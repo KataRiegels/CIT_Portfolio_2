@@ -1,13 +1,13 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using DataLayer.Models;
+using DataLayer.Models.TitleModels;
 
 namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
         const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=Jse33pjp";
-        public DbSet<Title_basics> Title_basicss { get; set; }
+        public DbSet<TitleBasics> TitleBasicss { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -18,9 +18,9 @@ namespace DataLayer
         {
             base.OnModelCreating(modelBuilder);
 
-            var tb_mb = modelBuilder.Entity<Title_basics>();
+            var tb_mb = modelBuilder.Entity<TitleBasics>();
 
-            tb_mb.ToTable("title_basics");
+            modelBuilder.Entity<TitleBasics>().ToTable("title_basics");
             tb_mb.Property(x => x.Tconst).HasColumnName("tconst");
             tb_mb.Property(x => x.TitleTypes).HasColumnName("titletypes");
             tb_mb.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.Models
+namespace DataLayer.Models.TitleModels
 {
-    public class Title_basics
+    public class TitleBasics
     {
 
         public string Tconst { get; set; }
