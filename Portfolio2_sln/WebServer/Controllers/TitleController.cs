@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 //using WebServer.Models;
 
 using DataLayer.Models.TitleModels;
-
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace WebServer.Controllers
 {
@@ -31,16 +31,18 @@ namespace WebServer.Controllers
         {
 
             var titles =
-                _dataService.GetTitles();
+                _dataService.GetTitles().Select(x => CreateTitleModel(x));
             //Console.WriteLine(titles);
             //Console.WriteLine();
             return Ok(titles);
         }
-        
+
         [HttpGet("{tconst}", Name = nameof(GetTitle))]
         public IActionResult GetTitle(string tconst)
         {
             var title = _dataService.GetTitle(tconst);
+            Console.WriteLine(tconst);
+            //var title = CreateTitleModel(_dataService.GetTitle(tconst));
 
             if (title == null)
             {
@@ -50,11 +52,30 @@ namespace WebServer.Controllers
             return Ok(title);
         }
 
-        //private TitleModel CreateTitleModel(TitleBasics titleBasics)
-        //{
-        //    var model = _mapper.Map<TitleModel>(titleBasics);
-        //    model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
-        //    return model;
-        //}
+
+        [HttpGet("genre/{genreName}", Name = nameof(GetTitlesByGenre))]
+        public IActionResult GetTitlesByGenre(string genreName)
+        {
+            var title = _dataService.GetTitlesByGenre(genreName);
+
+            if (title == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(title);
+        }
+
+
+
+
+        private TitleModel CreateTitleModel(TitleBasics titleBasics)
+        {
+            var model = _mapper.Map<TitleModel>(titleBasics);
+            model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
+            model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+            
+            return model;
+        }
     }
 }

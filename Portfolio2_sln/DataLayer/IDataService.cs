@@ -12,5 +12,8 @@ namespace DataLayer
         IList<TitleBasics> GetTitles();
         TitleBasics GetTitle(string tconst);
 
+        IList<TitleBasics> GetTitlesByGenre(string genreName);
+
+        public IList<string> GetGenresFromTitle(string tconst);
     }
 }

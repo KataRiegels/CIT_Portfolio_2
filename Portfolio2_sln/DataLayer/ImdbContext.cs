@@ -6,8 +6,9 @@ namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
-        const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=Jse33pjp";
+        const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
+        public DbSet<TitleGenre> TitleGenres { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -31,8 +32,13 @@ namespace DataLayer
             tb_mb.Property(x => x.EndYear).HasColumnName("endyear");
             tb_mb.Property(x => x.RunTimeMinutes).HasColumnName("runtimeminutes");
 
-
-
+            var genre_table = modelBuilder.Entity<TitleGenre>();
+            genre_table.ToTable("genre");
+            genre_table.HasMany(b => b.TitleBasics).WithMany(g => g.TitleGenres);
+            genre_table.HasKey(t => new { t.Tconst, t.GenreName });
+            //genre_table.
+            genre_table.Property(x => x.Tconst).HasColumnName("tconst");
+            genre_table.Property(x => x.GenreName).HasColumnName("genre");
 
         }
 
