@@ -6,7 +6,7 @@ namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
-        const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=Jse33pjp";
+        const string ConnectionString = "host=localhost;db=imd;uid=postgres;pwd=Jse33pjp";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
