@@ -15,32 +15,17 @@ namespace DataLayer
 
         public TitleBasics GetTitle(string tconst)
         {
-            Console.WriteLine(tconst + "_DataService");
             var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst == tconst);
-            //var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst == "tt9522300 ");
-            Console.WriteLine(temp.Tconst + "_DataService2");
             return temp;
         }
 
         public IList<string> GetGenresFromTitle(string tconst)
         {
-            //Console.WriteLine(tconst + "hello");
-            //var genres = _db.TitleGenres
-            //    .Where(x => x.Tconst.Contains(tconst))
-            //    .ToList();
-            Console.WriteLine(tconst + "_GetGenres");
             var genres =
                 _db.TitleGenres.Where(x => x.Tconst.Contains(tconst.Trim()))
-                //_db.TitleGenres.Where(x => x.Tconst == "tt9522300")
             .Select(x => x.GenreName)
             .ToList();
 
-            Console.WriteLine(genres);
-
-            //.ToString();
-
-            //var genres2 = genres.Select(x => x.GenreName).ToList();
-            //Console.WriteLine(genres.First().GenreName);
             return genres;
         }
 
@@ -69,8 +54,6 @@ namespace DataLayer
                     )
                     .ToList();
 
-            //Console.WriteLine(innerJoin.First().TitleGenres.First().GenreName);
-            Console.WriteLine("innerJoin length:" + innerJoin.Count());
 
             return innerJoin;
             //return null;
