@@ -8,7 +8,7 @@ namespace DataLayer
         private static ImdbContext _db = new ImdbContext();
         public IList<TitleBasics> GetTitles()
         {
-            return new List<TitleBasics>();
+            return _db.TitleBasicss.ToList();
         }
 
         public TitleBasics GetTitle(string tconst)

@@ -29,10 +29,11 @@ namespace WebServer.Controllers
         [HttpGet]
         public IActionResult GetTitles()
         {
+
             var titles =
-                _dataService.GetTitles().Select(x => CreateTitleModel(x));
-            Console.WriteLine(titles);
-            Console.WriteLine();
+                _dataService.GetTitles();
+            //Console.WriteLine(titles);
+            //Console.WriteLine();
             return Ok(titles);
         }
         
@@ -46,16 +47,14 @@ namespace WebServer.Controllers
                 return NotFound();
             }
 
-            var model = CreateTitleModel(title);
-
-            return Ok(model);
+            return Ok(title);
         }
 
-        private TitleModel CreateTitleModel(TitleBasics titleBasics)
-        {
-            var model = _mapper.Map<TitleModel>(titleBasics);
-            model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
-            return model;
-        }
+        //private TitleModel CreateTitleModel(TitleBasics titleBasics)
+        //{
+        //    var model = _mapper.Map<TitleModel>(titleBasics);
+        //    model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
+        //    return model;
+        //}
     }
 }

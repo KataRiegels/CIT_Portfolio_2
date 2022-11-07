@@ -20,9 +20,10 @@ namespace DataLayer
 
             var tb_mb = modelBuilder.Entity<TitleBasics>();
 
-            modelBuilder.Entity<TitleBasics>().ToTable("title_basics");
+            tb_mb.ToTable("title_basics");
+            tb_mb.HasKey(x => x.Tconst);
             tb_mb.Property(x => x.Tconst).HasColumnName("tconst");
-            tb_mb.Property(x => x.TitleTypes).HasColumnName("titletypes");
+            tb_mb.Property(x => x.TitleType).HasColumnName("titletype");
             tb_mb.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
             tb_mb.Property(x => x.OriginalTitle).HasColumnName("originaltitle");
             tb_mb.Property(x => x.IsAdult).HasColumnName("isadult");
