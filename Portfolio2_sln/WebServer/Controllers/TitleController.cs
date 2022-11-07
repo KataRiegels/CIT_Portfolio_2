@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using DataLayer.Models.TitleModels;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Security.Cryptography.X509Certificates;
 
 namespace WebServer.Controllers
 {
@@ -30,7 +31,7 @@ namespace WebServer.Controllers
         public IActionResult GetTitles()
         {
 
-            var titles =
+            IEnumerable<TitleModel> titles =
                 _dataService.GetTitles().Select(x => CreateTitleModel(x));
             //Console.WriteLine(titles);
             //Console.WriteLine();
@@ -40,9 +41,8 @@ namespace WebServer.Controllers
         [HttpGet("{tconst}", Name = nameof(GetTitle))]
         public IActionResult GetTitle(string tconst)
         {
-            var title = _dataService.GetTitle(tconst);
-            Console.WriteLine(tconst);
-            //var title = CreateTitleModel(_dataService.GetTitle(tconst));
+            //var title = _dataService.GetTitle(tconst);
+            TitleModel title = CreateTitleModel(_dataService.GetTitle(tconst));
 
             if (title == null)
             {
@@ -52,11 +52,12 @@ namespace WebServer.Controllers
             return Ok(title);
         }
 
-
+        // Get all titles that includes given genre
         [HttpGet("genre/{genreName}", Name = nameof(GetTitlesByGenre))]
         public IActionResult GetTitlesByGenre(string genreName)
         {
-            var title = _dataService.GetTitlesByGenre(genreName);
+            IEnumerable<TitleModel> title = _dataService.GetTitlesByGenre(genreName).Select(x => CreateTitleModel(x));
+            //var title = _dataService.GetTitlesByGenre(genreName); // If we want to return normal TitleBasics instead
 
             if (title == null)
             {
@@ -68,7 +69,7 @@ namespace WebServer.Controllers
 
 
 
-
+        // Take TitleBasics from Datalayer and makes it into TitleModel to display for client
         private TitleModel CreateTitleModel(TitleBasics titleBasics)
         {
             var model = _mapper.Map<TitleModel>(titleBasics);

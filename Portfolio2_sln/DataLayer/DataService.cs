@@ -15,8 +15,10 @@ namespace DataLayer
 
         public TitleBasics GetTitle(string tconst)
         {
+            Console.WriteLine(tconst + "_DataService");
             var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst == tconst);
             //var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst == "tt9522300 ");
+            Console.WriteLine(temp.Tconst + "_DataService2");
             return temp;
         }
 
@@ -26,12 +28,14 @@ namespace DataLayer
             //var genres = _db.TitleGenres
             //    .Where(x => x.Tconst.Contains(tconst))
             //    .ToList();
+            Console.WriteLine(tconst + "_GetGenres");
             var genres =
-                _db.TitleGenres.Where(x => x.Tconst.Contains(tconst))
+                _db.TitleGenres.Where(x => x.Tconst.Contains(tconst.Trim()))
+                //_db.TitleGenres.Where(x => x.Tconst == "tt9522300")
             .Select(x => x.GenreName)
             .ToList();
 
-            //Console.WriteLine(genres.First());
+            Console.WriteLine(genres);
 
             //.ToString();
 
@@ -59,16 +63,17 @@ namespace DataLayer
                         IsAdult = title.IsAdult,
                         StartYear = title.StartYear,
                         EndYear = title.EndYear,
-                        RunTimeMinutes = title.RunTimeMinutes,
-                        TitleGenres = new List<TitleGenre>() { genre }
+                        RunTimeMinutes = title.RunTimeMinutes
+                        //TitleGenres = new List<TitleGenre>() { genre }
                     }
                     )
                     .ToList();
 
-            Console.WriteLine(innerJoin.First().TitleGenres.First().GenreName);
+            //Console.WriteLine(innerJoin.First().TitleGenres.First().GenreName);
+            Console.WriteLine("innerJoin length:" + innerJoin.Count());
 
-            //return innerJoin;
-            return null;
+            return innerJoin;
+            //return null;
         }
 
     }
