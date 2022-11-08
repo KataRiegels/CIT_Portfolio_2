@@ -11,7 +11,8 @@ namespace DataLayer
     public interface IDataService
     {
         IList<TitleBasics>  GetTitles(string? titleType);
-        TitleBasics         GetTitle(string tconst);
+        TitleBasics GetTitle(string tconst);
+        IList<TitlePrincipal> GetTitlesPrincipalFromName(string nconst);
 
         IList<NameBasics> GetNames();
         NameBasics GetName(string nconst);

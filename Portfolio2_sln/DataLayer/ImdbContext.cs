@@ -14,6 +14,8 @@ namespace DataLayer
         public DbSet<NameBasics> NameBasicss { get; set; }
         public DbSet<TitleGenre> TitleGenres { get; set; }
         public DbSet<TitleEpisode> TitleEpisodes { get; set; }
+        public DbSet<TitlePrincipal> TitlePrincipals { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -36,6 +38,13 @@ namespace DataLayer
             tb_mb.Property(x => x.StartYear).HasColumnName("startyear");
             tb_mb.Property(x => x.EndYear).HasColumnName("endyear");
             tb_mb.Property(x => x.RunTimeMinutes).HasColumnName("runtimeminutes");
+
+            var title_principal_table = modelBuilder.Entity<TitlePrincipal>();
+            title_principal_table.ToTable("title_principal");
+            title_principal_table.HasKey(t => new {t.Tconst, t.Nconst});
+            title_principal_table.Property(x => x.Tconst).HasColumnName("tconst");
+            title_principal_table.Property(x => x.Nconst).HasColumnName("nconst");
+            title_principal_table.Property(x => x.Category).HasColumnName("category");
 
             var genre_table = modelBuilder.Entity<TitleGenre>();
             genre_table.ToTable("genre");
