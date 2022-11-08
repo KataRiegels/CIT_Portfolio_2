@@ -1,7 +1,9 @@
-﻿using DataLayer.Models.TitleModels;
+﻿using DataLayer.Models.NameModels;
+using DataLayer.Models.TitleModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using System.Runtime.CompilerServices;
 
 namespace DataLayer
 {
@@ -57,6 +59,17 @@ namespace DataLayer
 
             return innerJoin;
             //return null;
+        }
+
+        public NameBasics GetName(string nconst) 
+        {
+            var temp = _db.NameBasicss.FirstOrDefault(x => x.Nconst == nconst);
+            return temp;
+        }
+
+        public IList<NameBasics> GetNames() 
+        {
+            return _db.NameBasicss.ToList();
         }
 
     }

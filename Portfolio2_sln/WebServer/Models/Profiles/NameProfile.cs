@@ -1,22 +1,23 @@
 ﻿using AutoMapper;
 using DataLayer;
+using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WebServer.Models.TitleModels;
+using WebServer.Models.NameModels;
 
 namespace WebServer.Models.Profiles
 {
-    public class TitleProfile : Profile
+    public class NameProfile : Profile
     {
-        public TitleProfile()
+        public NameProfile()
         {
-            CreateMap<TitleBasics, TitleModel>();
+            CreateMap<NameBasics, NameModel>();
 
-            CreateMap<TitleCreateModel, TitleBasics>();
+            CreateMap<NameCreateModel, NameBasics>();
         }
     }
 }

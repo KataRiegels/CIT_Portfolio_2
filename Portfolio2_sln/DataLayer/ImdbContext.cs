@@ -1,14 +1,16 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using DataLayer.Models.TitleModels;
+using DataLayer.Models.NameModels;
 
 namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
         //const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
-        const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=Jse33pjp";
+        const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
+        public DbSet<NameBasics> NameBasicss { get; set; }
         public DbSet<TitleGenre> TitleGenres { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -40,6 +42,16 @@ namespace DataLayer
             //genre_table.
             genre_table.Property(x => x.Tconst).HasColumnName("tconst");
             genre_table.Property(x => x.GenreName).HasColumnName("genre");
+
+
+            var name_table = modelBuilder.Entity<NameBasics>();
+            name_table.ToTable("name_basics");
+            name_table.HasKey(x => x.Nconst);
+            name_table.Property(x => x.Nconst).HasColumnName("nconst");
+            name_table.Property(x => x.PrimaryName).HasColumnName("primaryname");
+            name_table.Property(x => x.BirthYear).HasColumnName("birthyear");
+            name_table.Property(x => x.DeathYear).HasColumnName("deathyear");
+
 
         }
 
