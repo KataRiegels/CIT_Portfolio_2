@@ -142,6 +142,11 @@ namespace DataLayer
 
             return innerJoin;
         }
+        public OmdbData GetOmdbData(string tconst)
+        {
+            var temp = _db.omdbDatas.FirstOrDefault(x => x.Tconst == tconst);
+            return temp;
+        }
        
     }
 }

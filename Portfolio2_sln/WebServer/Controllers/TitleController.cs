@@ -95,6 +95,18 @@ namespace WebServer.Controllers
             return Ok(titles);
         }
 
+        [HttpGet("Omdbdata/{tconst}")]
+        public IActionResult GetOmdbData(string tconst)
+        {
+            OmdbModel omdb = CreateOmdbModel(_dataService.GetOmdbData(tconst));
+
+            if(omdb == null)
+            {
+                return NotFound();
+            }
+            return Ok(omdb);
+        }
+
         /* -----------
             HELPERS
          ------------- */
@@ -106,6 +118,12 @@ namespace WebServer.Controllers
             model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
             //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
             
+            return model;
+        }
+
+        public OmdbModel CreateOmdbModel(OmdbData omdb)
+        {
+            var model = _mapper.Map<OmdbModel>(omdb);
             return model;
         }
 

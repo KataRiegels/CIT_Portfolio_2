@@ -15,6 +15,7 @@ namespace DataLayer
         public DbSet<TitleGenre> TitleGenres { get; set; }
         public DbSet<TitleEpisode> TitleEpisodes { get; set; }
         public DbSet<TitlePrincipal> TitlePrincipals { get; set; }
+        public DbSet<OmdbData> omdbDatas { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -71,6 +72,13 @@ namespace DataLayer
             episodeTable.Property(x => x.EpisodeNumber).HasColumnName("episodenumber");
             episodeTable.Property(x => x.SeasonNumber).HasColumnName("seasonnumber");
 
+
+            var omdbTalbe = modelBuilder.Entity<OmdbData>();
+            omdbTalbe.ToTable("omdb_data");
+            omdbTalbe.HasKey(x => x.Tconst);
+            omdbTalbe.Property(x => x.Tconst).HasColumnName("tconst");
+            omdbTalbe.Property(x => x.Poster).HasColumnName("poster");
+            omdbTalbe.Property(x => x.Plot).HasColumnName("plot");
         }
 
     }
