@@ -27,14 +27,14 @@ namespace WebServer.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public IActionResult GetTitles()
+        [HttpGet(Name = nameof(GetTitles))]
+        public IActionResult GetTitles(string? titleType = null)
         {
-
+            
             IEnumerable<TitleModel> titles =
-                _dataService.GetTitles().Select(x => CreateTitleModel(x));
-            //Console.WriteLine(titles);
-            //Console.WriteLine();
+                _dataService.GetTitles(titleType).Select(x => CreateTitleModel(x));
+
+
             return Ok(titles);
         }
 
@@ -67,14 +67,31 @@ namespace WebServer.Controllers
             return Ok(title);
         }
 
+        // Get all titles that includes given genre
+        [HttpGet("{tconst}/episodes", Name = nameof(GetEpisodesFromTitle))]
+        public IActionResult GetEpisodesFromTitle(string tconst)
+        {
+            IEnumerable<TitleModel> title = _dataService.GetEpisodesFromTitle(tconst).Select(x => CreateTitleModel(x));
+            //var title = _dataService.GetTitlesByGenre(genreName); // If we want to return normal TitleBasics instead
 
+            if (title == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(title);
+        }
+
+        /* -----------
+            HELPERS
+         ------------- */
 
         // Take TitleBasics from Datalayer and makes it into TitleModel to display for client
         private TitleModel CreateTitleModel(TitleBasics titleBasics)
         {
             var model = _mapper.Map<TitleModel>(titleBasics);
             model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
-            model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
             
             return model;
         }

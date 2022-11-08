@@ -6,7 +6,7 @@
         public string GenreName { get; set; }
 
         //public TitleBasics Title { get; set; }
-        public IList<TitleBasics> TitleBasics { get; set; } = new List<TitleBasics>();
+        //public IList<TitleBasics> TitleBasics { get; set; } = new List<TitleBasics>();
 
     }
 }

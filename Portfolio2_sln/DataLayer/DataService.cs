@@ -8,14 +8,28 @@ namespace DataLayer
     public class DataService : IDataService
     {
         private static ImdbContext _db = new ImdbContext();
-        public IList<TitleBasics> GetTitles()
+
+        /* ------------
+            TITLES
+          ------------*/
+        // can currently get with one query
+        public IList<TitleBasics> GetTitles(string? titleType = null)
         {
-            return _db.TitleBasicss.ToList();
+            Console.WriteLine(titleType);
+            var result = _db.TitleBasicss.ToList();
+            if (titleType != null)
+            {
+                result = _db.TitleBasicss.Where(x => x.TitleType == (titleType)).ToList();
+                Console.WriteLine(result.Count());
+            }
+
+            return result;
         }
 
         public TitleBasics GetTitle(string tconst)
         {
             var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst == tconst);
+            
             return temp;
         }
 
@@ -35,7 +49,7 @@ namespace DataLayer
                 _db.TitleGenres.Where(x => x.GenreName.Contains(genreName)).ToList();
 
 
-            var innerJoin = _db.TitleGenres.Join(
+            var innerJoin = titleGenres.Join(
                     _db.TitleBasicss,
                     genre => genre.Tconst,
                     title => title.Tconst,
@@ -58,6 +72,40 @@ namespace DataLayer
             return innerJoin;
             //return null;
         }
+
+
+
+
+
+        public IList<TitleBasics> GetEpisodesFromTitle(string parentTconst)
+        {
+            Console.WriteLine(parentTconst);
+            var episodes = _db.TitleEpisodes
+                .Where(e => e.ParentTconst == parentTconst.Trim())
+                //.Where(e => e.ParentTconst == parentTconst)
+                .ToList();
+            foreach (var episode in episodes)
+            {
+                Console.WriteLine(episode.Tconst);
+            }
+            Console.WriteLine(episodes.Count());
+
+            var innerJoin = episodes.Join(
+                    _db.TitleBasicss,
+                    episode => episode.Tconst,
+                    title => title.Tconst,
+                    (episode, title) =>
+                    title
+                   
+                    )
+                    .ToList();
+            Console.WriteLine(episodes.Count());
+            Console.WriteLine(innerJoin.Count());
+
+            return innerJoin;
+        }
+
+
 
     }
 }

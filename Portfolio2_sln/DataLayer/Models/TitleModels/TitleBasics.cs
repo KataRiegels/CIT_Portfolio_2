@@ -18,6 +18,8 @@ namespace DataLayer.Models.TitleModels
         public string EndYear { get; set; }
         public int? RunTimeMinutes { get; set; }
 
+        //public IList<TitleBasics> Episodes { get; set; }
+
         //public IList<TitleGenre> TitleGenres { get; set; } = new List<TitleGenre>();
 
     }
