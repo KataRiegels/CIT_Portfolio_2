@@ -33,7 +33,7 @@ namespace WebServer.Controllers
         [HttpGet]
         public IActionResult GetNames()
         {
-            IEnumerable<NameBasics> names =
+            IEnumerable<NameModel> names =
                 _dataService.GetNames().Select(x => CreateNameModel(x));
             return Ok(names);
         }
