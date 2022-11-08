@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.NameModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataLayer
 {
@@ -12,6 +13,7 @@ namespace DataLayer
         public DbSet<TitleBasics> TitleBasicss { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }
         public DbSet<TitleGenre> TitleGenres { get; set; }
+        public DbSet<TitleEpisode> TitleEpisodes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -39,7 +41,6 @@ namespace DataLayer
             genre_table.ToTable("genre");
             //genre_table.HasMany(b => b.TitleBasics).WithMany(g => g.TitleGenres);
             genre_table.HasKey(t => new { t.Tconst, t.GenreName });
-            //genre_table.
             genre_table.Property(x => x.Tconst).HasColumnName("tconst");
             genre_table.Property(x => x.GenreName).HasColumnName("genre");
 
@@ -53,8 +54,15 @@ namespace DataLayer
             name_table.Property(x => x.DeathYear).HasColumnName("deathyear");
 
 
-        }
+            var episodeTable = modelBuilder.Entity<TitleEpisode>();
+            episodeTable.ToTable("title_episode");
+            episodeTable.HasKey(x => x.Tconst);
+            episodeTable.Property(x => x.Tconst).HasColumnName("tconst");
+            episodeTable.Property(x => x.ParentTconst).HasColumnName("parenttconst");
+            episodeTable.Property(x => x.EpisodeNumber).HasColumnName("episodenumber");
+            episodeTable.Property(x => x.SeasonNumber).HasColumnName("seasonnumber");
 
+        }
 
     }
 }

@@ -10,15 +10,20 @@ namespace DataLayer
 {
     public interface IDataService
     {
+        IList<TitleBasics>  GetTitles(string? titleType);
+        TitleBasics         GetTitle(string tconst);
 
         IList<NameBasics> GetNames();
         NameBasics GetName(string nconst);
 
-        IList<TitleBasics> GetTitles();
-        TitleBasics GetTitle(string tconst);
 
         IList<TitleBasics> GetTitlesByGenre(string genreName);
 
+        // Make private? or in Controller, maybe?
         public IList<string> GetGenresFromTitle(string tconst);
+        public IList<TitleBasics> GetEpisodesFromTitle(string parentTconst);
+
+
+
     }
 }
