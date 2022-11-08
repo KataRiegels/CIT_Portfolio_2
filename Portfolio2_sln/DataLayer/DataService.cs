@@ -147,6 +147,12 @@ namespace DataLayer
             var temp = _db.omdbDatas.FirstOrDefault(x => x.Tconst == tconst);
             return temp;
         }
+
+        public string GetPlot(string tconst)
+        {
+            var temp = GetOmdbData(tconst).Plot;
+            return temp;
+        }
        
     }
 }

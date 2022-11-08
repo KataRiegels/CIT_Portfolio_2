@@ -107,6 +107,13 @@ namespace WebServer.Controllers
             return Ok(omdb);
         }
 
+        [HttpGet("Omdbdata/plot/{tconst}")]
+        public IActionResult GetPlot(string tconst)
+        {
+            string plot = _dataService.GetPlot(tconst);
+            return Ok(plot);
+        }
+
         /* -----------
             HELPERS
          ------------- */

@@ -14,6 +14,7 @@ namespace DataLayer
         TitleBasics GetTitle(string tconst);
         IList<TitlePrincipal> GetTitlesPrincipalFromName(string nconst);
         OmdbData GetOmdbData(string tconst);
+        string GetPlot(string tconst);
 
         IList<NameBasics> GetNames();
         NameBasics GetName(string nconst);
