@@ -8,12 +8,21 @@ namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
-        //const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
-        const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
+        const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
+        //const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }
+
+
+
+
+        // TITLES
+
+
         public DbSet<TitleGenre> TitleGenres { get; set; }
         public DbSet<TitleEpisode> TitleEpisodes { get; set; }
+        public DbSet<TitleAka> TitleAkas { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -39,7 +48,6 @@ namespace DataLayer
 
             var genre_table = modelBuilder.Entity<TitleGenre>();
             genre_table.ToTable("genre");
-            //genre_table.HasMany(b => b.TitleBasics).WithMany(g => g.TitleGenres);
             genre_table.HasKey(t => new { t.Tconst, t.GenreName });
             genre_table.Property(x => x.Tconst).HasColumnName("tconst");
             genre_table.Property(x => x.GenreName).HasColumnName("genre");
@@ -61,6 +69,31 @@ namespace DataLayer
             episodeTable.Property(x => x.ParentTconst).HasColumnName("parenttconst");
             episodeTable.Property(x => x.EpisodeNumber).HasColumnName("episodenumber");
             episodeTable.Property(x => x.SeasonNumber).HasColumnName("seasonnumber");
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // TITLES
+            var titleAkaTable = modelBuilder.Entity<TitleAka>();
+            titleAkaTable.ToTable("title_aka");
+            titleAkaTable.HasKey(t => new { t.Tconst, t.Ordering });
+            titleAkaTable.Property(x => x.Tconst).HasColumnName("tconst");
+            titleAkaTable.Property(x => x.Ordering).HasColumnName("ordering");
+            titleAkaTable.Property(x => x.Title).HasColumnName("title");
+            titleAkaTable.Property(x => x.Region).HasColumnName("region");
+            titleAkaTable.Property(x => x.IsOriginalTitle).HasColumnName("isoriginaltitle");
+
+
+
 
         }
 

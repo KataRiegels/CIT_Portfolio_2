@@ -1,9 +1,5 @@
 ﻿using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
-using System.Runtime.CompilerServices;
 
 namespace DataLayer
 {
@@ -34,6 +30,13 @@ namespace DataLayer
             
             return temp;
         }
+
+        public IList<TitleAka> GetTitleAkasByTitle(string tconst)
+        {
+            return _db.TitleAkas.Where(x => x.Tconst == tconst).ToList(); ;
+        }
+
+
 
         public IList<string> GetGenresFromTitle(string tconst)
         {

@@ -17,6 +17,18 @@ namespace DataLayer
         NameBasics GetName(string nconst);
 
 
+
+
+
+
+
+
+
+
+
+
+        // TITLES
+        public IList<TitleAka> GetTitleAkasByTitle(string tconst);
         IList<TitleBasics> GetTitlesByGenre(string genreName);
 
         // Make private? or in Controller, maybe?

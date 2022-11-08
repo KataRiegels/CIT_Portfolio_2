@@ -52,6 +52,17 @@ namespace WebServer.Controllers
             return Ok(title);
         }
 
+        // Get all the title_akas
+        [HttpGet("{tconst}/akas", Name = nameof(GetTitleAkasByTitle))]
+        public IActionResult GetTitleAkasByTitle(string tconst)
+        {
+            IEnumerable<TitleAka> titles =
+                _dataService.GetTitleAkasByTitle(tconst);
+
+            return Ok(titles);
+
+        }
+
         // Get all titles that includes given genre
         [HttpGet("genre/{genreName}", Name = nameof(GetTitlesByGenre))]
         public IActionResult GetTitlesByGenre(string genreName)
