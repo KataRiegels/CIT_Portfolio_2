@@ -93,8 +93,19 @@ namespace DataLayer
             titleAkaTable.Property(x => x.IsOriginalTitle).HasColumnName("isoriginaltitle");
 
 
+            var titlePrincipleTable = modelBuilder.Entity<TitlePrincipal>();
+            titlePrincipleTable.ToTable("title_principals");
+            titlePrincipleTable.HasKey(t => new { t.Tconst, t.Nconst, t.Category });
+            titlePrincipleTable.Property(x => x.Tconst).HasColumnName("tconst");
+            titlePrincipleTable.Property(x => x.Nconst).HasColumnName("nconst");
+            titlePrincipleTable.Property(x => x.Category).HasColumnName("category");
 
 
+
+
+
+
+            //titlePrincipleTable.Property(x => x.).HasColumnName("");
         }
 
     }

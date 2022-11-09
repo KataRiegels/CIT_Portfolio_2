@@ -102,7 +102,7 @@ namespace WebServer.Controllers
         {
             var model = _mapper.Map<TitleModel>(titleBasics);
             model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
-            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+            model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
             
             return model;
         }

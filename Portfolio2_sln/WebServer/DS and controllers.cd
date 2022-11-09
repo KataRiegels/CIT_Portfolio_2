@@ -8,7 +8,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="WebServer.Controllers.TitleController">
-    <Position X="1.25" Y="3" Width="3.5" />
+    <Position X="1.25" Y="3.5" Width="3.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAQABAAACAACIBAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Controllers\TitleController.cs</FileName>

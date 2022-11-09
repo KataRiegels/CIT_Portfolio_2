@@ -14,5 +14,7 @@
 
         
         public IList<string> Genres { get; set; } = new List<string>();
+        public IList<string> TitleAkas{ get; set; }   
+        public double AverageRating{ get; set; }
     }
 }

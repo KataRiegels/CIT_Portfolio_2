@@ -36,6 +36,7 @@ namespace DataLayer
             return _db.TitleAkas.Where(x => x.Tconst == tconst).ToList(); ;
         }
 
+        
 
 
         public IList<string> GetGenresFromTitle(string tconst)
@@ -60,13 +61,13 @@ namespace DataLayer
                     title => title.Tconst,
                     (genre, title) => new TitleBasics
                     {
-                        Tconst = title.Tconst,
-                        TitleType = title.TitleType,
-                        PrimaryTitle = title.PrimaryTitle,
+                        Tconst        = title.Tconst,
+                        TitleType     = title.TitleType,
+                        PrimaryTitle  = title.PrimaryTitle,
                         OriginalTitle = title.OriginalTitle,
-                        IsAdult = title.IsAdult,
-                        StartYear = title.StartYear,
-                        EndYear = title.EndYear,
+                        IsAdult       = title.IsAdult,
+                        StartYear     = title.StartYear,
+                        EndYear       = title.EndYear,
                         RunTimeMinutes = title.RunTimeMinutes
                         //TitleGenres = new List<TitleGenre>() { genre }
                     }
