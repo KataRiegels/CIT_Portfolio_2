@@ -51,8 +51,7 @@ namespace WebServer.Controllers
             return Ok(name);
         }
 
-
-
+        
 
         private NameModel CreateNameModel(NameBasics nameBasics)
         {
@@ -61,5 +60,7 @@ namespace WebServer.Controllers
 
             return model;
         }
+
+
     }
 }

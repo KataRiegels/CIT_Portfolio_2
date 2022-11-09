@@ -124,5 +124,39 @@ namespace DataLayer
             return _db.NameBasicss.ToList();
         }
 
+        public IList<TitlePrincipal> GetTitlesPrincipalFromName(string nconst) 
+        {
+            IList<TitlePrincipal> titlePrincipals =
+                _db.TitlePrincipals.Where(x => x.Nconst == nconst).ToList();
+
+            //IList<TitleBasics> titleBasics =
+            //    _db.TitleBasicss.Where(x => x.Tconst == titlePrincipals.Tconst).ToList();
+
+            var innerJoin = titlePrincipals.Join(
+                _db.NameBasicss,
+                principal => principal.Nconst,
+                name => name.Nconst,
+                (principal, name) => new TitlePrincipal
+                {
+                    Tconst = principal.Tconst,
+                    Nconst = principal.Nconst,
+                    Category = principal.Category,
+                }
+                ).ToList();
+
+            return innerJoin;
+        }
+        public OmdbData GetOmdbData(string tconst)
+        {
+            var temp = _db.omdbDatas.FirstOrDefault(x => x.Tconst == tconst);
+            return temp;
+        }
+
+        public string GetPlot(string tconst)
+        {
+            var temp = GetOmdbData(tconst).Plot;
+            return temp;
+        }
+       
     }
 }

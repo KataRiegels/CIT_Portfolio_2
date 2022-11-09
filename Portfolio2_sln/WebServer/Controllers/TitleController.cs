@@ -93,17 +93,64 @@ namespace WebServer.Controllers
             return Ok(title);
         }
 
+        [HttpGet("PrincipalTitles/{nconst}")]
+        public IActionResult GetTitlesPrincipalFromName(string nconst)
+        {
+            IEnumerable<TitlePrincipalModel> titles =
+                _dataService.GetTitlesPrincipalFromName(nconst).Select(x => CreateTitlePrincipalModel(x));
+
+            if (titles == null)
+            {
+                return NotFound();
+            }
+            return Ok(titles);
+        }
+
+        [HttpGet("Omdbdata/{tconst}")]
+        public IActionResult GetOmdbData(string tconst)
+        {
+            OmdbModel omdb = CreateOmdbModel(_dataService.GetOmdbData(tconst));
+
+            if(omdb == null)
+            {
+                return NotFound();
+            }
+            return Ok(omdb);
+        }
+
+        [HttpGet("Omdbdata/plot/{tconst}")]
+        public IActionResult GetPlot(string tconst)
+        {
+            string plot = _dataService.GetPlot(tconst);
+            return Ok(plot);
+        }
+
         /* -----------
             HELPERS
          ------------- */
 
         // Take TitleBasics from Datalayer and makes it into TitleModel to display for client
-        private TitleModel CreateTitleModel(TitleBasics titleBasics)
+        public TitleModel CreateTitleModel(TitleBasics titleBasics)
         {
             var model = _mapper.Map<TitleModel>(titleBasics);
             model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
             model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
             
+            return model;
+        }
+
+        public OmdbModel CreateOmdbModel(OmdbData omdb)
+        {
+            var model = _mapper.Map<OmdbModel>(omdb);
+            return model;
+        }
+
+        public TitlePrincipalModel CreateTitlePrincipalModel(TitlePrincipal titleprincipal)
+        {
+            var model = _mapper.Map<TitlePrincipalModel>(titleprincipal);
+            //model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleprincipal.Tconst });
+            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+
             return model;
         }
     }
