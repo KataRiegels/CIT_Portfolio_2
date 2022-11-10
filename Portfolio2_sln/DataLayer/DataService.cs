@@ -338,7 +338,7 @@ namespace DataLayer
                 .ToList();
         }
 
-        public void CreateBookmarkTitle(string username, string tconst, string annotation)
+        public BookmarkTitle CreateBookmarkTitle(string username, string tconst, string annotation)
         {
             BookmarkTitle newBookmark = new BookmarkTitle()
             {
@@ -346,9 +346,10 @@ namespace DataLayer
                 Tconst = tconst,
                 Annotation = annotation
             };
-
+            Console.WriteLine(newBookmark.Username + " " + newBookmark.Tconst + " " + newBookmark.Annotation);
             _db.BookmarkTitles.Add(newBookmark);
             _db.SaveChanges();
+            return newBookmark;
 
         }
 

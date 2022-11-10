@@ -90,6 +90,16 @@ namespace WebServer.Controllers
             return Ok(title);
         }
 
+        [HttpPost("{username}/titlebookmarks", Name = nameof(CreateBookmarkTitle))]
+        public IActionResult CreateBookmarkTitle(BookmarkTitleCreateModel newBookmark,string username)
+        {
+            //Console.WriteLine(newBookmark.ToString());
+            Console.WriteLine(username);
+            var bookmark = _mapper.Map<BookmarkTitle>(newBookmark);
+            var returned = _dataService.CreateBookmarkTitle(username, bookmark.Tconst, bookmark.Annotation);
+            return CreatedAtRoute(null, CreateBookmarkTitleModel(returned));
+        }
+
         [HttpGet("{username}/titlebookmarks")]
         public IActionResult GetBookmarksTitleaByUser(string username)
         {
@@ -102,6 +112,7 @@ namespace WebServer.Controllers
         {
             var model = _mapper.Map<BookmarkTitleModel>(bookmark);
             var title = _dataService.GetBasicTitle(bookmark.Tconst);
+            //var something = new {TitleController }.CreateBasicTitleModel(title);
             model.Title = _mapper.Map<BasicTitleModel>(title);
             model.Title.Url = _generator.GetUriByName(HttpContext, nameof(WebServer.Controllers.TitleController.GetTitle), new { title.Tconst});
 
