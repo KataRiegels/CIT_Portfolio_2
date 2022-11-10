@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore.Query;
 using System.Security.Cryptography.X509Certificates;
 using DataLayer.Models.NameModels;
 using WebServer.Models.NameModels;
+using DataLayer.Model;
+using NpgsqlTypes;
 
 namespace WebServer.Controllers
 {
@@ -51,7 +53,25 @@ namespace WebServer.Controllers
             return Ok(name);
         }
 
-        
+        [HttpGet("list", Name = nameof(GetListNames))]
+        public IActionResult GetListNames()
+        {
+            IEnumerable<ListNameModel> names =
+              _dataService.GetListNames().Select(x => CreateListNameModel(x));
+
+            if(names == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(names);
+        }
+
+        private ListNameModel CreateListNameModel(ListNameModelDL listModel)
+        {
+            var model = _mapper.Map<ListNameModel>(listModel);
+            return model;
+        }
 
         private NameModel CreateNameModel(NameBasics nameBasics)
         {

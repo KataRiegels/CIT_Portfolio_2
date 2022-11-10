@@ -39,6 +39,23 @@ namespace DataLayer
 
         public bool DeleteBookmarkTitle(string username, string tconst);
 
+        //---------------------------------------------------------------------------------------------
+        //                    NAME
+        //---------------------------------------------------------------------------------------------
+        public IList<BasicNameModelDL> GetBasicNames();
+        public IList<ListNameModelDL> GetListNames();
+        public IList<DetailedActorModel> GetDetailedActors();
+        public IList<DetailedProducerModel> GetDetailedProducers();
+        //public BasicNameModelDL GetBasicName(string nconst);
+        //public DetailedActorModel GetDetailedActor(string nconst);
+        //public DetailedProducerModel GetDetailedProducer(string nconst);
+
+        //---------------------------------------------------------------------------------------------
+        //             NAME HELPERS
+        //---------------------------------------------------------------------------------------------
+
+        public string GetProfession(string nconst);
+        public string GetKnownFor(string nconst);
 
 
 

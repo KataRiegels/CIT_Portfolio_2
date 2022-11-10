@@ -4,6 +4,7 @@ using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
 namespace DataLayer
@@ -258,20 +259,85 @@ namespace DataLayer
 
 
 
+        //----------------------------------------------------------------------------------------------
+        //             NAME
+        //----------------------------------------------------------------------------------------------
 
 
+        public IList<BasicNameModelDL> GetBasicNames()
+        {
+            var basicnames = _db.NameBasicss
+                .Select(n => new BasicNameModelDL
+                {
+                    Nconst = n.Nconst,
+                    PrimaryName = n.PrimaryName
+                })
+                .ToList();
+
+            return basicnames;
+        }
+
+        public BasicNameModelDL GetBasicName(string nconst)
+        {
+            var namebasic = _db.NameBasicss.FirstOrDefault(x => x.Nconst == nconst);
+
+            var basicname = new BasicNameModelDL()
+            {
+                Nconst = nconst,
+                PrimaryName = namebasic.PrimaryName
+            };
+
+            return basicname;
+        }
+
+        public IList<ListNameModelDL> GetListNames()
+        {
+            var basicnames = GetBasicNames();
+
+            IList<ListNameModelDL> listnames = new();
+
+            for(int n = 0; n < basicnames.Count(); n++)
+            {
+                Console.WriteLine(basicnames[0].Nconst);
+                var listname = new ListNameModelDL()
+                {
+                    BasicName = basicnames[n],
+                    Occupation = "Hello",//GetProfession(basicnames[n].Nconst),
+                    KnownForTitle = GetBasicTitle("tt8392956")//GetKnownFor(basicnames[n].Nconst))
+                };
+                listnames.Add(listname);
+            }
+
+            return listnames;
+        }
+        public IList<DetailedActorModel> GetDetailedActors()
+        {
+            return null;
+        }
+
+        public IList<DetailedProducerModel> GetDetailedProducers()
+        {
+            return null;
+        }
 
 
+        //----------------------------------------------------------------------------------------------
+        //         NAME HELPERS
+        //----------------------------------------------------------------------------------------------
 
+        public string GetProfession(string nconst)
+        {
+            string temp = _db.NameProfessions.FirstOrDefault(x => x.Nconst == nconst).Profession;
+            Console.WriteLine(temp);
+            return temp;
+        }
 
-
-
-
-
-
-
-
-
+        public string GetKnownFor(string nconst)
+        {
+            string temp = _db.NameKnownFors.FirstOrDefault(x => x.Nconst == nconst).Tconst;
+            Console.WriteLine(temp);
+            return temp;
+        }
 
         /* ----------------------------------------------------------------------------------------------------------
                         USER 

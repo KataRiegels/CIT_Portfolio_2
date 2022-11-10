@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Model
 {
-    public class ListNameModelDL
+    public class DetailedActorModel
     {
         public BasicNameModelDL BasicName { get; set; }
-        public string Occupation { get; set; }
-        public BasicTitleModelDL KnownForTitle { get; set; }
-
+        public string CharacterName { get; set; }
+        public IList<BasicTitleModelDL> Titles { get; set; }
     }
 }

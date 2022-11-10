@@ -9,12 +9,13 @@ namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
-        const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
-        //const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
+        //const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
+        const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }
 
-
+        public DbSet<NameProfession> NameProfessions { get; set; }
+        public DbSet<NameKnownFor> NameKnownFors { get; set; }
 
         public DbSet<User> Users { get; set; }
         public DbSet<BookmarkTitle> BookmarkTitles { get; set; }
@@ -79,6 +80,18 @@ namespace DataLayer
             episodeTable.Property(x => x.ParentTconst).HasColumnName("parenttconst");
             episodeTable.Property(x => x.EpisodeNumber).HasColumnName("episodenumber");
             episodeTable.Property(x => x.SeasonNumber).HasColumnName("seasonnumber");
+
+            var KnownFor_table = modelBuilder.Entity<NameKnownFor>();
+            KnownFor_table.ToTable("known_for");
+            KnownFor_table.HasKey(x => new { x.Tconst, x.Nconst});
+            KnownFor_table.Property(x => x.Tconst).HasColumnName("tconst");
+            KnownFor_table.Property(x => x.Nconst).HasColumnName("nconst");
+
+            var name_profession = modelBuilder.Entity<NameProfession>();
+            name_profession.ToTable("profession");
+            name_profession.HasKey(x => x.Nconst);
+            name_profession.Property(x => x.Nconst).HasColumnName("nconst");
+            name_profession.Property(x => x.Profession).HasColumnName("profession");
 
 
             // Usser
