@@ -1,6 +1,7 @@
 ﻿using DataLayer.Model;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
+using DataLayer.Models.UserModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Security.Cryptography.X509Certificates;
@@ -254,6 +255,92 @@ namespace DataLayer
             var temp = GetOmdbData(tconst).Plot;
             return temp;
         }
-       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* ----------------------------------------------------------------------------------------------------------
+                        USER 
+        ---------------------------------------------------------------------------------------------------------- */
+
+        public User GetUser(string username)
+        {
+            return _db.Users.FirstOrDefault(x => x.Username == username);
+        }
+
+        public IList<User> GetUsers()
+        {
+            return _db.Users.ToList();
+        }
+
+        public void CreateUser(string username, string password, string birthYear, string email)
+        {
+            User newUser = new User()
+            {
+                Username = username,
+                Password = password,
+                BirthYear = birthYear,
+                Email = email
+            };
+
+            _db.Users.Add(newUser);
+            _db.SaveChanges();
+
+        }
+
+        public bool DeleteUser(string username)
+        {
+
+            var product = GetUser(username);
+            if (product == null)
+            {
+                return false;
+            }
+            _db.Users.Remove(GetUser(username));
+            _db.SaveChanges();
+            return true;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

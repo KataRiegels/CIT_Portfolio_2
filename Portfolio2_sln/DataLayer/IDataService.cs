@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DataLayer.Model;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
+using DataLayer.Models.UserModels;
 
 namespace DataLayer
 {
@@ -22,10 +23,12 @@ namespace DataLayer
 
 
 
+        public User GetUser(string username);
+        public IList<User> GetUsers();
 
+        public void CreateUser(string username, string password, string birthYear, string email);
 
-
-
+        public bool DeleteUser(string username);
 
 
 

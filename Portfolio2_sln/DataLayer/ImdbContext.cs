@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.NameModels;
+using DataLayer.Models.UserModels;
 using System.ComponentModel.DataAnnotations;
 
 namespace DataLayer
@@ -15,7 +16,7 @@ namespace DataLayer
 
 
 
-
+        public DbSet<User> Users { get; set; }
         // TITLES
 
         public DbSet<TitleAvgRating> TitleAvgRatings { get; set; }
@@ -75,6 +76,16 @@ namespace DataLayer
             episodeTable.Property(x => x.SeasonNumber).HasColumnName("seasonnumber");
 
 
+            // Usser
+
+            var userTable = modelBuilder.Entity<User>();
+            userTable.ToTable("users");
+            userTable.HasKey(x => x.Username);
+            userTable.Property(x => x.Username).HasColumnName("username");
+            userTable.Property(x => x.Password).HasColumnName("password");
+            userTable.Property(x => x.BirthYear).HasColumnName("birthyear");
+            userTable.Property(x => x.Email).HasColumnName("email");
+            //userTable.Property(x => x.).HasColumnName("");
 
 
 
