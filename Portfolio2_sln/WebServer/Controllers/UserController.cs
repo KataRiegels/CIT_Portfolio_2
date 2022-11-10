@@ -95,15 +95,17 @@ namespace WebServer.Controllers
         {
             IEnumerable<BookmarkTitleModel> bookmark =
                 _dataService.GetBookmarkTitlesByUser(username).Select(x => CreateBookmarkTitleModel(x));
-            Console.WriteLine("IS THIS WORKING?????");
 
             return Ok(bookmark);
         }
         public BookmarkTitleModel CreateBookmarkTitleModel(BookmarkTitle bookmark)
         {
             var model = _mapper.Map<BookmarkTitleModel>(bookmark);
+            var title = _dataService.GetBasicTitle(bookmark.Tconst);
+            model.Title = _mapper.Map<BasicTitleModel>(title);
+            model.Title.Url = _generator.GetUriByName(HttpContext, nameof(WebServer.Controllers.TitleController.GetTitle), new { title.Tconst});
+
             //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
-            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
 
             return model;
         }
