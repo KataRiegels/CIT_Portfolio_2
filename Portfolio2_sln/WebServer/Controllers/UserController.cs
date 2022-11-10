@@ -6,6 +6,7 @@ using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 using WebServer.Models.TitleModels;
 using WebServer.Models.UserModels;
+using WebServer.Controllers;
 using Microsoft.AspNetCore.Mvc;
 //using WebServer.Models;
 
@@ -20,7 +21,7 @@ namespace WebServer.Controllers
     public class UserController : ControllerBase
     {
         private IDataService _dataService;
-        private IDataServiceUser _dataServiceUser;
+        //private IDataServiceUser _dataServiceUser;
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
 
@@ -45,6 +46,7 @@ namespace WebServer.Controllers
         [HttpGet("{username}", Name = nameof(GetUser))]
         public IActionResult GetUser(string username)
         {
+
             //var title = _dataService.GetTitle(tconst);
             UserModel title = CreateUserModel(_dataService.GetUser(username));
 
@@ -75,9 +77,36 @@ namespace WebServer.Controllers
             return Ok();
         }
 
+        [HttpGet("{username}/titlebookmark/{tconst}", Name = nameof(GetBookmarkTitle))]
+        public IActionResult GetBookmarkTitle(string username, string tconst)
+        {
+            //var title = _dataService.GetTitle(tconst);
+            BookmarkTitleModel title = CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
 
+            if (title == null)
+            {
+                return NotFound();
+            }
+            return Ok(title);
+        }
 
+        [HttpGet("{username}/titlebookmarks")]
+        public IActionResult GetBookmarksTitleaByUser(string username)
+        {
+            IEnumerable<BookmarkTitleModel> bookmark =
+                _dataService.GetBookmarkTitlesByUser(username).Select(x => CreateBookmarkTitleModel(x));
+            Console.WriteLine("IS THIS WORKING?????");
 
+            return Ok(bookmark);
+        }
+        public BookmarkTitleModel CreateBookmarkTitleModel(BookmarkTitle bookmark)
+        {
+            var model = _mapper.Map<BookmarkTitleModel>(bookmark);
+            //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
+            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+
+            return model;
+        }
         public UserModel CreateUserModel(User user)
         {
             var model = _mapper.Map<UserModel>(user);
@@ -86,6 +115,12 @@ namespace WebServer.Controllers
 
             return model;
         }
+
+        /*
+         
+         
+         */
+
 
     }
 }

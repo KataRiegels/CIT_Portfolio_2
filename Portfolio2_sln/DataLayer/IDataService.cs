@@ -30,6 +30,16 @@ namespace DataLayer
 
         public bool DeleteUser(string username);
 
+        public BookmarkTitle GetBookmarkTitle(string username, string tconst);
+        public IList<BookmarkTitle> GetBookmarkTitles();
+
+        public IList<BookmarkTitle> GetBookmarkTitlesByUser(string username);
+
+        public void CreateBookmarkTitle(string username, string tconst, string annotation);
+
+        public bool DeleteBookmarkTitle(string username, string tconst);
+
+
 
 
         //public static double GetRatingFromTitle(string tconst);

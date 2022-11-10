@@ -17,6 +17,11 @@ namespace DataLayer
 
 
         public DbSet<User> Users { get; set; }
+        public DbSet<BookmarkTitle> BookmarkTitles { get; set; }
+        public DbSet<BookmarkName> BookmarkNames { get; set; }
+
+
+
         // TITLES
 
         public DbSet<TitleAvgRating> TitleAvgRatings { get; set; }
@@ -100,7 +105,7 @@ namespace DataLayer
             userBookmarkTitleTable.ToTable("bookmark_title");
             userBookmarkTitleTable.HasKey(x => new { x.Username, x.Tconst });
             userBookmarkTitleTable.Property(x => x.Username).HasColumnName("username");
-            userBookmarkTitleTable.Property(x => x.Tconst).HasColumnName("Tconst");
+            userBookmarkTitleTable.Property(x => x.Tconst).HasColumnName("tconst");
             userBookmarkTitleTable.Property(x => x.Annotation).HasColumnName("annotation");
 
             var userRatingTable = modelBuilder.Entity<UserRating>();
