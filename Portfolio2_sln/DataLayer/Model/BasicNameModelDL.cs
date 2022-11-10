@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Model
 {
-    public class BasicNameModel
+    public class BasicNameModelDL
     {
         public string Nconst { get; set; }
         public string PrimaryName { get; set; }

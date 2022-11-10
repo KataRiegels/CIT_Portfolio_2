@@ -9,7 +9,7 @@ namespace DataLayer.Models.TitleModels
     public class TitleAvgRating
     {
         public string Tconst { get; set; }
-        public int AverageRating { get; set; }
+        public double AverageRating { get; set; }
         public int NumVotes { get; set; }
     }
 }

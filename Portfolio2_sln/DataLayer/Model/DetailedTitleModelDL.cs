@@ -1,9 +1,12 @@
-﻿using DataLayer.Model;
-using WebServer.Models.NameModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace WebServer.Models.TitleModels
+namespace DataLayer.Model
 {
-    public class DetailedTitleModel
+    public class DetailedTitleModelDL
     {
         public BasicTitleModelDL BasicTitle { get; set; }
         // If it's a movie
@@ -17,8 +20,7 @@ namespace WebServer.Models.TitleModels
 
         public int? SeasonNumber { get; set; }
         public int? EpisodeNumber { get; set; }
-        //public string Poster { get; set; }
-
+        //public ListTitleModel Title { get; set; }
 
 
     }

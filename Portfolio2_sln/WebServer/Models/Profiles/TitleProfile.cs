@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DataLayer;
 using DataLayer.Models.TitleModels;
+using DataLayer.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,10 @@ namespace WebServer.Models.Profiles
     {
         public TitleProfile()
         {
+            CreateMap<BasicTitleModelDL, BasicTitleModel>();
+            CreateMap<ListTitleModelDL, ListTitleModel>();
+            CreateMap<DetailedTitleModelDL, DetailedTitleModel>();
+
             CreateMap<TitleBasics, TitleModel>();
 
             CreateMap<TitleCreateModel, TitleBasics>();

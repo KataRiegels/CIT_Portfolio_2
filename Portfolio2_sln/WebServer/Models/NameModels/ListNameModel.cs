@@ -6,7 +6,7 @@ namespace WebServer.Models.NameModels
     {
         public BasicNameModel BasicName { get; set; }
         public string Occupation { get; set; }
-        public BasicTitleModel KnownForTitle { get; set; }
+        public BasicTitleModelDL KnownForTitle { get; set; }
 
 
     }

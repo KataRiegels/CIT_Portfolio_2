@@ -1,5 +1,9 @@
-﻿using DataLayer.Models.NameModels;
+﻿using DataLayer.Model;
+using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DataLayer
 {
@@ -31,6 +35,99 @@ namespace DataLayer
             return temp;
         }
 
+        public IList<BasicTitleModelDL> GetBasicTitles()
+        {
+            Console.WriteLine(_db.TitleBasicss.First().Tconst);
+            var basicTitles = _db.TitleBasicss
+                .Select(t => new BasicTitleModelDL 
+                    { Tconst = t.Tconst,
+                    TitleType = t.TitleType, 
+                    PrimaryTitle = t.PrimaryTitle,
+                    StartYear = t.StartYear
+                }) 
+                .ToList();
+
+            return basicTitles;
+        }
+
+        public IList<ListTitleModelDL> GetListTitles()
+        {
+
+
+            var basicTitles = _db.TitleBasicss
+                .OrderBy(t => t.Tconst)
+            .Select(t => new ListTitleModelDL
+            {
+                    
+                Tconst = t.Tconst,
+                TitleType = t.TitleType,
+                PrimaryTitle = t.PrimaryTitle,
+                StartYear = t.StartYear,
+
+                //Rating = GetRatingFromTitle(t.Tconst)
+                Genres = GetGenresFromTitle(t.Tconst)
+
+            })
+            .ToList();
+            
+            //Console.WriteLine(basicTitles.Count());
+            return null;
+        }
+
+        private static double? GetRatingFromTitle (string tconst)
+        {
+            var rating = new ImdbContext().TitleAvgRatings
+                .Where(x => x.Tconst.Trim() == tconst.Trim())
+                .FirstOrDefault(x => x.Tconst.Trim() == tconst.Trim());
+            //.ToList();
+            if (rating == null)
+            {
+                return null;
+            }
+            //Console.WriteLine(rating.AverageRating);
+            var result_rating = rating.AverageRating;
+            return result_rating;
+        }
+
+
+
+        public IList<DetailedTitleModelDL> GetDetailedTitles()
+        {
+
+            return null;
+        }
+
+        public BasicTitleModelDL GetBasicTitle(string tconst)
+        {
+            var basicTitle = _db.TitleBasicss
+                .FirstOrDefault(x => x.Tconst == tconst);
+            //.Where(x => x.Tconst == tconst)
+            //.Include(x => x.TitleType)
+            //.Include(t => t.Tconst)
+            //.ToList();
+            var basic = new BasicTitleModelDL
+            {
+                TitleType = basicTitle.TitleType,
+                PrimaryTitle = basicTitle.PrimaryTitle,
+                StartYear = basicTitle.StartYear,
+                Tconst = tconst
+            };
+
+            return basic;
+        }
+
+        public ListTitleModelDL GetListTitle(string tconst)
+        {
+            return null;
+        }
+
+        public DetailedTitleModelDL GetDetailedTitle(string tconst)
+        {
+
+            return null;
+        }
+
+
         public IList<TitleAka> GetTitleAkasByTitle(string tconst)
         {
             return _db.TitleAkas.Where(x => x.Tconst == tconst).ToList(); ;
@@ -39,13 +136,13 @@ namespace DataLayer
         
 
 
-        public IList<string> GetGenresFromTitle(string tconst)
+        private static  IList<string> GetGenresFromTitle(string tconst)
         {
             var genres =
-                _db.TitleGenres.Where(x => x.Tconst.Contains(tconst.Trim()))
+                new ImdbContext().TitleGenres.Where(x => x.Tconst.Contains(tconst.Trim()))
             .Select(x => x.GenreName)
             .ToList();
-
+            Console.WriteLine(genres.Count());
             return genres;
         }
 

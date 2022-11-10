@@ -18,7 +18,8 @@ namespace DataLayer
 
         // TITLES
 
-
+        public DbSet<TitleAvgRating> TitleAvgRatings { get; set; }
+        
         public DbSet<TitleGenre> TitleGenres { get; set; }
         public DbSet<TitleEpisode> TitleEpisodes { get; set; }
         public DbSet<TitlePrincipal> TitlePrincipals { get; set; }
@@ -103,7 +104,12 @@ namespace DataLayer
             titlePrincipleTable.Property(x => x.Nconst).HasColumnName("nconst");
             titlePrincipleTable.Property(x => x.Category).HasColumnName("category");
 
-
+            var titleRatingsTable = modelBuilder.Entity<TitleAvgRating>();
+            titleRatingsTable.ToTable("title_rating");
+            titleRatingsTable.HasKey(x => x.Tconst);
+            titleRatingsTable.Property(x => x.Tconst).HasColumnName("tconst");
+            titleRatingsTable.Property(x => x.AverageRating).HasColumnName("averagerating");
+            titleRatingsTable.Property(x => x.NumVotes).HasColumnName("numvotes");
 
 
 

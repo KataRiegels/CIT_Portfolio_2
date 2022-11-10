@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DataLayer;
 using DataLayer.Models;
+using DataLayer.Model;
 using DataLayer.Models.TitleModels;
 using WebServer.Models.TitleModels;
 using Microsoft.AspNetCore.Mvc;
@@ -63,20 +64,43 @@ namespace WebServer.Controllers
 
         }
 
-        // Get all titles that includes given genre
-        [HttpGet("genre/{genreName}", Name = nameof(GetTitlesByGenre))]
-        public IActionResult GetTitlesByGenre(string genreName)
+        [HttpGet("basics", Name = nameof(GetBasicTitles))]
+        public IActionResult GetBasicTitles()
         {
-            IEnumerable<TitleModel> title = _dataService.GetTitlesByGenre(genreName).Select(x => CreateTitleModel(x));
-            //var title = _dataService.GetTitlesByGenre(genreName); // If we want to return normal TitleBasics instead
 
-            if (title == null)
-            {
-                return NotFound();
-            }
+            IEnumerable<BasicTitleModel> titles =
+                _dataService.GetBasicTitles().Select(x => CreateBasicTitleModel(x));
 
-            return Ok(title);
+
+            return Ok(titles);
         }
+
+        [HttpGet("list", Name = nameof(GetListTitles))]
+        public IActionResult GetListTitles()
+        {
+
+            IEnumerable<ListTitleModel> titles =
+                _dataService.GetListTitles().Select(x => CreateListTitleModel(x));
+
+
+            return Ok(titles);
+        }
+
+
+        // Get all titles that includes given genre
+        //[HttpGet("genre/{genreName}", Name = nameof(GetTitlesByGenre))]
+        //public IActionResult GetTitlesByGenre(string genreName)
+        //{
+        //    IEnumerable<TitleModel> title = _dataService.GetTitlesByGenre(genreName).Select(x => CreateTitleModel(x));
+        //    //var title = _dataService.GetTitlesByGenre(genreName); // If we want to return normal TitleBasics instead
+
+        //    if (title == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(title);
+        //}
 
         // Get all titles that includes given genre
         [HttpGet("{tconst}/episodes", Name = nameof(GetEpisodesFromTitle))]
@@ -134,10 +158,49 @@ namespace WebServer.Controllers
         {
             var model = _mapper.Map<TitleModel>(titleBasics);
             model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
-            model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
             
             return model;
         }
+
+        public BasicTitleModel CreateBasicTitleModel(BasicTitleModelDL titleBasics)
+        {
+            var model = _mapper.Map<BasicTitleModel>(titleBasics);
+            model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
+
+            return model;
+        }
+
+        public ListTitleModel CreateListTitleModel(ListTitleModelDL titleBasics)
+        {
+            var model = _mapper.Map<ListTitleModel>(titleBasics);
+            model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
+
+            return model;
+        }
+
+        //public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleModelDL titleBasics)
+        //{
+        //    var model = _mapper.Map<DetailedTitleModel>(titleBasics);
+        //    model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
+
+        //    return model;
+        //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public OmdbModel CreateOmdbModel(OmdbData omdb)
         {
