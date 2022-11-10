@@ -67,16 +67,14 @@ namespace WebServer.Controllers
         [HttpDelete("{username}")]
         public IActionResult DeleteUser(string username)
         {
-
             var deleted = _dataService.DeleteUser(username);
-
             if (!deleted)
             {
                 return NotFound();
             }
-
             return Ok();
         }
+
 
 
 

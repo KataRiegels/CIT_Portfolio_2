@@ -87,13 +87,39 @@ namespace DataLayer
             userTable.Property(x => x.Email).HasColumnName("email");
             //userTable.Property(x => x.).HasColumnName("");
 
+            var userBookmarkNameTable = modelBuilder.Entity<BookmarkName>();
+            userBookmarkNameTable.ToTable("bookmark_name");
+            userBookmarkNameTable.HasKey(x =>  new { x.Username, x.Nconst });
+            userBookmarkNameTable.Property(x => x.Username).HasColumnName("username");
+            userBookmarkNameTable.Property(x => x.Nconst).HasColumnName("nconst");
+            userBookmarkNameTable.Property(x => x.Annotation).HasColumnName("annotation");
+            //.Property(x => x.BirthYear).HasColumnName("birthyear");
+            //.Property(x => x.Email).HasColumnName("email");
+
+            var userBookmarkTitleTable = modelBuilder.Entity<BookmarkTitle>();
+            userBookmarkTitleTable.ToTable("bookmark_title");
+            userBookmarkTitleTable.HasKey(x => new { x.Username, x.Tconst });
+            userBookmarkTitleTable.Property(x => x.Username).HasColumnName("username");
+            userBookmarkTitleTable.Property(x => x.Tconst).HasColumnName("Tconst");
+            userBookmarkTitleTable.Property(x => x.Annotation).HasColumnName("annotation");
+
+            var userRatingTable = modelBuilder.Entity<UserRating>();
+            userRatingTable.ToTable("user_rating");
+            userRatingTable.HasKey(x => new { x.Username, x.Tconst });
+            userRatingTable.Property(x => x.Username).HasColumnName("username");
+            userRatingTable.Property(x => x.Tconst).HasColumnName("Tconst");
+            userRatingTable.Property(x => x.Rating).HasColumnName("rating");
+            userRatingTable.Property(x => x.Date).HasColumnName("date");
 
 
-
-
-
-
-
+            var userSearchTable = modelBuilder.Entity<UserSearch>();
+            userSearchTable.ToTable("user_search");
+            userSearchTable.HasKey(x => new { x.Username, x.SearchId });
+            userSearchTable.Property(x => x.Username).HasColumnName("username");
+            userSearchTable.Property(x => x.SearchId).HasColumnName("search_id");
+            userSearchTable.Property(x => x.Date).HasColumnName("date");
+            userSearchTable.Property(x => x.SearchContent).HasColumnName("search_content");
+            userSearchTable.Property(x => x.SearchCategory).HasColumnName("search_category");
 
 
 
