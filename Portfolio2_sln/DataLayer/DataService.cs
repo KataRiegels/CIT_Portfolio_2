@@ -367,17 +367,17 @@ namespace DataLayer
         }
 
         /* BOOKMARK NAMES */
-        public BookmarkName GetBookmarkName(string username, string Nconst)
+        public BookmarkName GetBookmarkName(string username, string nconst)
         {
-            return _db.BookmarkNames.FirstOrDefault(x => x.Username == username && x.Nconst.Trim() == tconst.Trim());
+            return _db.BookmarkNames.FirstOrDefault(x => x.Username == username && x.Nconst.Trim() == nconst.Trim());
         }
 
-        public IList<BookmarkName> GetBookmarkName()
+        public IList<BookmarkName> GetBookmarkNames()
         {
             return _db.BookmarkNames.ToList();
         }
 
-        public IList<BookmarkName> GetBookmarkNameByUser(string username)
+        public IList<BookmarkName> GetBookmarkNamesByUser(string username)
         {
             return _db.BookmarkNames
                 .Where(x => x.Username == username)

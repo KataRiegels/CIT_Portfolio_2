@@ -83,14 +83,14 @@ namespace WebServer.Controllers
         [HttpGet("{username}/titlebookmark/{tconst}", Name = nameof(GetBookmarkTitle))]
         public IActionResult GetBookmarkTitle(string username, string tconst)
         {
-            //var title = _dataService.GetTitle(tconst);
-            BookmarkTitleModel title = CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
+            //var name = _dataService.GetTitle(tconst);
+            BookmarkTitleModel name = CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
 
-            if (title == null)
+            if (name == null)
             {
                 return NotFound();
             }
-            return Ok(title);
+            return Ok(name);
         }
 
         [HttpPost("{username}/titlebookmarks", Name = nameof(CreateBookmarkTitle))]
@@ -125,9 +125,70 @@ namespace WebServer.Controllers
         }
 
 
+        /*  Bookmark names */
+        /*
+         
+        [HttpGet("{username}/namebookmark/{tconst}", Name = nameof(GetBookmarkName))]
+        public IActionResult GetBookmarkName(string username, string tconst)
+        {
+            //var name = _dataService.GetName(tconst);
+            BookmarkNameModel name = CreateBookmarkNameModel(_dataService.GetBookmarkName(username, tconst));
 
+            if (name == null)
+            {
+                return NotFound();
+            }
+            return Ok(name);
+        }
+
+        [HttpPost("{username}/namebookmarks", Name = nameof(CreateBookmarkName))]
+        public IActionResult CreateBookmarkName(string username, BookmarkNameCreateModel newBookmark)
+        {
+            //Console.WriteLine(newBookmark.ToString());
+            Console.WriteLine(username);
+            var bookmark = _mapper.Map<BookmarkName>(newBookmark);
+            var returned = _dataService.CreateBookmarkName(username, bookmark.Nconst, bookmark.Annotation);
+            return CreatedAtRoute(null, CreateBookmarkNameModel(returned));
+        }
+
+
+        [HttpDelete("{username}/namebookmarks", Name = nameof(DeleteBookmarkName))]
+        public IActionResult DeleteBookmarkName(string username, BookmarkNameCreateModel deleteBookmark)
+        {
+            //Console.WriteLine(newBookmark.ToString());
+            Console.WriteLine(username);
+            var bookmark = _mapper.Map<BookmarkName>(deleteBookmark);
+            var returned = _dataService.DeleteBookmarkName(username, bookmark.Nconst);
+            //return CreatedAtRoute(null, CreateBookmarkNameModel(returned));
+            return CreatedAtRoute(null, returned);
+        }
+
+        [HttpGet("{username}/namebookmarks")]
+        public IActionResult GetBookmarksNamesByUser(string username)
+        {
+            IEnumerable<BookmarkNameModel> bookmark =
+                _dataService.GetBookmarkNamesByUser(username).Select(x => CreateBookmarkNameModel(x));
+
+            return Ok(bookmark);
+        }
+
+
+        public BookmarkNameModel CreateBookmarkNameModel(BookmarkName bookmark)
+        {
+            var model = _mapper.Map<BookmarkNameModel>(bookmark);
+            var title = _dataService.GetBasicName(bookmark.Nconst);
+            //var something = new {TitleController }.CreateBasicTitleModel(title);
+            model.Name = _mapper.Map<BasicNameModel>(title);
+            model.Name.Url = _generator.GetUriByName(HttpContext, nameof(WebServer.Controllers.NameController.GetName), new { title.Tconst });
+
+            //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
+
+            return model;
+        }
+         */
 
         /* HELPERS */
+
         public BookmarkTitleModel CreateBookmarkTitleModel(BookmarkTitle bookmark)
         {
             var model = _mapper.Map<BookmarkTitleModel>(bookmark);
