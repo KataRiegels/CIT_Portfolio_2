@@ -91,13 +91,25 @@ namespace WebServer.Controllers
         }
 
         [HttpPost("{username}/titlebookmarks", Name = nameof(CreateBookmarkTitle))]
-        public IActionResult CreateBookmarkTitle(BookmarkTitleCreateModel newBookmark,string username)
+        public IActionResult CreateBookmarkTitle(string username, BookmarkTitleCreateModel newBookmark)
         {
             //Console.WriteLine(newBookmark.ToString());
             Console.WriteLine(username);
             var bookmark = _mapper.Map<BookmarkTitle>(newBookmark);
             var returned = _dataService.CreateBookmarkTitle(username, bookmark.Tconst, bookmark.Annotation);
             return CreatedAtRoute(null, CreateBookmarkTitleModel(returned));
+        }
+
+
+        [HttpDelete("{username}/titlebookmarks", Name = nameof(DeleteBookmarkTitle))]
+        public IActionResult DeleteBookmarkTitle(string username, BookmarkTitleCreateModel deleteBookmark)
+        {
+            //Console.WriteLine(newBookmark.ToString());
+            Console.WriteLine(username);
+            var bookmark = _mapper.Map<BookmarkTitle>(deleteBookmark);
+            var returned = _dataService.DeleteBookmarkTitle(username, bookmark.Tconst);
+            //return CreatedAtRoute(null, CreateBookmarkTitleModel(returned));
+            return CreatedAtRoute(null, returned);
         }
 
         [HttpGet("{username}/titlebookmarks")]
