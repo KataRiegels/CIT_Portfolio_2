@@ -77,6 +77,9 @@ namespace WebServer.Controllers
             return Ok();
         }
 
+
+        /* Title bookmarks */
+
         [HttpGet("{username}/titlebookmark/{tconst}", Name = nameof(GetBookmarkTitle))]
         public IActionResult GetBookmarkTitle(string username, string tconst)
         {
@@ -120,6 +123,11 @@ namespace WebServer.Controllers
 
             return Ok(bookmark);
         }
+
+
+
+
+        /* HELPERS */
         public BookmarkTitleModel CreateBookmarkTitleModel(BookmarkTitle bookmark)
         {
             var model = _mapper.Map<BookmarkTitleModel>(bookmark);

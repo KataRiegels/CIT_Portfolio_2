@@ -18,6 +18,9 @@ namespace WebServer.Models.Profiles
     {
         public UserProfile()
         {
+            CreateMap<BookmarkName, BookmarkNameModel>();
+            CreateMap<BookmarkNameCreateModel, BookmarkName>();
+
             CreateMap<BookmarkTitle, BookmarkTitleModel>();
             CreateMap<BookmarkTitleCreateModel, BookmarkTitle>();
 

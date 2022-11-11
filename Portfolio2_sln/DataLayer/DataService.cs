@@ -366,8 +366,51 @@ namespace DataLayer
             return true;
         }
 
+        /* BOOKMARK NAMES */
+        public BookmarkName GetBookmarkName(string username, string Nconst)
+        {
+            return _db.BookmarkNames.FirstOrDefault(x => x.Username == username && x.Nconst.Trim() == tconst.Trim());
+        }
 
+        public IList<BookmarkName> GetBookmarkName()
+        {
+            return _db.BookmarkNames.ToList();
+        }
 
+        public IList<BookmarkName> GetBookmarkNameByUser(string username)
+        {
+            return _db.BookmarkNames
+                .Where(x => x.Username == username)
+                .ToList();
+        }
+
+        public BookmarkName CreateBookmarkName(string username, string nconst, string annotation)
+        {
+            BookmarkName newBookmark = new BookmarkName()
+            {
+                Username = username,
+                Nconst = nconst,
+                Annotation = annotation
+            };
+            Console.WriteLine(newBookmark.Username + " " + newBookmark.Nconst + " " + newBookmark.Annotation);
+            _db.BookmarkNames.Add(newBookmark);
+            _db.SaveChanges();
+            return newBookmark;
+
+        }
+
+        public bool DeleteBookmarkName(string username, string nconst)
+        {
+
+            var product = GetBookmarkName(username, nconst);
+            if (product == null)
+            {
+                return false;
+            }
+            _db.BookmarkNames.Remove(GetBookmarkName(username, nconst));
+            _db.SaveChanges();
+            return true;
+        }
 
 
 
