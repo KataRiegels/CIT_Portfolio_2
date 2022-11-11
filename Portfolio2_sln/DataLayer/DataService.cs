@@ -3,6 +3,7 @@ using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -443,7 +444,24 @@ namespace DataLayer
             return true;
         }
 
+        public IList<BookmarkTitleTest> GetTitleBookmarks()
+        {
+            Console.WriteLine("Call function from Entity Framework");
+            using var ctx = new ImdbContext();
 
+            string name = "user";
+
+            var result = ctx.BookmarkTitlesTests.FromSqlInterpolated($"select * from select_title_bookmark({name})");
+
+            //var bookmark = ctx.BookmarkTitles.Where(x => x.Username == name).ToList();
+
+            Console.WriteLine(result.ToList());
+
+            //ctx.SaveChanges();
+
+            return result.ToList();
+
+        }
 
 
 

@@ -23,6 +23,7 @@ namespace DataLayer
         public DbSet<BookmarkTitle> BookmarkTitles { get; set; }
         public DbSet<BookmarkName> BookmarkNames { get; set; }
 
+        public DbSet<BookmarkTitleTest> BookmarkTitlesTests { get; set; }
 
 
         // TITLES
@@ -45,6 +46,12 @@ namespace DataLayer
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<BookmarkTitleTest>().HasNoKey();
+            modelBuilder.Entity<BookmarkTitleTest>().Property(x => x.PrimaryName).HasColumnName("name");
+            modelBuilder.Entity<BookmarkTitleTest>().Property(x => x.Tconst).HasColumnName("tconst");
+            modelBuilder.Entity<BookmarkTitleTest>().Property(x => x.Annotation).HasColumnName("annotation");
+
 
             var tb_mb = modelBuilder.Entity<TitleBasics>();
 

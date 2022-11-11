@@ -77,17 +77,22 @@ namespace WebServer.Controllers
             return Ok();
         }
 
-        [HttpGet("{username}/titlebookmark/{tconst}", Name = nameof(GetBookmarkTitle))]
-        public IActionResult GetBookmarkTitle(string username, string tconst)
+        //[HttpGet("{username}/titlebookmark/{tconst}", Name = nameof(GetBookmarkTitle))]
+        [HttpGet("bookmark")]
+        //public IActionResult GetBookmarkTitle(string username, string tconst)
+        public IActionResult GetBookmarkTitle()
         {
-            //var title = _dataService.GetTitle(tconst);
-            BookmarkTitleModel title = CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
+            //BookmarkTitleModel title = CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
+            //CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
+            var something = _dataService.GetTitleBookmarks();
 
-            if (title == null)
-            {
-                return NotFound();
-            }
-            return Ok(title);
+
+            //if (title == null)
+            //{
+            //    return NotFound();
+            //}
+            //return Ok(title);
+            return Ok(something);
         }
 
         [HttpGet("{username}/titlebookmarks")]

@@ -78,5 +78,7 @@ namespace DataLayer
 
 
 
+        public IList<BookmarkTitleTest> GetTitleBookmarks();
+
     }
 }
