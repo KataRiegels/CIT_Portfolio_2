@@ -290,25 +290,26 @@ namespace DataLayer
             return basicname;
         }
 
+        public IList<DetailedNameModelDL> GetDetailedNames()
+        {
+            var names = _db.DetailedNames.Select(n => n).ToList();
+            return names;
+        }
+
         public IList<ListNameModelDL> GetListNames()
         {
-            var basicnames = GetBasicNames();
-
-            IList<ListNameModelDL> listnames = new();
-
-            for(int n = 0; n < basicnames.Count(); n++)
-            {
-                Console.WriteLine(basicnames[0].Nconst);
-                var listname = new ListNameModelDL()
+            var basicnames = GetBasicNames()
+                .Select(x => new ListNameModelDL()
                 {
-                    BasicName = basicnames[n],
-                    Occupation = "Hello",//GetProfession(basicnames[n].Nconst),
-                    KnownForTitle = GetBasicTitle("tt8392956")//GetKnownFor(basicnames[n].Nconst))
-                };
-                listnames.Add(listname);
-            }
+                    BasicName = x,
+                    Occupation = GetProfession(x.Nconst),
+                    KnownForTitle = GetBasicTitle(GetKnownFor(x.Nconst))
+                })
+                .ToList();
 
-            return listnames;
+            
+
+            return basicnames;
         }
         public IList<DetailedActorModel> GetDetailedActors()
         {
@@ -327,14 +328,25 @@ namespace DataLayer
 
         public string GetProfession(string nconst)
         {
-            string temp = _db.NameProfessions.FirstOrDefault(x => x.Nconst == nconst).Profession;
+            string temp = "";
+            try { temp = _db.NameProfessions.FirstOrDefault(x => x.Nconst == nconst).Profession; } 
+            catch
+            {
+                return "";
+            }
+            
             Console.WriteLine(temp);
             return temp;
         }
 
         public string GetKnownFor(string nconst)
         {
-            string temp = _db.NameKnownFors.FirstOrDefault(x => x.Nconst == nconst).Tconst;
+            string temp = "";
+            try { temp = _db.NameKnownFors.FirstOrDefault(x => x.Nconst == nconst).Tconst; }
+            catch
+            {
+                return "tt10382912";
+            }
             Console.WriteLine(temp);
             return temp;
         }

@@ -4,6 +4,7 @@ using DataLayer.Models.TitleModels;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.UserModels;
 using System.ComponentModel.DataAnnotations;
+using DataLayer.Model;
 
 namespace DataLayer
 {
@@ -13,6 +14,7 @@ namespace DataLayer
         const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }
+        public DbSet<DetailedNameModelDL> DetailedNames { get; set; }
 
         public DbSet<NameProfession> NameProfessions { get; set; }
         public DbSet<NameKnownFor> NameKnownFors { get; set; }
@@ -92,6 +94,18 @@ namespace DataLayer
             name_profession.HasKey(x => x.Nconst);
             name_profession.Property(x => x.Nconst).HasColumnName("nconst");
             name_profession.Property(x => x.Profession).HasColumnName("profession");
+
+            var list_names = modelBuilder.Entity<DetailedNameModelDL>();
+            list_names.ToView("detailed_names");
+            list_names.HasNoKey();
+            list_names.Property(x => x.Primaryname).HasColumnName("primaryname");
+            list_names.Property(x => x.Character).HasColumnName("character");
+            list_names.Property(x => x.Profession).HasColumnName("profession");
+            list_names.Property(x => x.KnownForTitle).HasColumnName("primarytitle");
+            list_names.Property(x => x.StartYear).HasColumnName("startyear");
+            list_names.Property(x => x.TitleType).HasColumnName("titletype");
+            list_names.Property(x => x.Tconst).HasColumnName("tconst");
+            list_names.Property(x => x.Nconst).HasColumnName("nconst");
 
 
             // Usser

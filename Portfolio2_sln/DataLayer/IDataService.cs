@@ -21,7 +21,7 @@ namespace DataLayer
         IList<NameBasics> GetNames();
         NameBasics GetName(string nconst);
 
-
+        IList<DetailedNameModelDL> GetDetailedNames();
 
         public User GetUser(string username);
         public IList<User> GetUsers();

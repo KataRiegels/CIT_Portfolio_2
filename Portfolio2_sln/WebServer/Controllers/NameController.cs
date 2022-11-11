@@ -67,6 +67,27 @@ namespace WebServer.Controllers
             return Ok(names);
         }
 
+        [HttpGet("detailed")]
+        public IActionResult GetDetailedNames()
+        {
+            IEnumerable<DetailedNameModel> names =
+                _dataService.GetDetailedNames().Select(x => CreateDetailedNameModel(x));
+
+            if(names == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(names);
+        }
+
+        private DetailedNameModel CreateDetailedNameModel(DetailedNameModelDL detailModel)
+        {
+            var model = _mapper.Map<DetailedNameModel>(detailModel);
+            return model;
+        }
+
+
         private ListNameModel CreateListNameModel(ListNameModelDL listModel)
         {
             var model = _mapper.Map<ListNameModel>(listModel);
