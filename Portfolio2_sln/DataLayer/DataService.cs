@@ -463,7 +463,30 @@ namespace DataLayer
 
         }
 
+        public bool CreateUserRating(string username, string tconst, int rating)
+        {
+            using var db = new ImdbContext();
 
+            //string name = "user";
+
+            //BookmarkTitle newBookmark = new BookmarkTitle()
+            //{
+            //    Username = username,
+            //    Tconst = tconst,
+            //    Annotation = annotation
+            //};
+
+            var result = db.UserRatings.FromSqlInterpolated($"select user_rate({username}, {tconst}, {rating})");
+
+            //var bookmark = ctx.BookmarkTitles.Where(x => x.Username == name).ToList();
+
+            //Console.WriteLine(result.ToList());
+
+            //ctx.SaveChanges();
+
+            return true;
+
+        }
 
 
 

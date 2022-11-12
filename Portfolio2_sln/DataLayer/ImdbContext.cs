@@ -22,6 +22,7 @@ namespace DataLayer
         public DbSet<User> Users { get; set; }
         public DbSet<BookmarkTitle> BookmarkTitles { get; set; }
         public DbSet<BookmarkName> BookmarkNames { get; set; }
+        public DbSet<UserRating> UserRatings { get; set; }
 
         public DbSet<BookmarkTitleTest> BookmarkTitlesTests { get; set; }
 

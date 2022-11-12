@@ -104,6 +104,8 @@ namespace WebServer.Controllers
 
             return Ok(bookmark);
         }
+
+
         public BookmarkTitleModel CreateBookmarkTitleModel(BookmarkTitle bookmark)
         {
             var model = _mapper.Map<BookmarkTitleModel>(bookmark);
@@ -119,6 +121,14 @@ namespace WebServer.Controllers
             //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
 
             return model;
+        }
+
+        [HttpPost("{username}")]
+        public IActionResult CreateRating(string username, string tconst, int rating)
+        {
+            //var user = _mapper.Map<User>(newUser);
+            _dataService.CreateUserRating(username, tconst,rating);
+            return CreatedAtRoute(null, new {User = username, Tconst = tconst, Rating = rating});
         }
 
         /*

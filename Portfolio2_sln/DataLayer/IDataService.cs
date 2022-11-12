@@ -80,5 +80,8 @@ namespace DataLayer
 
         public IList<BookmarkTitleTest> GetTitleBookmarks();
 
+        public bool CreateUserRating(string username, string tconst, int rating);
+
+
     }
 }
