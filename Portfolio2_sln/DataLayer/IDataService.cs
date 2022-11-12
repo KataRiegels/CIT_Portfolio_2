@@ -82,6 +82,8 @@ namespace DataLayer
 
         public bool CreateUserRating(string username, string tconst, int rating);
 
+        public SearchResult CreateUserSearch(string username, string searchContent, string seachCategory = null);
+
 
     }
 }

@@ -106,6 +106,8 @@ namespace WebServer.Controllers
         }
 
 
+   
+
         public BookmarkTitleModel CreateBookmarkTitleModel(BookmarkTitle bookmark)
         {
             var model = _mapper.Map<BookmarkTitleModel>(bookmark);
@@ -123,13 +125,58 @@ namespace WebServer.Controllers
             return model;
         }
 
-        [HttpPost("{username}")]
-        public IActionResult CreateRating(string username, string tconst, int rating)
+        [HttpPost("{username}/rating")]
+        public IActionResult CreateRating(string username, UserRatingCreateModel rating )
         {
-            //var user = _mapper.Map<User>(newUser);
-            _dataService.CreateUserRating(username, tconst,rating);
-            return CreatedAtRoute(null, new {User = username, Tconst = tconst, Rating = rating});
+            var rate = _mapper.Map<UserRating>(rating);
+            //Console.WriteLine(rate.Rating);
+            _dataService.CreateUserRating(username, rate.Tconst , rate.Rating);
+            return CreatedAtRoute(null, CreateUserRatingModel(rate));
         }
+
+        [HttpPost("{username}/search")]
+        public IActionResult CreateUserSearch(string username, UserSearchCreateModel search)
+        {
+            //var searching = _mapper.Map<SearchResult>(search);
+            //Console.WriteLine(rate.Rating);
+            //UserSearchResultsModel results = _dataService.CreateUserSearch(username, search.SearchContent, search.SearchCategory);
+            var results = _dataService.CreateUserSearch(username, search.SearchContent, search.SearchCategory);
+            var temp = _mapper.Map<UserSearchResultsModel>(results);
+            //return CreatedAtRoute(null, CreateUserSearchModel(searching));
+            return CreatedAtRoute(null, temp);
+        }
+
+
+
+        public UserRatingModel CreateUserRatingModel(UserRating rating)
+        {
+            var model = _mapper.Map<UserRatingModel>(rating);
+            //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
+            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+
+            return model;
+        }
+
+
+        public UserSearchModel CreateUserSearchModel(UserSearch search)
+        {
+            var model = _mapper.Map<UserSearchModel>(search);
+            //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
+            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+
+            return model;
+        }
+
+
+        //public UserSearchModel CreateUserSearchModel(UserSearch search)
+        //{
+        //    var model = _mapper.Map<UserSearchModel>(search);
+        //    //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
+        //    //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+
+        //    return model;
+        //}
+
 
         /*
          
