@@ -53,7 +53,7 @@ namespace WebServer.Controllers
             return Ok(name);
         }
 
-        [HttpGet("list", Name = nameof(GetListNames))]
+        [HttpGet("list")]
         public IActionResult GetListNames()
         {
             IEnumerable<ListNameModel> names =

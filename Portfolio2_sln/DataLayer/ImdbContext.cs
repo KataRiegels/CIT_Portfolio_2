@@ -13,8 +13,10 @@ namespace DataLayer
         //const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
         const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
+        public DbSet<DetailedTitleModelDL> DetailedTitles { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }
         public DbSet<DetailedNameModelDL> DetailedNames { get; set; }
+        public DbSet<FullTitleViewModel> FullViews { get; set; }
 
         public DbSet<NameProfession> NameProfessions { get; set; }
         public DbSet<NameKnownFor> NameKnownFors { get; set; }
@@ -187,6 +189,33 @@ namespace DataLayer
             titleRatingsTable.Property(x => x.AverageRating).HasColumnName("averagerating");
             titleRatingsTable.Property(x => x.NumVotes).HasColumnName("numvotes");
 
+            var detailedTitle = modelBuilder.Entity<DetailedTitleModelDL>();
+            //detailedTitle.ToView("detailed_titles");
+            detailedTitle.HasNoKey();
+            //detailedTitle.Property(x => x.Tconst).HasColumnName("tconst");
+            //detailedTitle.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
+            //detailedTitle.Property(x => x.startyear).HasColumnName("startyear");
+            //detailedTitle.Property(x => x.titletype).HasColumnName("titletype");
+            //detailedTitle.Property(x => x.runtime).HasColumnName("runtimeminutes");
+            //detailedTitle.Property(x => x.rating).HasColumnName("averagerating");
+            //detailedTitle.Property(x => x.genre).HasColumnName("genre");
+            //detailedTitle.Property(x => x.plot).HasColumnName("plot");
+            //detailedTitle.Property(x => x.poster).HasColumnName("poster");
+            //detailedTitle.Property(x => x.relatedName).HasColumnName("primaryname");
+
+            var fullTitleView = modelBuilder.Entity<FullTitleViewModel>();
+            fullTitleView.ToView("detailed_titles");
+            fullTitleView.HasNoKey();
+            fullTitleView.Property(x => x.Tconst).HasColumnName("tconst");
+            fullTitleView.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
+            fullTitleView.Property(x => x.startyear).HasColumnName("startyear");
+            fullTitleView.Property(x => x.titletype).HasColumnName("titletype");
+            fullTitleView.Property(x => x.runtime).HasColumnName("runtimeminutes");
+            fullTitleView.Property(x => x.rating).HasColumnName("averagerating");
+            fullTitleView.Property(x => x.genre).HasColumnName("genre");
+            fullTitleView.Property(x => x.plot).HasColumnName("plot");
+            fullTitleView.Property(x => x.poster).HasColumnName("poster");
+            fullTitleView.Property(x => x.relatedName).HasColumnName("primaryname");
 
 
 

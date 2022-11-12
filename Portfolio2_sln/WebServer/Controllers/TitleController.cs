@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataLayer.Models.TitleModels;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Security.Cryptography.X509Certificates;
+using WebServer.Models.NameModels;
 
 namespace WebServer.Controllers
 {
@@ -75,13 +76,16 @@ namespace WebServer.Controllers
             return Ok(titles);
         }
 
-        [HttpGet("list", Name = nameof(GetListTitles))]
+        [HttpGet("list")]
         public IActionResult GetListTitles()
-        {
-
+        {   
             IEnumerable<ListTitleModel> titles =
                 _dataService.GetListTitles().Select(x => CreateListTitleModel(x));
 
+            if(titles == null)
+            {
+                return NotFound();
+            }
 
             return Ok(titles);
         }
@@ -149,6 +153,20 @@ namespace WebServer.Controllers
             return Ok(plot);
         }
 
+        [HttpGet("detailed")]
+        public IActionResult GetDetailedTitles()
+        {
+            IEnumerable<DetailedTitleModel> titles =
+               _dataService.GetDetailedTitles().Select(x => CreateDetailedTitleModel(x));
+
+            if (titles == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(titles);
+        }
+
         /* -----------
             HELPERS
          ------------- */
@@ -163,6 +181,15 @@ namespace WebServer.Controllers
             return model;
         }
 
+        public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleModelDL detailedTitle)
+        {
+            var model = _mapper.Map<DetailedTitleModel>(detailedTitle);
+            //model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
+            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+
+            return model;
+        }
+
         public BasicTitleModel CreateBasicTitleModel(BasicTitleModelDL titleBasics)
         {
             var model = _mapper.Map<BasicTitleModel>(titleBasics);
@@ -174,7 +201,7 @@ namespace WebServer.Controllers
         public ListTitleModel CreateListTitleModel(ListTitleModelDL titleBasics)
         {
             var model = _mapper.Map<ListTitleModel>(titleBasics);
-            model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
+            //model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
 
             return model;
         }

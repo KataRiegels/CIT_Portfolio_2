@@ -55,26 +55,19 @@ namespace DataLayer
 
         public IList<ListTitleModelDL> GetListTitles()
         {
+            var titles = GetDetailedTitles()
+                .Select(x => new ListTitleModelDL()
+                {
+                    Tconst = x.Tconst,
+                    PrimaryTitle = x.PrimaryTitle,
+                    StartYear = x.startyear,
+                    TitleType = x.titletype,
+                    runtime = x.runtime,
+                    Rating = x.rating,
+                    Genres = x.genre
 
-
-            var basicTitles = _db.TitleBasicss
-                .OrderBy(t => t.Tconst)
-            .Select(t => new ListTitleModelDL
-            {
-                    
-                Tconst = t.Tconst,
-                TitleType = t.TitleType,
-                PrimaryTitle = t.PrimaryTitle,
-                StartYear = t.StartYear,
-
-                //Rating = GetRatingFromTitle(t.Tconst)
-                Genres = GetGenresFromTitle(t.Tconst)
-
-            })
-            .ToList();
-            
-            //Console.WriteLine(basicTitles.Count());
-            return null;
+                }).Take(20).ToList();
+            return titles;
         }
 
         private static double? GetRatingFromTitle (string tconst)
@@ -95,10 +88,32 @@ namespace DataLayer
 
 
         public IList<DetailedTitleModelDL> GetDetailedTitles()
-        {
 
+                    /*
+            fullview.where(tconst = tconst).select(genre).add(list)
+
+
+            */
+
+            
+        {
+            var titles = _db.FullViews.Select(t => t).GroupBy(t => t.Tconst).Take(1).ToList();
+            foreach (var title in titles)
+            {
+            
+            foreach (var item in title)
+                {
+                Console.WriteLine(item.genre);
+                    
+                }
+            }
+
+            //return titles;
             return null;
         }
+
+
+
 
         public BasicTitleModelDL GetBasicTitle(string tconst)
         {
@@ -126,6 +141,8 @@ namespace DataLayer
 
         public DetailedTitleModelDL GetDetailedTitle(string tconst)
         {
+
+
 
             return null;
         }
@@ -299,18 +316,21 @@ namespace DataLayer
 
         public IList<ListNameModelDL> GetListNames()
         {
-            var basicnames = GetBasicNames()
+            var names = GetDetailedNames()
                 .Select(x => new ListNameModelDL()
                 {
-                    BasicName = x,
-                    Occupation = GetProfession(x.Nconst),
-                    KnownForTitle = GetBasicTitle(GetKnownFor(x.Nconst))
-                })
-                .ToList();
+                    Nconst = x.Nconst,
+                    Primaryname = x.Primaryname,
+                    Profession = x.Profession,
+                    KnownForTitle = x.KnownForTitle,
+                    StartYear = x.StartYear,
+                    TitleType = x.TitleType,
+                    Tconst = x.Tconst
+                }).ToList();
 
             
 
-            return basicnames;
+            return names;
         }
         public IList<DetailedActorModel> GetDetailedActors()
         {
