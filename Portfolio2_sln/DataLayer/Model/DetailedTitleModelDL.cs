@@ -9,8 +9,8 @@ namespace DataLayer.Model
     public class DetailedTitleModelDL
     {
         public string Tconst { get; set; }
-        public string? PrimaryTitle { get; set; }
-        public string? startyear { get; set; }
+        public string PrimaryTitle { get; set; }
+        public string startyear { get; set; }
         public string? titletype { get; set; }
         public int? runtime { get; set; }
         public double? rating { get; set; }

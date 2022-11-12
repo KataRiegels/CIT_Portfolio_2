@@ -20,8 +20,9 @@ namespace DataLayer
         // can currently get with one query
         public IList<TitleBasics> GetTitles(string? titleType = null)
         {
-            Console.WriteLine(titleType);
+
             var result = _db.TitleBasicss.ToList();
+            Console.WriteLine("-------------------------------------");
             if (titleType != null)
             {
                 result = _db.TitleBasicss.Where(x => x.TitleType == (titleType)).ToList();
@@ -55,19 +56,20 @@ namespace DataLayer
 
         public IList<ListTitleModelDL> GetListTitles()
         {
-            var titles = GetDetailedTitles()
-                .Select(x => new ListTitleModelDL()
-                {
-                    Tconst = x.Tconst,
-                    PrimaryTitle = x.PrimaryTitle,
-                    StartYear = x.startyear,
-                    TitleType = x.titletype,
-                    runtime = x.runtime,
-                    Rating = x.rating,
-                    Genres = x.genre
+            //var titles = GetDetailedTitles()
+            //    .Select(x => new ListTitleModelDL()
+            //    {
+            //        Tconst = x.Tconst,
+            //        PrimaryTitle = x.PrimaryTitle,
+            //        StartYear = x.startyear,
+            //        TitleType = x.titletype,
+            //        runtime = x.runtime,
+            //        Rating = x.rating,
+            //        Genres = x.genre
 
-                }).Take(20).ToList();
-            return titles;
+            //    }).Take(20).ToList();
+            //return titles;
+            return null;
         }
 
         private static double? GetRatingFromTitle (string tconst)
@@ -87,7 +89,7 @@ namespace DataLayer
 
 
 
-        public IList<DetailedTitleModelDL> GetDetailedTitles()
+        public IList<DetailedTitleModelDL>? GetDetailedTitles()
 
                     /*
             fullview.where(tconst = tconst).select(genre).add(list)
@@ -97,9 +99,16 @@ namespace DataLayer
 
             
         {
-            var titles = _db.FullViews.Select(t => t).GroupBy(t => t.Tconst).Take(1).ToList();
+
+            var titles = _db.FullViews
+                .Select(t => t)
+               
+                .Take(20).ToList()
+                .GroupBy(t => t.Tconst);
+                Console.WriteLine("sdfksædlfk");
             foreach (var title in titles)
             {
+                Console.WriteLine(title);
             
             foreach (var item in title)
                 {
@@ -108,8 +117,9 @@ namespace DataLayer
                 }
             }
 
+           var temp = new List<DetailedTitleModelDL>();
             //return titles;
-            return null;
+            return temp;
         }
 
 
@@ -308,10 +318,11 @@ namespace DataLayer
             return basicname;
         }
 
-        public IList<DetailedNameModelDL> GetDetailedNames()
+        public IList<DetailedNameModelDL>? GetDetailedNames()
         {
-            var names = _db.DetailedNames.Select(n => n).ToList();
-            return names;
+            //var names = _db.DetailedNames.Select(n => n).ToList();
+            //return names;
+            return null;
         }
 
         public IList<ListNameModelDL> GetListNames()

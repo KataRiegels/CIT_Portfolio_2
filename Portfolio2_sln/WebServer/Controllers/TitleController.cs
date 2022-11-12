@@ -32,7 +32,6 @@ namespace WebServer.Controllers
         [HttpGet(Name = nameof(GetTitles))]
         public IActionResult GetTitles(string? titleType = null)
         {
-            
             IEnumerable<TitleModel> titles =
                 _dataService.GetTitles(titleType).Select(x => CreateTitleModel(x));
 
@@ -156,8 +155,15 @@ namespace WebServer.Controllers
         [HttpGet("detailed")]
         public IActionResult GetDetailedTitles()
         {
-            IEnumerable<DetailedTitleModel> titles =
-               _dataService.GetDetailedTitles().Select(x => CreateDetailedTitleModel(x));
+
+            //IEnumerable<DetailedTitleModel>? titles =
+
+            //_dataService.GetDetailedTitles().Select(x => CreateDetailedTitleModel(x));
+            var titles2 =
+            _dataService.GetDetailedTitles();
+            Console.WriteLine("skdjflksjdflskflksjdflksjfdlskjflskjdf");
+               //var titles = titles2.Select(x => CreateDetailedTitleModel(x));
+               var titles = titles2.Select(x => x);
 
             if (titles == null)
             {
@@ -181,8 +187,9 @@ namespace WebServer.Controllers
             return model;
         }
 
-        public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleModelDL detailedTitle)
+        public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleModelDL? detailedTitle)
         {
+            Console.WriteLine("I hate my life");
             var model = _mapper.Map<DetailedTitleModel>(detailedTitle);
             //model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
             //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
@@ -192,6 +199,7 @@ namespace WebServer.Controllers
 
         public BasicTitleModel CreateBasicTitleModel(BasicTitleModelDL titleBasics)
         {
+
             var model = _mapper.Map<BasicTitleModel>(titleBasics);
             model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
 

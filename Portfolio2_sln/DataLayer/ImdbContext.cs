@@ -10,12 +10,12 @@ namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
-        //const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
-        const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
+        const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
+        //const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
-        public DbSet<DetailedTitleModelDL> DetailedTitles { get; set; }
+        //public DbSet<DetailedTitleModelDL> DetailedTitles { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }
-        public DbSet<DetailedNameModelDL> DetailedNames { get; set; }
+        //public DbSet<DetailedNameModelDL> DetailedNames { get; set; }
         public DbSet<FullTitleViewModel> FullViews { get; set; }
 
         public DbSet<NameProfession> NameProfessions { get; set; }
@@ -104,17 +104,17 @@ namespace DataLayer
             name_profession.Property(x => x.Nconst).HasColumnName("nconst");
             name_profession.Property(x => x.Profession).HasColumnName("profession");
 
-            var list_names = modelBuilder.Entity<DetailedNameModelDL>();
-            list_names.ToView("detailed_names");
-            list_names.HasNoKey();
-            list_names.Property(x => x.Primaryname).HasColumnName("primaryname");
-            list_names.Property(x => x.Character).HasColumnName("character");
-            list_names.Property(x => x.Profession).HasColumnName("profession");
-            list_names.Property(x => x.KnownForTitle).HasColumnName("primarytitle");
-            list_names.Property(x => x.StartYear).HasColumnName("startyear");
-            list_names.Property(x => x.TitleType).HasColumnName("titletype");
-            list_names.Property(x => x.Tconst).HasColumnName("tconst");
-            list_names.Property(x => x.Nconst).HasColumnName("nconst");
+            //var list_names = modelBuilder.Entity<DetailedNameModelDL>();
+            //list_names.ToView("detailed_names");
+            //list_names.HasNoKey();
+            //list_names.Property(x => x.Character).HasColumnName("character");
+            //list_names.Property(x => x.Primaryname).HasColumnName("primaryname");
+            //list_names.Property(x => x.Profession).HasColumnName("profession");
+            //list_names.Property(x => x.KnownForTitle).HasColumnName("primarytitle");
+            //list_names.Property(x => x.StartYear).HasColumnName("startyear");
+            //list_names.Property(x => x.TitleType).HasColumnName("titletype");
+            //list_names.Property(x => x.Tconst).HasColumnName("tconst");
+            //list_names.Property(x => x.Nconst).HasColumnName("nconst");
 
 
             // Usser
@@ -189,9 +189,9 @@ namespace DataLayer
             titleRatingsTable.Property(x => x.AverageRating).HasColumnName("averagerating");
             titleRatingsTable.Property(x => x.NumVotes).HasColumnName("numvotes");
 
-            var detailedTitle = modelBuilder.Entity<DetailedTitleModelDL>();
+            //var detailedTitle = modelBuilder.Entity<DetailedTitleModelDL>();
             //detailedTitle.ToView("detailed_titles");
-            detailedTitle.HasNoKey();
+            //detailedTitle.HasNoKey();
             //detailedTitle.Property(x => x.Tconst).HasColumnName("tconst");
             //detailedTitle.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
             //detailedTitle.Property(x => x.startyear).HasColumnName("startyear");
@@ -215,7 +215,9 @@ namespace DataLayer
             fullTitleView.Property(x => x.genre).HasColumnName("genre");
             fullTitleView.Property(x => x.plot).HasColumnName("plot");
             fullTitleView.Property(x => x.poster).HasColumnName("poster");
-            fullTitleView.Property(x => x.relatedName).HasColumnName("primaryname");
+            //fullTitleView.Property(x => x.relatedName).HasColumnName("primaryname");
+
+            fullTitleView.Property(x => x.relatedName).HasColumnName("plot");
 
 
 
