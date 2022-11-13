@@ -61,6 +61,7 @@ namespace WebServer.Controllers
         [HttpPost]
         public IActionResult CreateUser(UserCreateModel newUser)
         {
+            //var dsUser = new DataServiceUser();
             var user = _mapper.Map<User>(newUser);
             _dataService.CreateUser(user.Username, user.Password, user.BirthYear, user.Email);
             return CreatedAtRoute(null, CreateUserModel(user));

@@ -100,26 +100,38 @@ namespace DataLayer
             
         {
 
+            //var titles = _db.FullViews
+            //IList<DetailedTitleModelDL> titles = (IList<DetailedTitleModelDL>)_db.FullViews
             var titles = _db.FullViews
-                .Select(t => t)
                
-                .Take(20).ToList()
-                .GroupBy(t => t.Tconst);
-                Console.WriteLine("sdfksædlfk");
+                .ToList()
+                //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
+                .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleModelDL
+                {
+                    Tconst = key,
+                    //Tconst = obj.Tconst,
+                    genre =  model.Select(m => m.genre).ToList()
+                }
+                ).ToList();
+                
+                //.AsEnumerable(
+                    
+                //)
+                Console.WriteLine("sdfkslfk");
             foreach (var title in titles)
             {
                 Console.WriteLine(title);
             
-            foreach (var item in title)
-                {
-                Console.WriteLine(item.genre);
+            //foreach (var item in title)
+            //    {
+            //    Console.WriteLine(item.genre);
                     
-                }
+            //    }
             }
 
            var temp = new List<DetailedTitleModelDL>();
             //return titles;
-            return temp;
+            return titles;
         }
 
 
@@ -483,6 +495,9 @@ namespace DataLayer
             string name = "user";
 
             var result = ctx.BookmarkTitlesTests.FromSqlInterpolated($"select * from select_title_bookmark({name})");
+
+
+
 
             //var bookmark = ctx.BookmarkTitles.Where(x => x.Username == name).ToList();
 
