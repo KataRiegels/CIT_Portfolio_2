@@ -108,11 +108,18 @@ namespace DataLayer
                 //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
                 .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleModelDL
                 {
+                    PrimaryTitle = model.First().PrimaryTitle,
+                    startyear = model.First().startyear,
+                    titletype = model.First().titletype,
+                    runtime = model.First().runtime,
+                    rating = model.First().rating,
+                    plot = model.First().plot,
+                    poster = model.First().poster,
                     Tconst = key,
                     //Tconst = obj.Tconst,
                     genre =  model.Select(m => m.genre).ToList()
                 }
-                ).ToList();
+                ).Take(20).ToList();
                 
                 //.AsEnumerable(
                     
