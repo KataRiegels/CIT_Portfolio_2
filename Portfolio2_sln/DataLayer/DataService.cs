@@ -100,9 +100,9 @@ namespace DataLayer
             
         {
 
-            //var titles = _db.FullViews
-            //IList<DetailedTitleModelDL> titles = (IList<DetailedTitleModelDL>)_db.FullViews
-            var titles = _db.FullViews
+            //var titles = _db.FullViewTitles
+            //IList<DetailedTitleModelDL> titles = (IList<DetailedTitleModelDL>)_db.FullViewTitles
+            var titles = _db.FullViewTitles
                
                 .ToList()
                 //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
@@ -117,7 +117,7 @@ namespace DataLayer
                     poster = model.First().poster,
                     Tconst = key,
                     //Tconst = obj.Tconst,
-                    genre =  model.Select(m => m.genre).ToList()
+                    genre =  model.Select(m => m.genre).Distinct().ToList()
                 }
                 ).Take(20).ToList();
                 
@@ -339,28 +339,46 @@ namespace DataLayer
 
         public IList<DetailedNameModelDL>? GetDetailedNames()
         {
-            //var names = _db.DetailedNames.Select(n => n).ToList();
-            //return names;
-            return null;
+            var names = _db.FullViewNames
+
+                .ToList()
+                //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
+                .GroupBy(t => t.Nconst, (key, model) => new DetailedNameModelDL
+                {
+                    Nconst = key,
+                    PrimaryName = model.First().PrimaryName,
+                    BirthYear = model.First().BirthYear,
+                    DeathYear = model.First().DeathYear,
+                    Professions = model.Select(p => p.Profession).Distinct().ToList(),
+                    KnwonForTconst = model.Select(m => m.KnwonForTconst).Distinct().ToList(),
+                    Characters = model.Select(m => new Tuple<string,string>(m.Character, m.CharacterTconst )).Distinct().ToList(),
+                    Jobs = model.AsEnumerable().Select(m => new Tuple<string,string>(m.Job, m.JobTconst )).Distinct().ToList()
+                    //plot = model.First().plot,
+                    //poster = model.First().poster,
+                    ////Tconst = obj.Tconst,
+                    //genre = model.Select(m => m.genre).Distinct().ToList()
+                }
+                ).Take(20).ToList();
+            return names;
         }
 
         public IList<ListNameModelDL> GetListNames()
         {
-            var names = GetDetailedNames()
-                .Select(x => new ListNameModelDL()
-                {
-                    Nconst = x.Nconst,
-                    Primaryname = x.Primaryname,
-                    Profession = x.Profession,
-                    KnownForTitle = x.KnownForTitle,
-                    StartYear = x.StartYear,
-                    TitleType = x.TitleType,
-                    Tconst = x.Tconst
-                }).ToList();
+            //var names = GetDetailedNames()
+            //    .Select(x => new ListNameModelDL()
+            //    {
+            //        Nconst = x.Nconst,
+            //        Primaryname = x.Primaryname,
+            //        Profession = x.Profession,
+            //        KnownForTitle = x.KnownForTitle,
+            //        StartYear = x.StartYear,
+            //        TitleType = x.TitleType,
+            //        Tconst = x.Tconst
+            //    }).ToList();
 
             
 
-            return names;
+            return null;
         }
         public IList<DetailedActorModel> GetDetailedActors()
         {

@@ -16,7 +16,8 @@ namespace DataLayer
         //public DbSet<DetailedTitleModelDL> DetailedTitles { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }
         //public DbSet<DetailedNameModelDL> DetailedNames { get; set; }
-        public DbSet<FullTitleViewModel> FullViews { get; set; }
+        public DbSet<FullTitleViewModel> FullViewTitles { get; set; }
+        public DbSet<FullNameViewModel> FullViewNames { get; set; }
 
         public DbSet<NameProfession> NameProfessions { get; set; }
         public DbSet<NameKnownFor> NameKnownFors { get; set; }
@@ -104,17 +105,20 @@ namespace DataLayer
             name_profession.Property(x => x.Nconst).HasColumnName("nconst");
             name_profession.Property(x => x.Profession).HasColumnName("profession");
 
-            //var list_names = modelBuilder.Entity<DetailedNameModelDL>();
-            //list_names.ToView("detailed_names");
-            //list_names.HasNoKey();
-            //list_names.Property(x => x.Character).HasColumnName("character");
-            //list_names.Property(x => x.Primaryname).HasColumnName("primaryname");
-            //list_names.Property(x => x.Profession).HasColumnName("profession");
-            //list_names.Property(x => x.KnownForTitle).HasColumnName("primarytitle");
-            //list_names.Property(x => x.StartYear).HasColumnName("startyear");
-            //list_names.Property(x => x.TitleType).HasColumnName("titletype");
-            //list_names.Property(x => x.Tconst).HasColumnName("tconst");
-            //list_names.Property(x => x.Nconst).HasColumnName("nconst");
+            var list_names = modelBuilder.Entity<FullNameViewModel>();
+            list_names.ToView("detailed_names");
+            list_names.HasNoKey();
+            list_names.Property(x => x.Nconst).HasColumnName("nconst");
+            list_names.Property(x => x.Character).HasColumnName("character");
+            list_names.Property(x => x.PrimaryName).HasColumnName("primaryname");
+            list_names.Property(x => x.BirthYear).HasColumnName("birthyear");
+            list_names.Property(x => x.DeathYear).HasColumnName("deathyear");
+            list_names.Property(x => x.Profession).HasColumnName("profession");
+            list_names.Property(x => x.KnwonForTconst).HasColumnName("kf_tconst");
+            list_names.Property(x => x.Character).HasColumnName("character");
+            list_names.Property(x => x.CharacterTconst).HasColumnName("ch_tconst");
+            list_names.Property(x => x.Job).HasColumnName("job");
+            list_names.Property(x => x.JobTconst).HasColumnName("job_tconst");
 
 
             // Usser

@@ -159,11 +159,9 @@ namespace WebServer.Controllers
             //IEnumerable<DetailedTitleModel>? titles =
 
             //_dataService.GetDetailedTitles().Select(x => CreateDetailedTitleModel(x));
-            var titles2 =
+            var titles =
             _dataService.GetDetailedTitles();
-            Console.WriteLine("skdjflksjdflskflksjdflksjfdlskjflskjdf");
-               //var titles = titles2.Select(x => CreateDetailedTitleModel(x));
-               var titles = titles2.Select(x => x);
+               //var titles = titles2.Select(x => x);
 
             if (titles == null)
             {

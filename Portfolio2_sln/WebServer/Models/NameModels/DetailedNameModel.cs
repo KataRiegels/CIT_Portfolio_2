@@ -2,13 +2,15 @@
 {
     public class DetailedNameModel
     {
-        public string? Primaryname { get; set; }
-        public string? Character { get; set; }
-        public string? Profession { get; set; }
-        public string? KnownForTitle { get; set; }
-        public string?    StartYear { get; set; }
-        public string?    TitleType { get; set; }
-        public string? Tconst { get; set; }
-        public string? Nconst { get; set; }
+        public string Url { get; set; }
+        public string Nconst { get; set; }
+        public string? PrimaryName { get; set; }
+        public string? BirthYear { get; set; }
+        public string? DeathYear { get; set; }
+        public IList<string>? Professions { get; set; }
+        public IList<string>? KnwonForTconst { get; set; }
+        public IList<Tuple<string, string>>? Characters { get; set; }
+        //public IList<IList<string>>? Characters { get; set; }
+        public IList<Tuple<string, string>>? Jobs { get; set; }
     }
 }
