@@ -32,11 +32,14 @@ namespace WebServer.Controllers
             _mapper = mapper;
         }
 
+        private int page = 0;
+        private int pageSize = 10;
+
         [HttpGet]
         public IActionResult GetNames()
         {
             IEnumerable<NameModel> names =
-                _dataService.GetNames().Select(x => CreateNameModel(x));
+                _dataService.GetNames().Select(x => CreateNameModel(x)).Skip((page - 1) * pageSize).Take(pageSize);
             return Ok(names);
         }
 

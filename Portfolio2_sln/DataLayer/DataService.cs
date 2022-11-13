@@ -14,15 +14,17 @@ namespace DataLayer
     {
         private static ImdbContext _db = new ImdbContext();
 
+        private int page = 0;
+        private int pageSize = 10;
+
         /* ------------
             TITLES
           ------------*/
         // can currently get with one query
         public IList<TitleBasics> GetTitles(string? titleType = null)
         {
-
-            var result = _db.TitleBasicss.ToList();
-            Console.WriteLine("-------------------------------------");
+            Console.WriteLine(titleType);
+            var result = _db.TitleBasicss.Skip((page*pageSize)-1).Take(pageSize).ToList();
             if (titleType != null)
             {
                 result = _db.TitleBasicss.Where(x => x.TitleType == (titleType)).ToList();
@@ -99,34 +101,15 @@ namespace DataLayer
 
             
         {
-
-            //var titles = _db.FullViews
-            //IList<DetailedTitleModelDL> titles = (IList<DetailedTitleModelDL>)_db.FullViews
-            var titles = _db.FullViews
-               
-                .ToList()
-                //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
-                .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleModelDL
-                {
-                    Tconst = key,
-                    //Tconst = obj.Tconst,
-                    genre =  model.Select(m => m.genre).ToList()
-                }
-                ).ToList();
-                
-                //.AsEnumerable(
-                    
-                //)
-                Console.WriteLine("sdfkslfk");
+            var titles = _db.FullViews.Select(t => t).GroupBy(t => t.Tconst).Take(1).ToList();
             foreach (var title in titles)
             {
-                Console.WriteLine(title);
             
-            //foreach (var item in title)
-            //    {
-            //    Console.WriteLine(item.genre);
+            foreach (var item in title)
+                {
+                Console.WriteLine(item.genre);
                     
-            //    }
+                }
             }
 
            var temp = new List<DetailedTitleModelDL>();
