@@ -187,10 +187,7 @@ namespace WebServer.Controllers
 
         public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleModelDL? detailedTitle)
         {
-            Console.WriteLine("I hate my life");
             var model = _mapper.Map<DetailedTitleModel>(detailedTitle);
-            //model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
-            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
 
             return model;
         }

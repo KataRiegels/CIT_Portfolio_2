@@ -113,7 +113,6 @@ namespace WebServer.Controllers
             if (listModel.KnownForTitleBasics != null)
             {
                 Console.WriteLine(listModel.KnownForTitleBasics.Tconst);
-                //model.KnownForTitleBasics.Url = _generator.GetUriByName(HttpContext, nameof(GetName), new {listModel.KnownForTitleBasics.Tconst });
                 model.KnownForTitleBasics.Url = _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { listModel.KnownForTitleBasics.Tconst });
                 //model.KnownForTitleBasics.Url = "this is a URL";
                 //model.KnownForTitleBasics.StartYear = "kjgjg";

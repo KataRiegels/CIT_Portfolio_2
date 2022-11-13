@@ -15,11 +15,11 @@ namespace DataLayer.Model
         //public Tuple<string, BasicTitleModelDL> KnownForTitleBasics { get; set; }
         //public BasicTitleModelDL KnownForTitleBasics { get; set; }
         public BasicTitleModelDL? KnownForTitleBasics { get; set; } = null;
-        //public string? KnownForTitle { get; set; }
-        //public string? StartYear { get; set; }
-        //public string? TitleType { get; set; }
-        //public string? Tconst { get; set; }
-        
+        public string? KnownForTitle { get; set; }
+        public string? StartYear { get; set; }
+        public string? TitleType { get; set; }
+        public string? Tconst { get; set; }
+
 
     }
 }

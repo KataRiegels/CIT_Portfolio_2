@@ -4,9 +4,12 @@ using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataLayer
 {
@@ -364,32 +367,82 @@ namespace DataLayer
 
         public IList<ListNameModelDL> GetListNames()
         {
-            var names = _db.FullViewNames
 
-                .ToList()
-                //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
+            var query =
+                _db.NameBasicss.ToList().GroupJoin(_db.NameKnownFors,
+                       basics => basics.Nconst,
+                       knownFor => knownFor.Nconst,
+                       (basics, knownFors) =>
+                       new
+                       {
+                           //basics,
+                           Nconst = basics.Nconst,
+                           PrimaryName = basics.PrimaryName,
+                           //PrimaryName = basics.PrimaryName,
+                           KnownForTitle = knownFors.Select(x => x.Tconst)
+                       }
+                           )
+                       // .GroupJoin(_db.TitleBasicss,
+                       //basics => basics.KnownForTitle,
+                       //knownFor => knownFor.Tconst,
+                       //(basics, knownFors) =>
+                       //new
+                       //{
+                       //    Nconst = basics.basics.Nconst,
+                       //    PrimaryName = basics.basics.PrimaryName,
+                       //    KnownForTitle = knownFors.Select(x => x.Tconst)
+                       //})
+                        ;
+
+            var names2 = query.ToList()
                 .GroupBy(t => t.Nconst, (key, model) => new ListNameModelDL
                 {
                     Nconst = key,
                     PrimaryName = model.First().PrimaryName,
-                    KnownForTitleBasics = model.First().KnwonForTconst != null ? GetBasicTitle(model.First().KnwonForTconst) : null
-                    //KnownForTitle = model.First().KnwonForTconst,
-                    //TitleType = model.First().KnwonForTconst != null ? GetTitle(model.First().KnwonForTconst).TitleType : null
-                    //TitleType = model.First().KnwonForTconst != null ? model.First().KnwonForTconst : null
-                    //StartYear = model.First().KnwonForTconst,
-
-                    //DeathYear = model.First().DeathYear,
-                    //Professions = model.Select(p => p.Profession).Distinct().ToList(),
-                    //KnwonForTconst = model.Select(m => m.KnwonForTconst).Distinct().ToList(),
-                    //Characters = model.Select(m => new Tuple<string, string>(m.Character, m.CharacterTconst)).Distinct().ToList(),
-                    //Jobs = model.AsEnumerable().Select(m => new Tuple<string, string>(m.Job, m.JobTconst)).Distinct().ToList()
-                    //plot = model.First().plot,
-                    //poster = model.First().poster,
-                    ////Tconst = obj.Tconst,
-                    //genre = model.Select(m => m.genre).Distinct().ToList()
+                    KnownForTitleBasics = model.First().KnownForTitle.Any() ? GetBasicTitle(model.First().KnownForTitle.First()) : null
                 }
-                ).Take(21).ToList();
-            return names;
+                ).Take(21).ToList(); ;
+
+            return names2;
+
+
+            //var count = 0;
+            //foreach (var name in query)
+            //{
+            //    count++;
+            //    var temp = name.KnownForTitle.Any()   ? name.KnownForTitle.First(): null;
+            //    Console.WriteLine(name.Nconst + " " + name.PrimaryName + " " + temp);
+            //    if (count == 21) break;
+            //}
+
+
+            //var names = _db.FullViewNames
+
+            //    .ToList()
+            //    //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
+            //    .GroupBy(t => t.Nconst, (key, model) => new ListNameModelDL
+            //    {
+            //        Nconst = key,
+            //        PrimaryName = model.First().PrimaryName,
+            //        KnownForTitleBasics = model.First().KnwonForTconst != null ? GetBasicTitle(model.First().KnwonForTconst) : null
+            //        //KnownForTitle = model.First().KnwonForTconst,
+            //        //TitleType = model.First().KnwonForTconst != null ? GetTitle(model.First().KnwonForTconst).TitleType : null
+            //        //TitleType = model.First().KnwonForTconst != null ? model.First().KnwonForTconst : null
+            //        //StartYear = model.First().KnwonForTconst,
+
+            //        //DeathYear = model.First().DeathYear,
+            //        //Professions = model.Select(p => p.Profession).Distinct().ToList(),
+            //        //KnwonForTconst = model.Select(m => m.KnwonForTconst).Distinct().ToList(),
+            //        //Characters = model.Select(m => new Tuple<string, string>(m.Character, m.CharacterTconst)).Distinct().ToList(),
+            //        //Jobs = model.AsEnumerable().Select(m => new Tuple<string, string>(m.Job, m.JobTconst)).Distinct().ToList()
+            //        //plot = model.First().plot,
+            //        //poster = model.First().poster,
+            //        ////Tconst = obj.Tconst,
+            //        //genre = model.Select(m => m.genre).Distinct().ToList()
+            //    }
+            //    ).Take(21).ToList();
+            //return names;
+
 
 
             return null;
