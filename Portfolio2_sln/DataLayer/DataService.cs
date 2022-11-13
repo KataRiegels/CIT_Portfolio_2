@@ -117,7 +117,7 @@ namespace DataLayer
                     poster = model.First().poster,
                     Tconst = key,
                     //Tconst = obj.Tconst,
-                    genre =  model.Select(m => m.genre).ToList()
+                    genre =  model.Select(m => m.genre).Distinct().ToList()
                 }
                 ).Take(20).ToList();
                 
