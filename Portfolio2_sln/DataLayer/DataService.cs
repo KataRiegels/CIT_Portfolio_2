@@ -34,7 +34,7 @@ namespace DataLayer
 
         public TitleBasics GetTitle(string tconst)
         {
-            var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst == tconst);
+            var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst.Trim() == tconst.Trim());
             
             return temp;
         }
@@ -147,7 +147,7 @@ namespace DataLayer
         public BasicTitleModelDL GetBasicTitle(string tconst)
         {
             var basicTitle = _db.TitleBasicss
-                .FirstOrDefault(x => x.Tconst == tconst);
+                .FirstOrDefault(x => x.Tconst.Trim() == tconst.Trim());
             //.Where(x => x.Tconst == tconst)
             //.Include(x => x.TitleType)
             //.Include(t => t.Tconst)
@@ -364,19 +364,33 @@ namespace DataLayer
 
         public IList<ListNameModelDL> GetListNames()
         {
-            //var names = GetDetailedNames()
-            //    .Select(x => new ListNameModelDL()
-            //    {
-            //        Nconst = x.Nconst,
-            //        Primaryname = x.Primaryname,
-            //        Profession = x.Profession,
-            //        KnownForTitle = x.KnownForTitle,
-            //        StartYear = x.StartYear,
-            //        TitleType = x.TitleType,
-            //        Tconst = x.Tconst
-            //    }).ToList();
+            var names = _db.FullViewNames
 
-            
+                .ToList()
+                //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
+                .GroupBy(t => t.Nconst, (key, model) => new ListNameModelDL
+                {
+                    Nconst = key,
+                    PrimaryName = model.First().PrimaryName,
+                    KnownForTitleBasics = model.First().KnwonForTconst != null ? GetBasicTitle(model.First().KnwonForTconst) : null
+                    //KnownForTitle = model.First().KnwonForTconst,
+                    //TitleType = model.First().KnwonForTconst != null ? GetTitle(model.First().KnwonForTconst).TitleType : null
+                    //TitleType = model.First().KnwonForTconst != null ? model.First().KnwonForTconst : null
+                    //StartYear = model.First().KnwonForTconst,
+
+                    //DeathYear = model.First().DeathYear,
+                    //Professions = model.Select(p => p.Profession).Distinct().ToList(),
+                    //KnwonForTconst = model.Select(m => m.KnwonForTconst).Distinct().ToList(),
+                    //Characters = model.Select(m => new Tuple<string, string>(m.Character, m.CharacterTconst)).Distinct().ToList(),
+                    //Jobs = model.AsEnumerable().Select(m => new Tuple<string, string>(m.Job, m.JobTconst)).Distinct().ToList()
+                    //plot = model.First().plot,
+                    //poster = model.First().poster,
+                    ////Tconst = obj.Tconst,
+                    //genre = model.Select(m => m.genre).Distinct().ToList()
+                }
+                ).Take(21).ToList();
+            return names;
+
 
             return null;
         }
