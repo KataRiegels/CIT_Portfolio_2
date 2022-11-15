@@ -1,13 +1,45 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using DataLayer.Models.TitleModels;
+using DataLayer.Models.NameModels;
+using DataLayer.Models.UserModels;
+using System.ComponentModel.DataAnnotations;
+using DataLayer.Model;
 
 namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
-        const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=Jse33pjp";
+        const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
+        //const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
+        //public DbSet<DetailedTitleModelDL> DetailedTitles { get; set; }
+        public DbSet<NameBasics> NameBasicss { get; set; }
+        //public DbSet<DetailedNameModelDL> DetailedNames { get; set; }
+        public DbSet<FullTitleViewModel> FullViewTitles { get; set; }
+        public DbSet<FullNameViewModel> FullViewNames { get; set; }
+
+        public DbSet<NameProfession> NameProfessions { get; set; }
+        public DbSet<NameKnownFor> NameKnownFors { get; set; }
+
+        public DbSet<User> Users { get; set; }
+        public DbSet<BookmarkTitle> BookmarkTitles { get; set; }
+        public DbSet<BookmarkName> BookmarkNames { get; set; }
+
+        public DbSet<BookmarkTitleTest> BookmarkTitlesTests { get; set; }
+
+
+        // TITLES
+
+        public DbSet<TitleAvgRating> TitleAvgRatings { get; set; }
+        
+        public DbSet<TitleGenre> TitleGenres { get; set; }
+        public DbSet<TitleEpisode> TitleEpisodes { get; set; }
+        public DbSet<TitlePrincipal> TitlePrincipals { get; set; }
+        public DbSet<OmdbData> omdbDatas { get; set; }
+        public DbSet<TitleAka> TitleAkas { get; set; }
+
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -17,6 +49,12 @@ namespace DataLayer
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<BookmarkTitleTest>().HasNoKey();
+            modelBuilder.Entity<BookmarkTitleTest>().Property(x => x.PrimaryName).HasColumnName("name");
+            modelBuilder.Entity<BookmarkTitleTest>().Property(x => x.Tconst).HasColumnName("tconst");
+            modelBuilder.Entity<BookmarkTitleTest>().Property(x => x.Annotation).HasColumnName("annotation");
+
 
             var tb_mb = modelBuilder.Entity<TitleBasics>();
 
@@ -31,11 +69,171 @@ namespace DataLayer
             tb_mb.Property(x => x.EndYear).HasColumnName("endyear");
             tb_mb.Property(x => x.RunTimeMinutes).HasColumnName("runtimeminutes");
 
+            var genre_table = modelBuilder.Entity<TitleGenre>();
+            genre_table.ToTable("genre");
+            genre_table.HasKey(t => new { t.Tconst, t.GenreName });
+            genre_table.Property(x => x.Tconst).HasColumnName("tconst");
+            genre_table.Property(x => x.GenreName).HasColumnName("genre");
+
+
+            var name_table = modelBuilder.Entity<NameBasics>();
+            name_table.ToTable("name_basics");
+            name_table.HasKey(x => x.Nconst);
+            name_table.Property(x => x.Nconst).HasColumnName("nconst");
+            name_table.Property(x => x.PrimaryName).HasColumnName("primaryname");
+            name_table.Property(x => x.BirthYear).HasColumnName("birthyear");
+            name_table.Property(x => x.DeathYear).HasColumnName("deathyear");
+
+
+            var episodeTable = modelBuilder.Entity<TitleEpisode>();
+            episodeTable.ToTable("title_episode");
+            episodeTable.HasKey(x => x.Tconst);
+            episodeTable.Property(x => x.Tconst).HasColumnName("tconst");
+            episodeTable.Property(x => x.ParentTconst).HasColumnName("parenttconst");
+            episodeTable.Property(x => x.EpisodeNumber).HasColumnName("episodenumber");
+            episodeTable.Property(x => x.SeasonNumber).HasColumnName("seasonnumber");
+
+            var KnownFor_table = modelBuilder.Entity<NameKnownFor>();
+            KnownFor_table.ToTable("known_for");
+            KnownFor_table.HasKey(x => new { x.Tconst, x.Nconst});
+            KnownFor_table.Property(x => x.Tconst).HasColumnName("tconst");
+            KnownFor_table.Property(x => x.Nconst).HasColumnName("nconst");
+
+            var name_profession = modelBuilder.Entity<NameProfession>();
+            name_profession.ToTable("profession");
+            name_profession.HasKey(x => x.Nconst);
+            name_profession.Property(x => x.Nconst).HasColumnName("nconst");
+            name_profession.Property(x => x.Profession).HasColumnName("profession");
+
+            var list_names = modelBuilder.Entity<FullNameViewModel>();
+            list_names.ToView("detailed_names");
+            list_names.HasNoKey();
+            list_names.Property(x => x.Nconst).HasColumnName("nconst");
+            list_names.Property(x => x.Character).HasColumnName("character");
+            list_names.Property(x => x.PrimaryName).HasColumnName("primaryname");
+            list_names.Property(x => x.BirthYear).HasColumnName("birthyear");
+            list_names.Property(x => x.DeathYear).HasColumnName("deathyear");
+            list_names.Property(x => x.Profession).HasColumnName("profession");
+            list_names.Property(x => x.KnwonForTconst).HasColumnName("kf_tconst");
+            list_names.Property(x => x.Character).HasColumnName("character");
+            list_names.Property(x => x.CharacterTconst).HasColumnName("ch_tconst");
+            list_names.Property(x => x.Job).HasColumnName("job");
+            list_names.Property(x => x.JobTconst).HasColumnName("job_tconst");
+
+
+            // Usser
+
+            var userTable = modelBuilder.Entity<User>();
+            userTable.ToTable("users");
+            userTable.HasKey(x => x.Username);
+            userTable.Property(x => x.Username).HasColumnName("username");
+            userTable.Property(x => x.Password).HasColumnName("password");
+            userTable.Property(x => x.BirthYear).HasColumnName("birthyear");
+            userTable.Property(x => x.Email).HasColumnName("email");
+            //userTable.Property(x => x.).HasColumnName("");
+
+            var userBookmarkNameTable = modelBuilder.Entity<BookmarkName>();
+            userBookmarkNameTable.ToTable("bookmark_name");
+            userBookmarkNameTable.HasKey(x =>  new { x.Username, x.Nconst });
+            userBookmarkNameTable.Property(x => x.Username).HasColumnName("username");
+            userBookmarkNameTable.Property(x => x.Nconst).HasColumnName("nconst");
+            userBookmarkNameTable.Property(x => x.Annotation).HasColumnName("annotation");
+            //.Property(x => x.BirthYear).HasColumnName("birthyear");
+            //.Property(x => x.Email).HasColumnName("email");
+
+            var userBookmarkTitleTable = modelBuilder.Entity<BookmarkTitle>();
+            userBookmarkTitleTable.ToTable("bookmark_title");
+            userBookmarkTitleTable.HasKey(x => new { x.Username, x.Tconst });
+            userBookmarkTitleTable.Property(x => x.Username).HasColumnName("username");
+            userBookmarkTitleTable.Property(x => x.Tconst).HasColumnName("tconst");
+            userBookmarkTitleTable.Property(x => x.Annotation).HasColumnName("annotation");
+
+            var userRatingTable = modelBuilder.Entity<UserRating>();
+            userRatingTable.ToTable("user_rating");
+            userRatingTable.HasKey(x => new { x.Username, x.Tconst });
+            userRatingTable.Property(x => x.Username).HasColumnName("username");
+            userRatingTable.Property(x => x.Tconst).HasColumnName("Tconst");
+            userRatingTable.Property(x => x.Rating).HasColumnName("rating");
+            userRatingTable.Property(x => x.Date).HasColumnName("date");
+
+
+            var userSearchTable = modelBuilder.Entity<UserSearch>();
+            userSearchTable.ToTable("user_search");
+            userSearchTable.HasKey(x => new { x.Username, x.SearchId });
+            userSearchTable.Property(x => x.Username).HasColumnName("username");
+            userSearchTable.Property(x => x.SearchId).HasColumnName("search_id");
+            userSearchTable.Property(x => x.Date).HasColumnName("date");
+            userSearchTable.Property(x => x.SearchContent).HasColumnName("search_content");
+            userSearchTable.Property(x => x.SearchCategory).HasColumnName("search_category");
 
 
 
+            // TITLES
+            var titleAkaTable = modelBuilder.Entity<TitleAka>();
+            titleAkaTable.ToTable("title_aka");
+            titleAkaTable.HasKey(t => new { t.Tconst, t.Ordering });
+            titleAkaTable.Property(x => x.Tconst).HasColumnName("tconst");
+            titleAkaTable.Property(x => x.Ordering).HasColumnName("ordering");
+            titleAkaTable.Property(x => x.Title).HasColumnName("title");
+            titleAkaTable.Property(x => x.Region).HasColumnName("region");
+            titleAkaTable.Property(x => x.IsOriginalTitle).HasColumnName("isoriginaltitle");
+
+
+            var titlePrincipleTable = modelBuilder.Entity<TitlePrincipal>();
+            titlePrincipleTable.ToTable("title_principals");
+            titlePrincipleTable.HasKey(t => new { t.Tconst, t.Nconst, t.Category });
+            titlePrincipleTable.Property(x => x.Tconst).HasColumnName("tconst");
+            titlePrincipleTable.Property(x => x.Nconst).HasColumnName("nconst");
+            titlePrincipleTable.Property(x => x.Category).HasColumnName("category");
+
+            var titleRatingsTable = modelBuilder.Entity<TitleAvgRating>();
+            titleRatingsTable.ToTable("title_rating");
+            titleRatingsTable.HasKey(x => x.Tconst);
+            titleRatingsTable.Property(x => x.Tconst).HasColumnName("tconst");
+            titleRatingsTable.Property(x => x.AverageRating).HasColumnName("averagerating");
+            titleRatingsTable.Property(x => x.NumVotes).HasColumnName("numvotes");
+
+            //var detailedTitle = modelBuilder.Entity<DetailedTitleModelDL>();
+            //detailedTitle.ToView("detailed_titles");
+            //detailedTitle.HasNoKey();
+            //detailedTitle.Property(x => x.Tconst).HasColumnName("tconst");
+            //detailedTitle.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
+            //detailedTitle.Property(x => x.startyear).HasColumnName("startyear");
+            //detailedTitle.Property(x => x.titletype).HasColumnName("titletype");
+            //detailedTitle.Property(x => x.runtime).HasColumnName("runtimeminutes");
+            //detailedTitle.Property(x => x.rating).HasColumnName("averagerating");
+            //detailedTitle.Property(x => x.genre).HasColumnName("genre");
+            //detailedTitle.Property(x => x.plot).HasColumnName("plot");
+            //detailedTitle.Property(x => x.poster).HasColumnName("poster");
+            //detailedTitle.Property(x => x.relatedName).HasColumnName("primaryname");
+
+            var fullTitleView = modelBuilder.Entity<FullTitleViewModel>();
+            fullTitleView.ToView("detailed_titles");
+            fullTitleView.HasNoKey();
+            fullTitleView.Property(x => x.Tconst).HasColumnName("tconst");
+            fullTitleView.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
+            fullTitleView.Property(x => x.startyear).HasColumnName("startyear");
+            fullTitleView.Property(x => x.titletype).HasColumnName("titletype");
+            fullTitleView.Property(x => x.runtime).HasColumnName("runtimeminutes");
+            fullTitleView.Property(x => x.rating).HasColumnName("averagerating");
+            fullTitleView.Property(x => x.genre).HasColumnName("genre");
+            fullTitleView.Property(x => x.plot).HasColumnName("plot");
+            fullTitleView.Property(x => x.poster).HasColumnName("poster");
+            //fullTitleView.Property(x => x.relatedName).HasColumnName("primaryname");
+
+            fullTitleView.Property(x => x.relatedName).HasColumnName("plot");
+
+
+
+            //titlePrincipleTable.Property(x => x.).HasColumnName("");
+
+            var omdbTalbe = modelBuilder.Entity<OmdbData>();
+            omdbTalbe.ToTable("omdb_data");
+            omdbTalbe.HasKey(x => x.Tconst);
+            omdbTalbe.Property(x => x.Tconst).HasColumnName("tconst");
+            omdbTalbe.Property(x => x.Poster).HasColumnName("poster");
+            omdbTalbe.Property(x => x.Plot).HasColumnName("plot");
         }
-
 
     }
 }

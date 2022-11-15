@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.Models.NameModels
+namespace DataLayer.Model
 {
-    public class NameBasics
+    public class BasicNameModelDL
     {
         public string Nconst { get; set; }
         public string PrimaryName { get; set; }
-        public string BirthYear { get; set; }
-        public string? DeathYear { get; set; }
     }
 }

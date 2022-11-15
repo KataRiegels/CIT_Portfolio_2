@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.Models.TitleModels
+namespace DataLayer.Models.UserModels
 {
-    public class TitleAvgRating
+    public class BookmarkTitleTest
     {
+        public string PrimaryName { get; set; }
         public string Tconst { get; set; }
-        public double AverageRating { get; set; }
-        public int NumVotes { get; set; }
+        public string Annotation { get; set; }
+
     }
 }

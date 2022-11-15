@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Models.UserModels
 {
-    public class User
+    public class BookmarkName
     {
         public string Username { get; set; }
-        public string Password { get; set; }
-        public string? BirthYear { get; set; }
-        public string Email { get; set; }
-
+        public string Nconst { get; set; }
+        public string? Annotation { get; set; }
     }
 }
