@@ -30,10 +30,10 @@ namespace WebServer.Controllers
         }
 
         [HttpGet(Name = nameof(GetTitles))]
-        public IActionResult GetTitles(string? titleType = null)
+        public IActionResult GetTitles()
         {
             IEnumerable<TitleModel> titles =
-                _dataService.GetTitles(titleType).Select(x => CreateTitleModel(x));
+                _dataService.GetTitles().Select(x => CreateTitleModel(x));
 
 
             return Ok(titles);
@@ -53,42 +53,33 @@ namespace WebServer.Controllers
             return Ok(title);
         }
 
-        // Get all the title_akas
-        [HttpGet("{tconst}/akas", Name = nameof(GetTitleAkasByTitle))]
-        public IActionResult GetTitleAkasByTitle(string tconst)
-        {
-            IEnumerable<TitleAka> titles =
-                _dataService.GetTitleAkasByTitle(tconst);
 
-            return Ok(titles);
-
-        }
 
         [HttpGet("basics", Name = nameof(GetBasicTitles))]
-        public IActionResult GetBasicTitles()
+        public IActionResult GetBasicTitles(int page = 0, int pageSize = 20)
         {
 
             IEnumerable<BasicTitleModel> titles =
-                _dataService.GetBasicTitles().Select(x => CreateBasicTitleModel(x));
+                _dataService.GetBasicTitles(page, pageSize).Select(x => CreateBasicTitleModel(x));
 
 
             return Ok(titles);
         }
 
-        [HttpGet("list")]
-        public IActionResult GetListTitles()
-        {   
-            IEnumerable<ListTitleModel> titles =
-                _dataService.GetListTitles().Select(x => CreateListTitleModel(x));
 
-            if(titles == null)
+        [HttpGet("list")]
+        public IActionResult GetListTitles(int page = 0, int pageSize = 20)
+        {
+            IEnumerable<ListTitleModel> titles =
+                _dataService.GetListTitles(page, pageSize).Select(x => CreateListTitleModel(x));
+
+            if (titles == null)
             {
                 return NotFound();
             }
 
             return Ok(titles);
         }
-
 
         // Get all titles that includes given genre
         //[HttpGet("genre/{genreName}", Name = nameof(GetTitlesByGenre))]
@@ -105,63 +96,20 @@ namespace WebServer.Controllers
         //    return Ok(title);
         //}
 
-        // Get all titles that includes given genre
-        [HttpGet("{tconst}/episodes", Name = nameof(GetEpisodesFromTitle))]
-        public IActionResult GetEpisodesFromTitle(string tconst)
-        {
-            IEnumerable<TitleModel> title = _dataService.GetEpisodesFromTitle(tconst).Select(x => CreateTitleModel(x));
-            //var title = _dataService.GetTitlesByGenre(genreName); // If we want to return normal TitleBasics instead
 
-            if (title == null)
-            {
-                return NotFound();
-            }
 
-            return Ok(title);
-        }
-
-        [HttpGet("PrincipalTitles/{nconst}")]
-        public IActionResult GetTitlesPrincipalFromName(string nconst)
-        {
-            IEnumerable<TitlePrincipalModel> titles =
-                _dataService.GetTitlesPrincipalFromName(nconst).Select(x => CreateTitlePrincipalModel(x));
-
-            if (titles == null)
-            {
-                return NotFound();
-            }
-            return Ok(titles);
-        }
-
-        [HttpGet("Omdbdata/{tconst}")]
-        public IActionResult GetOmdbData(string tconst)
-        {
-            OmdbModel omdb = CreateOmdbModel(_dataService.GetOmdbData(tconst));
-
-            if(omdb == null)
-            {
-                return NotFound();
-            }
-            return Ok(omdb);
-        }
-
-        [HttpGet("Omdbdata/plot/{tconst}")]
-        public IActionResult GetPlot(string tconst)
-        {
-            string plot = _dataService.GetPlot(tconst);
-            return Ok(plot);
-        }
 
         [HttpGet("detailed")]
-        public IActionResult GetDetailedTitles()
+        public IActionResult GetDetailedTitles(int page = 0, int pageSize = 20)
         {
 
             //IEnumerable<DetailedTitleModel>? titles =
 
             //_dataService.GetDetailedTitles().Select(x => CreateDetailedTitleModel(x));
             var titles =
-            _dataService.GetDetailedTitles();
-               //var titles = titles2.Select(x => x);
+            _dataService.GetDetailedTitles(page, pageSize);
+            //var titles = titles2.Select(x => CreateDetailedTitleModel(x));
+            //var titles = titles2.Select(x => x);
 
             if (titles == null)
             {
@@ -248,3 +196,6 @@ namespace WebServer.Controllers
         }
     }
 }
+     
+
+

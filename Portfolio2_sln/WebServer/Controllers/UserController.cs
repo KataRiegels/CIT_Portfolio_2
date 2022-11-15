@@ -79,22 +79,22 @@ namespace WebServer.Controllers
         }
 
         //[HttpGet("{username}/titlebookmark/{tconst}", Name = nameof(GetBookmarkTitle))]
-        [HttpGet("bookmark")]
-        //public IActionResult GetBookmarkTitle(string username, string tconst)
-        public IActionResult GetBookmarkTitle()
-        {
-            //BookmarkTitleModel title = CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
-            //CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
-            var something = _dataService.GetTitleBookmarks();
+        //[HttpGet("bookmark")]
+        ////public IActionResult GetBookmarkTitle(string username, string tconst)
+        //public IActionResult GetBookmarkTitle()
+        //{
+        //    //BookmarkTitleModel title = CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
+        //    //CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
+        //    var something = _dataService.GetTitleBookmarks();
 
 
-            //if (title == null)
-            //{
-            //    return NotFound();
-            //}
-            //return Ok(title);
-            return Ok(something);
-        }
+        //    //if (title == null)
+        //    //{
+        //    //    return NotFound();
+        //    //}
+        //    //return Ok(title);
+        //    return Ok(something);
+        //}
 
         [HttpGet("{username}/titlebookmarks")]
         public IActionResult GetBookmarksTitleaByUser(string username)

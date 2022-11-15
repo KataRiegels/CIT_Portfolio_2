@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataLayer.Model;
+﻿using DataLayer.Model;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 
 namespace DataLayer
 {
-    public interface IDataService
+    public interface IDataService1
     {
         void CreateBookmarkTitle(string username, string tconst, string annotation);
         void CreateUser(string username, string password, string birthYear, string email);
@@ -32,9 +27,8 @@ namespace DataLayer
         NameBasics GetName(string nconst);
         IList<NameBasics> GetNames(int page = 0, int pageSize = 20);
         TitleBasics GetTitle(string tconst);
-        IList<TitleBasics> GetTitles(int page = 0, int pageSize = 20);
+        IList<TitleBasics> GetTitles(string? titleType = null);
         User GetUser(string username);
         IList<User> GetUsers();
     }
 }
-
