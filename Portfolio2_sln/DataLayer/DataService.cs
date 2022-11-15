@@ -357,8 +357,6 @@ namespace DataLayer
                     Tconst = x.Tconst
                 }).Skip(page * pageSize).Take(pageSize).ToList();
 
-            
-
             return names;
         }
         public IList<DetailedActorModel> GetDetailedActors(int page = 0, int pageSize = 20)
