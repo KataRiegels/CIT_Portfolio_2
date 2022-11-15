@@ -8,17 +8,386 @@ namespace DataLayer
         private static ImdbContext _db = new ImdbContext();
         public IList<TitleBasics> GetTitles()
         {
-            return _db.TitleBasicss.ToList();
+            var result = _db.TitleBasicss.Skip(page * pageSize).Take(pageSize).ToList();
+            Console.WriteLine("-------------------------------------");
+            if (titleType != null)
+            {
+                result = _db.TitleBasicss.Where(x => x.TitleType == (titleType)).Skip(page * pageSize).Take(pageSize).ToList();
+                Console.WriteLine(result.Count());
+            }
+
+            return result;
         }
 
         public TitleBasics GetTitle(string tconst)
         {
-            
             var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst == tconst);
+            
+            return temp;
+        }
+
+        public IList<BasicTitleModelDL> GetBasicTitles(int page = 0, int pageSize = 20)
+        {
+            Console.WriteLine(_db.TitleBasicss.First().Tconst);
+            var basicTitles = _db.TitleBasicss
+                .Select(t => new BasicTitleModelDL 
+                    { Tconst = t.Tconst,
+                    TitleType = t.TitleType, 
+                    PrimaryTitle = t.PrimaryTitle,
+                    StartYear = t.StartYear
+                })
+                .Skip(page * pageSize).Take(pageSize).ToList();
+
+            return basicTitles;
+        }
+
+        public IList<ListTitleModelDL> GetListTitles(int page, int pageSize)
+        {
+            //var titles = GetDetailedTitles()
+            //    .Select(x => new ListTitleModelDL()
+            //    {
+            //        Tconst = x.Tconst,
+            //        PrimaryTitle = x.PrimaryTitle,
+            //        StartYear = x.startyear,
+            //        TitleType = x.titletype,
+            //        runtime = x.runtime,
+            //        Rating = x.rating,
+            //        Genres = x.genre
+
+            //    }).Skip(page * pageSize).Take(pageSize)..ToList();
+            //return titles;
+            return null;
+        }
+
+        private static double? GetRatingFromTitle (string tconst)
+        {
+            var rating = new ImdbContext().TitleAvgRatings
+                .Where(x => x.Tconst.Trim() == tconst.Trim())
+                .FirstOrDefault(x => x.Tconst.Trim() == tconst.Trim());
+            //.ToList();
+            if (rating == null)
+            {
+                return null;
+            }
+            //Console.WriteLine(rating.AverageRating);
+            var result_rating = rating.AverageRating;
+            return result_rating;
+        }
+
+
+
+        public IList<DetailedTitleModelDL>? GetDetailedTitles(int page, int pageSize)
+
+                    /*
+            fullview.where(tconst = tconst).select(genre).add(list)
+
+
+            */
+
+            
+        {
+
+            //var titles = _db.FullViews
+            //IList<DetailedTitleModelDL> titles = (IList<DetailedTitleModelDL>)_db.FullViews
+            var titles = _db.FullViews
+               
+                .ToList()
+                //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
+                .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleModelDL
+                {
+                    PrimaryTitle = model.First().PrimaryTitle,
+                    startyear = model.First().startyear,
+                    titletype = model.First().titletype,
+                    runtime = model.First().runtime,
+                    rating = model.First().rating,
+                    plot = model.First().plot,
+                    poster = model.First().poster,
+                    Tconst = key,
+                    //Tconst = obj.Tconst,
+                    genre =  model.Select(m => m.genre).Distinct().Skip(page * pageSize).Take(pageSize).ToList()
+                }
+                ).Skip(page * pageSize).Take(pageSize).ToList();
+                
+                //.AsEnumerable(
+                    
+                //)
+                Console.WriteLine("sdfkslfk");
+            foreach (var title in titles)
+            {
+                Console.WriteLine(title);
+            
+            //foreach (var item in title)
+            //    {
+            //    Console.WriteLine(item.genre);
+                    
+            //    }
+            }
+
+           var temp = new List<DetailedTitleModelDL>();
+            //return titles;
+            return titles;
+        }
+
+
+
+
+        public BasicTitleModelDL GetBasicTitle(string tconst)
+        {
+            var basicTitle = _db.TitleBasicss
+                .FirstOrDefault(x => x.Tconst == tconst);
+            //.Where(x => x.Tconst == tconst)
+            //.Include(x => x.TitleType)
+            //.Include(t => t.Tconst)
+            //.ToList();
+            var basic = new BasicTitleModelDL
+            {
+                TitleType = basicTitle.TitleType,
+                PrimaryTitle = basicTitle.PrimaryTitle,
+                StartYear = basicTitle.StartYear,
+                Tconst = tconst
+            };
+
+            return basic;
+        }
+
+        public ListTitleModelDL GetListTitle(string tconst)
+        {
+            return null;
+        }
+
+        public DetailedTitleModelDL GetDetailedTitle(string tconst)
+        {
+
+
+
+            return null;
+        }
+
+
+        public IList<TitleAka> GetTitleAkasByTitle(string tconst)
+        {
+            return _db.TitleAkas.Where(x => x.Tconst == tconst).ToList(); ;
+        }
+
+        
+
+
+        private static  IList<string> GetGenresFromTitle(string tconst)
+        {
+            var genres =
+                new ImdbContext().TitleGenres.Where(x => x.Tconst.Contains(tconst.Trim()))
+            .Select(x => x.GenreName)
+            .ToList();
+            Console.WriteLine(genres.Count());
+            return genres;
+        }
+
+        public IList<TitleBasics> GetTitlesByGenre(string genreName)
+        {
+            IList<TitleGenre> titleGenres =
+                _db.TitleGenres.Where(x => x.GenreName.Contains(genreName)).ToList();
+
+
+            var innerJoin = titleGenres.Join(
+                    _db.TitleBasicss,
+                    genre => genre.Tconst,
+                    title => title.Tconst,
+                    (genre, title) => new TitleBasics
+                    {
+                        Tconst        = title.Tconst,
+                        TitleType     = title.TitleType,
+                        PrimaryTitle  = title.PrimaryTitle,
+                        OriginalTitle = title.OriginalTitle,
+                        IsAdult       = title.IsAdult,
+                        StartYear     = title.StartYear,
+                        EndYear       = title.EndYear,
+                        RunTimeMinutes = title.RunTimeMinutes
+                        //TitleGenres = new List<TitleGenre>() { genre }
+                    }
+                    )
+                    .ToList();
+
+
+            return innerJoin;
+            //return null;
+        }
+
+
+
+
+
+        public IList<TitleBasics> GetEpisodesFromTitle(string parentTconst)
+        {
+            Console.WriteLine(parentTconst);
+            var episodes = _db.TitleEpisodes
+                .Where(e => e.ParentTconst == parentTconst.Trim())
+                //.Where(e => e.ParentTconst == parentTconst)
+                .ToList();
+            foreach (var episode in episodes)
+            {
+                Console.WriteLine(episode.Tconst);
+            }
+            Console.WriteLine(episodes.Count());
+
+            var innerJoin = episodes.Join(
+                    _db.TitleBasicss,
+                    episode => episode.Tconst,
+                    title => title.Tconst,
+                    (episode, title) =>
+                    title
+                   
+                    )
+                    .ToList();
+            Console.WriteLine(episodes.Count());
+            Console.WriteLine(innerJoin.Count());
+
+            return innerJoin;
+        }
+
+
+
+        public NameBasics GetName(string nconst) 
+        {
+            var temp = _db.NameBasicss.FirstOrDefault(x => x.Nconst == nconst);
+            return temp;
+        }
+
+        public IList<NameBasics> GetNames(int page = 0, int pageSize = 20) 
+        {
+            return _db.NameBasicss.Skip(page * pageSize).Take(pageSize).ToList();
+        }
+
+        public IList<TitlePrincipal> GetTitlesPrincipalFromName(string nconst, int page = 0, int pageSize = 20) 
+        {
+            IList<TitlePrincipal> titlePrincipals =
+                _db.TitlePrincipals.Where(x => x.Nconst == nconst).ToList();
+
+            //IList<TitleBasics> titleBasics =
+            //    _db.TitleBasicss.Where(x => x.Tconst == titlePrincipals.Tconst).ToList();
+
+            var innerJoin = titlePrincipals.Join(
+                _db.NameBasicss,
+                principal => principal.Nconst,
+                name => name.Nconst,
+                (principal, name) => new TitlePrincipal
+                {
+                    Tconst = principal.Tconst,
+                    Nconst = principal.Nconst,
+                    Category = principal.Category,
+                }
+                ).Skip(page * pageSize).Take(pageSize).ToList();
+
+            return innerJoin;
+        }
+        public OmdbData GetOmdbData(string tconst)
+        {
+            var temp = _db.omdbDatas.FirstOrDefault(x => x.Tconst == tconst);
+            return temp;
+        }
+
+        public string GetPlot(string tconst)
+        {
+            var temp = GetOmdbData(tconst).Plot;
+            return temp;
+        }
+
+
+
+        //----------------------------------------------------------------------------------------------
+        //             NAME
+        //----------------------------------------------------------------------------------------------
+
+
+        public IList<BasicNameModelDL> GetBasicNames(int page = 0, int pageSize = 20)
+        {
+            var basicnames = _db.NameBasicss
+                .Select(n => new BasicNameModelDL
+                {
+                    Nconst = n.Nconst,
+                    PrimaryName = n.PrimaryName
+                })
+                .Skip(page * pageSize).Take(pageSize).ToList();
+
+            return basicnames;
+        }
+
+        public BasicNameModelDL GetBasicName(string nconst)
+        {
+            var namebasic = _db.NameBasicss.FirstOrDefault(x => x.Nconst == nconst);
+
+            var basicname = new BasicNameModelDL()
+            {
+                Nconst = nconst,
+                PrimaryName = namebasic.PrimaryName
+            };
+
+            return basicname;
+        }
+
+        public IList<DetailedNameModelDL>? GetDetailedNames(int page = 0, int pageSize = 20)
+        {
+            //var names = _db.DetailedNames.Select(n => n).Skip(page * pageSize).Take(pageSize).ToList();
+            //return names;
+            return null;
+        }
+
+        public IList<ListNameModelDL> GetListNames(int page = 0, int pageSize = 20)
+        {
+            var names = GetDetailedNames()
+                .Select(x => new ListNameModelDL()
+                {
+                    Nconst = x.Nconst,
+                    Primaryname = x.Primaryname,
+                    Profession = x.Profession,
+                    KnownForTitle = x.KnownForTitle,
+                    StartYear = x.StartYear,
+                    TitleType = x.TitleType,
+                    Tconst = x.Tconst
+                }).Skip(page * pageSize).Take(pageSize).ToList();
+
+            return names;
+        }
+        public IList<DetailedActorModel> GetDetailedActors(int page = 0, int pageSize = 20)
+        {
+            return null;
+        }
+
+        public IList<DetailedProducerModel> GetDetailedProducers(int page = 0, int pageSize = 20)
+        {
+            return null;
+        }
+
+
+        //----------------------------------------------------------------------------------------------
+        //         NAME HELPERS
+        //----------------------------------------------------------------------------------------------
+
+        public string GetProfession(string nconst)
+        {
+            string temp = "";
+            try { temp = _db.NameProfessions.FirstOrDefault(x => x.Nconst == nconst).Profession; } 
+            catch
+            {
+                return "";
+            }
+            
+            Console.WriteLine(temp);
+            return temp;
+        }
+
+        public string GetKnownFor(string nconst)
+        {
+            string temp = "";
+            try { temp = _db.NameKnownFors.FirstOrDefault(x => x.Nconst == nconst).Tconst; }
+            catch
+            {
+                return "tt10382912";
+            }
             Console.WriteLine(temp);
             return temp;
 
-            
+            return result.ToList();
+
         }
     }
 }
