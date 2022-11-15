@@ -27,8 +27,8 @@ namespace DataLayer
             //Console.WriteLine("-------------------------------------");
             //if (titleType != null)
             //{
-                result = _db.TitleBasicss.Skip(page * pageSize).Take(pageSize).ToList();
-                //Console.WriteLine(result.Count());
+            result = _db.TitleBasicss.Skip(page * pageSize).Take(pageSize).ToList();
+            //Console.WriteLine(result.Count());
             //}
 
             return result;
@@ -191,7 +191,7 @@ namespace DataLayer
             return basicname;
         }
 
-      
+
 
         //public IList<ListNameModelDL> GetListNames(int page = 0, int pageSize = 20)
         //{
@@ -226,12 +226,12 @@ namespace DataLayer
 
 
 
-              //----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------
         //             NAME
         //----------------------------------------------------------------------------------------------
 
 
-     
+
 
 
         public IList<ListNameModelDL> GetListNames(int page = 0, int pageSize = 20)
@@ -430,13 +430,13 @@ namespace DataLayer
             return true;
         }
 
- 
+
 
         public bool CreateUserRating(string username, string tconst, int rating)
         {
             using var db = new ImdbContext();
 
-            Console.WriteLine(username + " " + tconst + " " + rating );
+            Console.WriteLine(username + " " + tconst + " " + rating);
             var result = db.Database.ExecuteSqlInterpolated($"select * from user_rate({username}, {tconst}, {rating})");
             //Console.WriteLine(result);
 
