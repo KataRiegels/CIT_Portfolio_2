@@ -432,9 +432,38 @@ namespace DataLayer
 
  
 
+        public bool CreateUserRating(string username, string tconst, int rating)
+        {
+            using var db = new ImdbContext();
+
+            Console.WriteLine(username + " " + tconst + " " + rating );
+            var result = db.Database.ExecuteSqlInterpolated($"select * from user_rate({username}, {tconst}, {rating})");
+            //Console.WriteLine(result);
 
 
+            return true; // shouldn't return this - fix
 
+        }
+
+        public SearchResult CreateUserSearch(string username, string searchContent, string searchCategory = null)
+        {
+            using var db = new ImdbContext();
+
+            //Console.WriteLine(username + " " + tconst + " " + rating);
+            var result = db.Database.ExecuteSqlInterpolated($"select * from save_string_search({username}, {searchContent}, {searchCategory})");
+            //Console.WriteLine(result);
+            var searchResult = new SearchResult();
+            //if (searchCategory != "titles")
+            //{
+            var titles = db.SearchTitleResults.FromSqlInterpolated($"select * from string_search_titles({searchContent})").ToList();
+            //}
+
+            searchResult.TitleResults = titles;
+
+
+            return searchResult; // shouldn't return this - fix
+
+        }
 
 
 

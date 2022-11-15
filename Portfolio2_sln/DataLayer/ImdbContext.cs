@@ -25,6 +25,9 @@ namespace DataLayer
         public DbSet<User> Users { get; set; }
         public DbSet<BookmarkTitle> BookmarkTitles { get; set; }
         public DbSet<BookmarkName> BookmarkNames { get; set; }
+        public DbSet<UserRating> UserRatings { get; set; }
+
+        public DbSet<SearchTitleModel> SearchTitleResults{ get; set; }
 
         public DbSet<BookmarkTitleTest> BookmarkTitlesTests { get; set; }
 
@@ -165,6 +168,11 @@ namespace DataLayer
             userSearchTable.Property(x => x.Date).HasColumnName("date");
             userSearchTable.Property(x => x.SearchContent).HasColumnName("search_content");
             userSearchTable.Property(x => x.SearchCategory).HasColumnName("search_category");
+
+            var searchResultTitles = modelBuilder.Entity<SearchTitleModel>();
+            searchResultTitles.HasNoKey();
+            searchResultTitles.Property(x => x.Tconst).HasColumnName("tconst");
+            searchResultTitles.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
 
 
 

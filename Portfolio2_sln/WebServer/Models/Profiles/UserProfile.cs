@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DataLayer;
+using DataLayer.Model;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
@@ -21,9 +22,16 @@ namespace WebServer.Models.Profiles
             CreateMap<BookmarkTitle, BookmarkTitleModel>();
             CreateMap<BookmarkTitleCreateModel, BookmarkTitle>();
 
+            CreateMap<SearchResult, UserSearchResultsModel>();
 
             CreateMap<User, UserModel>();
-            CreateMap<UserCreateModel, User>();
+            CreateMap<UserCreateModel, User>(); 
+            
+            CreateMap<UserSearch, UserSearchModel>();
+            CreateMap<UserSearchCreateModel, UserSearch>();
+            
+            CreateMap<UserRating, UserRatingModel>();
+            CreateMap<UserRatingCreateModel, UserRating>();
         }
     }
 }
