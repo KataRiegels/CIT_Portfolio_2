@@ -34,11 +34,11 @@ namespace WebServer.Controllers
 
 
         [HttpGet(Name = nameof(GetUsers))]
-        public IActionResult GetUsers()
+        public IActionResult GetUsers(int page = 0, int pageSize = 20)
         {
 
             IEnumerable<UserModel> users =
-                _dataService.GetUsers().Select(x => CreateUserModel(x));
+                _dataService.GetUsers(page, pageSize).Select(x => CreateUserModel(x));
 
             return Ok(users);
         }

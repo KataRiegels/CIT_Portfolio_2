@@ -18,14 +18,13 @@ namespace DataLayer
             TITLES
           ------------*/
         // can currently get with one query
-        public IList<TitleBasics> GetTitles(string? titleType = null)
+        public IList<TitleBasics> GetTitles(string? titleType = null, int page = 0, int pageSize = 20)
         {
-
-            var result = _db.TitleBasicss.ToList();
+            var result = _db.TitleBasicss.Skip(page * pageSize).Take(pageSize).ToList();
             Console.WriteLine("-------------------------------------");
             if (titleType != null)
             {
-                result = _db.TitleBasicss.Where(x => x.TitleType == (titleType)).ToList();
+                result = _db.TitleBasicss.Where(x => x.TitleType == (titleType)).Skip(page * pageSize).Take(pageSize).ToList();
                 Console.WriteLine(result.Count());
             }
 
@@ -39,7 +38,7 @@ namespace DataLayer
             return temp;
         }
 
-        public IList<BasicTitleModelDL> GetBasicTitles()
+        public IList<BasicTitleModelDL> GetBasicTitles(int page = 0, int pageSize = 20)
         {
             Console.WriteLine(_db.TitleBasicss.First().Tconst);
             var basicTitles = _db.TitleBasicss
@@ -48,13 +47,13 @@ namespace DataLayer
                     TitleType = t.TitleType, 
                     PrimaryTitle = t.PrimaryTitle,
                     StartYear = t.StartYear
-                }) 
-                .ToList();
+                })
+                .Skip(page * pageSize).Take(pageSize).ToList();
 
             return basicTitles;
         }
 
-        public IList<ListTitleModelDL> GetListTitles()
+        public IList<ListTitleModelDL> GetListTitles(int page, int pageSize)
         {
             //var titles = GetDetailedTitles()
             //    .Select(x => new ListTitleModelDL()
@@ -67,7 +66,7 @@ namespace DataLayer
             //        Rating = x.rating,
             //        Genres = x.genre
 
-            //    }).Take(20).ToList();
+            //    }).Skip(page * pageSize).Take(pageSize)..ToList();
             //return titles;
             return null;
         }
@@ -89,7 +88,7 @@ namespace DataLayer
 
 
 
-        public IList<DetailedTitleModelDL>? GetDetailedTitles()
+        public IList<DetailedTitleModelDL>? GetDetailedTitles(int page, int pageSize)
 
                     /*
             fullview.where(tconst = tconst).select(genre).add(list)
@@ -117,9 +116,9 @@ namespace DataLayer
                     poster = model.First().poster,
                     Tconst = key,
                     //Tconst = obj.Tconst,
-                    genre =  model.Select(m => m.genre).Distinct().ToList()
+                    genre =  model.Select(m => m.genre).Distinct().Skip(page * pageSize).Take(pageSize).ToList()
                 }
-                ).Take(20).ToList();
+                ).Skip(page * pageSize).Take(pageSize).ToList();
                 
                 //.AsEnumerable(
                     
@@ -265,12 +264,12 @@ namespace DataLayer
             return temp;
         }
 
-        public IList<NameBasics> GetNames() 
+        public IList<NameBasics> GetNames(int page = 0, int pageSize = 20) 
         {
-            return _db.NameBasicss.ToList();
+            return _db.NameBasicss.Skip(page * pageSize).Take(pageSize).ToList();
         }
 
-        public IList<TitlePrincipal> GetTitlesPrincipalFromName(string nconst) 
+        public IList<TitlePrincipal> GetTitlesPrincipalFromName(string nconst, int page = 0, int pageSize = 20) 
         {
             IList<TitlePrincipal> titlePrincipals =
                 _db.TitlePrincipals.Where(x => x.Nconst == nconst).ToList();
@@ -288,7 +287,7 @@ namespace DataLayer
                     Nconst = principal.Nconst,
                     Category = principal.Category,
                 }
-                ).ToList();
+                ).Skip(page * pageSize).Take(pageSize).ToList();
 
             return innerJoin;
         }
@@ -311,7 +310,7 @@ namespace DataLayer
         //----------------------------------------------------------------------------------------------
 
 
-        public IList<BasicNameModelDL> GetBasicNames()
+        public IList<BasicNameModelDL> GetBasicNames(int page = 0, int pageSize = 20)
         {
             var basicnames = _db.NameBasicss
                 .Select(n => new BasicNameModelDL
@@ -319,7 +318,7 @@ namespace DataLayer
                     Nconst = n.Nconst,
                     PrimaryName = n.PrimaryName
                 })
-                .ToList();
+                .Skip(page * pageSize).Take(pageSize).ToList();
 
             return basicnames;
         }
@@ -337,14 +336,14 @@ namespace DataLayer
             return basicname;
         }
 
-        public IList<DetailedNameModelDL>? GetDetailedNames()
+        public IList<DetailedNameModelDL>? GetDetailedNames(int page = 0, int pageSize = 20)
         {
-            //var names = _db.DetailedNames.Select(n => n).ToList();
+            //var names = _db.DetailedNames.Select(n => n).Skip(page * pageSize).Take(pageSize).ToList();
             //return names;
             return null;
         }
 
-        public IList<ListNameModelDL> GetListNames()
+        public IList<ListNameModelDL> GetListNames(int page = 0, int pageSize = 20)
         {
             var names = GetDetailedNames()
                 .Select(x => new ListNameModelDL()
@@ -356,18 +355,18 @@ namespace DataLayer
                     StartYear = x.StartYear,
                     TitleType = x.TitleType,
                     Tconst = x.Tconst
-                }).ToList();
+                }).Skip(page * pageSize).Take(pageSize).ToList();
 
             
 
             return names;
         }
-        public IList<DetailedActorModel> GetDetailedActors()
+        public IList<DetailedActorModel> GetDetailedActors(int page = 0, int pageSize = 20)
         {
             return null;
         }
 
-        public IList<DetailedProducerModel> GetDetailedProducers()
+        public IList<DetailedProducerModel> GetDetailedProducers(int page = 0, int pageSize = 20)
         {
             return null;
         }
@@ -411,9 +410,9 @@ namespace DataLayer
             return _db.Users.FirstOrDefault(x => x.Username == username);
         }
 
-        public IList<User> GetUsers()
+        public IList<User> GetUsers(int page = 0, int pageSize = 20)
         {
-            return _db.Users.ToList();
+            return _db.Users.Skip(page * pageSize).Take(pageSize).ToList();
         }
 
         public void CreateUser(string username, string password, string birthYear, string email)

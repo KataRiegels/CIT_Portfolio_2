@@ -33,10 +33,10 @@ namespace WebServer.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetNames()
+        public IActionResult GetNames(int page = 0, int pageSize = 20)
         {
             IEnumerable<NameModel> names =
-                _dataService.GetNames().Select(x => CreateNameModel(x));
+                _dataService.GetNames(page, pageSize).Select(x => CreateNameModel(x));
             return Ok(names);
         }
 
@@ -54,10 +54,10 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("list")]
-        public IActionResult GetListNames()
+        public IActionResult GetListNames(int page = 0, int pageSize = 20)
         {
             IEnumerable<ListNameModel> names =
-              _dataService.GetListNames().Select(x => CreateListNameModel(x));
+              _dataService.GetListNames(page, pageSize).Select(x => CreateListNameModel(x));
 
             if(names == null)
             {
@@ -68,10 +68,10 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("detailed")]
-        public IActionResult GetDetailedNames()
+        public IActionResult GetDetailedNames(int page = 0, int pageSize = 20)
         {
             IEnumerable<DetailedNameModel> names =
-                _dataService.GetDetailedNames().Select(x => CreateDetailedNameModel(x));
+                _dataService.GetDetailedNames(page, pageSize).Select(x => CreateDetailedNameModel(x));
 
             if(names == null)
             {

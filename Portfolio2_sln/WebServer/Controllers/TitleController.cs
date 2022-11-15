@@ -29,11 +29,11 @@ namespace WebServer.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet(Name = nameof(GetTitles))]
-        public IActionResult GetTitles(string? titleType = null)
+        [HttpGet]
+        public IActionResult GetTitles(string? titleType = null, int page = 0, int pageSize = 20)
         {
             IEnumerable<TitleModel> titles =
-                _dataService.GetTitles(titleType).Select(x => CreateTitleModel(x));
+                _dataService.GetTitles(titleType, page, pageSize).Select(x => CreateTitleModel(x));
 
 
             return Ok(titles);
@@ -65,21 +65,21 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("basics", Name = nameof(GetBasicTitles))]
-        public IActionResult GetBasicTitles()
+        public IActionResult GetBasicTitles(int page = 0, int pageSize = 20)
         {
 
             IEnumerable<BasicTitleModel> titles =
-                _dataService.GetBasicTitles().Select(x => CreateBasicTitleModel(x));
+                _dataService.GetBasicTitles(page, pageSize).Select(x => CreateBasicTitleModel(x));
 
 
             return Ok(titles);
         }
 
         [HttpGet("list")]
-        public IActionResult GetListTitles()
+        public IActionResult GetListTitles(int page = 0, int pageSize = 20)
         {   
             IEnumerable<ListTitleModel> titles =
-                _dataService.GetListTitles().Select(x => CreateListTitleModel(x));
+                _dataService.GetListTitles(page, pageSize).Select(x => CreateListTitleModel(x));
 
             if(titles == null)
             {
@@ -121,10 +121,10 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("PrincipalTitles/{nconst}")]
-        public IActionResult GetTitlesPrincipalFromName(string nconst)
+        public IActionResult GetTitlesPrincipalFromName(string nconst, int page = 0, int pageSize = 20)
         {
             IEnumerable<TitlePrincipalModel> titles =
-                _dataService.GetTitlesPrincipalFromName(nconst).Select(x => CreateTitlePrincipalModel(x));
+                _dataService.GetTitlesPrincipalFromName(nconst, page, pageSize).Select(x => CreateTitlePrincipalModel(x));
 
             if (titles == null)
             {
@@ -153,14 +153,14 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("detailed")]
-        public IActionResult GetDetailedTitles()
+        public IActionResult GetDetailedTitles(int page = 0, int pageSize = 20)
         {
 
             //IEnumerable<DetailedTitleModel>? titles =
 
             //_dataService.GetDetailedTitles().Select(x => CreateDetailedTitleModel(x));
             var titles2 =
-            _dataService.GetDetailedTitles();
+            _dataService.GetDetailedTitles(page, pageSize);
             Console.WriteLine("skdjflksjdflskflksjdflksjfdlskjflskjdf");
                //var titles = titles2.Select(x => CreateDetailedTitleModel(x));
                var titles = titles2.Select(x => x);

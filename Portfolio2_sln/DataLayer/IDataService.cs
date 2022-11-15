@@ -12,19 +12,19 @@ namespace DataLayer
 {
     public interface IDataService
     {
-        IList<TitleBasics>  GetTitles(string? titleType);
+        IList<TitleBasics>  GetTitles(string? titleType, int page, int pageSize);
         TitleBasics GetTitle(string tconst);
-        IList<TitlePrincipal> GetTitlesPrincipalFromName(string nconst);
+        IList<TitlePrincipal> GetTitlesPrincipalFromName(string nconst, int page, int pageSize);
         OmdbData GetOmdbData(string tconst);
         string GetPlot(string tconst);
 
-        IList<NameBasics> GetNames();
+        IList<NameBasics> GetNames(int page, int pageSize);
         NameBasics GetName(string nconst);
 
-        IList<DetailedNameModelDL> GetDetailedNames();
+        IList<DetailedNameModelDL> GetDetailedNames(int page, int pageSize);
 
         public User GetUser(string username);
-        public IList<User> GetUsers();
+        public IList<User> GetUsers(int page, int pageSize);
 
         public void CreateUser(string username, string password, string birthYear, string email);
 
@@ -42,10 +42,10 @@ namespace DataLayer
         //---------------------------------------------------------------------------------------------
         //                    NAME
         //---------------------------------------------------------------------------------------------
-        public IList<BasicNameModelDL> GetBasicNames();
-        public IList<ListNameModelDL> GetListNames();
-        public IList<DetailedActorModel> GetDetailedActors();
-        public IList<DetailedProducerModel> GetDetailedProducers();
+        public IList<BasicNameModelDL> GetBasicNames(int page, int pageSize);
+        public IList<ListNameModelDL> GetListNames(int page, int pageSize);
+        public IList<DetailedActorModel> GetDetailedActors(int page, int pageSize);
+        public IList<DetailedProducerModel> GetDetailedProducers(int page, int pageSize);
         //public BasicNameModelDL GetBasicName(string nconst);
         //public DetailedActorModel GetDetailedActor(string nconst);
         //public DetailedProducerModel GetDetailedProducer(string nconst);
@@ -65,9 +65,9 @@ namespace DataLayer
         public IList<TitleAka> GetTitleAkasByTitle(string tconst);
         //IList<TitleBasics> GetTitlesByGenre(string genreName);
 
-        public IList<BasicTitleModelDL> GetBasicTitles();
-        public IList<ListTitleModelDL> GetListTitles();
-        public IList<DetailedTitleModelDL> GetDetailedTitles();
+        public IList<BasicTitleModelDL> GetBasicTitles(int page, int pageSize);
+        public IList<ListTitleModelDL> GetListTitles(int page, int pageSize);
+        public IList<DetailedTitleModelDL> GetDetailedTitles(int page, int pageSize);
         public BasicTitleModelDL GetBasicTitle(string tconst);
         public ListTitleModelDL GetListTitle(string tconst);
         public DetailedTitleModelDL GetDetailedTitle(string tconst);
