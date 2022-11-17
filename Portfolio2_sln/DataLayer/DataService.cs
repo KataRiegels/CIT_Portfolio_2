@@ -20,16 +20,10 @@ namespace DataLayer
         /* ------------
             TITLES
           ------------*/
-        // can currently get with one query
         public IList<TitleBasics> GetTitles(int page = 0, int pageSize = 20)
         {
             var result = _db.TitleBasicss.Skip(page * pageSize).Take(pageSize).ToList();
-            //Console.WriteLine("-------------------------------------");
-            //if (titleType != null)
-            //{
             result = _db.TitleBasicss.Skip(page * pageSize).Take(pageSize).ToList();
-            //Console.WriteLine(result.Count());
-            //}
 
             return result;
         }
@@ -45,10 +39,6 @@ namespace DataLayer
         {
             var basicTitle = _db.TitleBasicss
                 .FirstOrDefault(x => x.Tconst.Trim() == tconst.Trim());
-            //.Where(x => x.Tconst == tconst)
-            //.Include(x => x.TitleType)
-            //.Include(t => t.Tconst)
-            //.ToList();
             var basic = new BasicTitleModelDL
             {
                 TitleType = basicTitle.TitleType,
@@ -123,7 +113,6 @@ namespace DataLayer
 
 
             var temp = new List<DetailedTitleModelDL>();
-            //return titles;
             return titles;
         }
 
@@ -137,8 +126,6 @@ namespace DataLayer
 
         public DetailedTitleModelDL GetDetailedTitle(string tconst)
         {
-
-
 
             return null;
         }
@@ -315,7 +302,6 @@ namespace DataLayer
             var names = _db.FullViewNames
 
                 .ToList()
-                //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
                 .GroupBy(t => t.Nconst, (key, model) => new DetailedNameModelDL
                 {
                     Nconst = key,
@@ -440,7 +426,6 @@ namespace DataLayer
             var result = db.Database.ExecuteSqlInterpolated($"select * from user_rate({username}, {tconst}, {rating})");
             //Console.WriteLine(result);
 
-
             return true; // shouldn't return this - fix
 
         }
@@ -449,19 +434,15 @@ namespace DataLayer
         {
             using var db = new ImdbContext();
 
-            //Console.WriteLine(username + " " + tconst + " " + rating);
             var result = db.Database.ExecuteSqlInterpolated($"select * from save_string_search({username}, {searchContent}, {searchCategory})");
-            //Console.WriteLine(result);
             var searchResult = new SearchResult();
-            //if (searchCategory != "titles")
-            //{
             var titles = db.SearchTitleResults.FromSqlInterpolated($"select * from string_search_titles({searchContent})").ToList();
             //}
 
             searchResult.TitleResults = titles;
 
 
-            return searchResult; // shouldn't return this - fix
+            return searchResult; // shouldn't return this
 
         }
 
