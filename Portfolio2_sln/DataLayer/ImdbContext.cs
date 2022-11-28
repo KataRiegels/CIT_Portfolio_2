@@ -10,8 +10,8 @@ namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
-        const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
-        //const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
+        //const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
+        const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
         //public DbSet<DetailedTitleModelDL> DetailedTitles { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }

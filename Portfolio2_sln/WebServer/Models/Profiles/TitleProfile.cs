@@ -17,7 +17,7 @@ namespace WebServer.Models.Profiles
         {
             CreateMap<BasicTitleModelDL, BasicTitleModel>();
             CreateMap<ListTitleModelDL, ListTitleModel>();
-            //CreateMap<DetailedTitleModelDL, DetailedTitleModel>();
+            CreateMap<DetailedTitleModelDL, DetailedTitleModel>();
 
             CreateMap<TitleBasics, TitleModel>();
 

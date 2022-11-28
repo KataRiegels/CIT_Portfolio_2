@@ -69,11 +69,11 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("list")]
-        public IActionResult GetListNames()
+        public IActionResult GetListNames(int page = 0, int pagesize = 20)
         {
             //IEnumerable<ListNameModelDL> names =
             IEnumerable<ListNameModel> names =
-              _dataService.GetListNames().Select(x => CreateListNameModel(x));
+              _dataService.GetListNames(page, pagesize).Select(x => CreateListNameModel(x));
               //_dataService.GetListNames();
 
             if(names == null)
