@@ -10,8 +10,8 @@ namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
-        //const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
-        const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
+        const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
+        //const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
         //public DbSet<DetailedTitleModelDL> DetailedTitles { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }
@@ -28,6 +28,7 @@ namespace DataLayer
         public DbSet<UserRating> UserRatings { get; set; }
 
         public DbSet<SearchTitleModel> SearchTitleResults{ get; set; }
+        public DbSet<SearchNameModel> SearchNameResults{ get; set; }
 
         public DbSet<BookmarkTitleTest> BookmarkTitlesTests { get; set; }
 
@@ -174,7 +175,10 @@ namespace DataLayer
             searchResultTitles.Property(x => x.Tconst).HasColumnName("tconst");
             searchResultTitles.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
 
-
+            var searchResultNames = modelBuilder.Entity<SearchNameModel>();
+            searchResultNames.HasNoKey();
+            searchResultNames.Property(x => x.Nconst).HasColumnName("nconst");
+            searchResultNames.Property(x => x.PrimaryName).HasColumnName("primaryname");
 
             // TITLES
             var titleAkaTable = modelBuilder.Entity<TitleAka>();

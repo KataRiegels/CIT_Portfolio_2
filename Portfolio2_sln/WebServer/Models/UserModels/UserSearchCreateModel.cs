@@ -4,6 +4,6 @@
     {
         //public string Username { get; set; }
         public string SearchContent { get; set; }
-        public string SearchCategory { get; set; }
+        public string? SearchCategory { get; set; }
     }
 }

@@ -70,8 +70,11 @@ namespace WebServer.Controllers
         [HttpGet("list")]
         public IActionResult GetListTitles(int page = 0, int pageSize = 20)
         {
-            IEnumerable<ListTitleModel> titles =
-                _dataService.GetListTitles(page, pageSize).Select(x => CreateListTitleModel(x));
+            Console.WriteLine(page);
+            //IEnumerable<ListTitleModel> titles =
+            IEnumerable<ListTitleModelDL> titles =
+                _dataService.GetListTitles(page, pageSize);
+                //.Select(x => CreateListTitleModel(x));
 
             if (titles == null)
             {
@@ -100,7 +103,7 @@ namespace WebServer.Controllers
 
 
         [HttpGet("detailed")]
-        public IActionResult GetDetailedTitles(int page = 0, int pageSize = 20)
+        public IActionResult GetDetailedTitles(int page = 0, int pageSize = 2)
         {
 
             //IEnumerable<DetailedTitleModel>? titles =
@@ -151,6 +154,7 @@ namespace WebServer.Controllers
 
         public ListTitleModel CreateListTitleModel(ListTitleModelDL titleBasics)
         {
+            Console.WriteLine(titleBasics);
             var model = _mapper.Map<ListTitleModel>(titleBasics);
             //model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
 

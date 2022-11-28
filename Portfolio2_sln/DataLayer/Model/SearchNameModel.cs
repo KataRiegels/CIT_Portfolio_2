@@ -8,7 +8,7 @@ namespace DataLayer.Model
 {
     public class SearchNameModel
     {
-        public string Tconst { get; set; }
-        public string PrimaryTitle { get; set; }
+        public string Nconst { get; set; }
+        public string? PrimaryName { get; set; }
     }
 }

@@ -136,15 +136,17 @@ namespace WebServer.Controllers
         }
 
         [HttpPost("{username}/search")]
-        public IActionResult CreateUserSearch(string username, UserSearchCreateModel search)
+        //public IActionResult CreateUserSearch(string username, UserSearchCreateModel search)
+        public IActionResult CreateUserSearch(string username, string searchContent, string? searchCategory = null)
         {
             //var searching = _mapper.Map<SearchResult>(search);
             //Console.WriteLine(rate.Rating);
             //UserSearchResultsModel results = _dataService.CreateUserSearch(username, search.SearchContent, search.SearchCategory);
-            var results = _dataService.CreateUserSearch(username, search.SearchContent, search.SearchCategory);
-            var temp = _mapper.Map<UserSearchResultsModel>(results);
+            var results = _dataService.CreateUserSearch(username, searchContent, searchCategory);
+            //var temp = _mapper.Map<UserSearchResultsModel>(results);
             //return CreatedAtRoute(null, CreateUserSearchModel(searching));
-            return CreatedAtRoute(null, temp);
+            return CreatedAtRoute(null, results);
+            //return CreatedAtRoute(null, temp);
         }
 
 

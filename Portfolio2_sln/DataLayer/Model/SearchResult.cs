@@ -8,7 +8,10 @@ namespace DataLayer.Model
 {
     public class SearchResult
     {
-        public IList<SearchNameModel>? NameResults { get; set; }
-        public IList<SearchTitleModel>? TitleResults { get; set; }
+        public IList<ListNameModelDL>? NameResults { get; set; }
+        public IList<ListTitleModelDL>? TitleResults { get; set; }
+
+        //public IList<SearchNameModel>? NameResults { get; set; }
+        //public IList<SearchTitleModel>? TitleResults { get; set; }
     }
 }
