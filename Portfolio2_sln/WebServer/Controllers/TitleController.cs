@@ -72,9 +72,10 @@ namespace WebServer.Controllers
         {
             Console.WriteLine(page);
             //IEnumerable<ListTitleModel> titles =
-            IEnumerable<ListTitleModelDL> titles =
-                _dataService.GetListTitles(page, pageSize);
-                //.Select(x => CreateListTitleModel(x));
+            IEnumerable<ListTitleModel> titles =
+                _dataService.GetListTitles(page, pageSize)
+                .Select(x => CreateListTitleModel(x));
+
 
             if (titles == null)
             {
@@ -154,9 +155,11 @@ namespace WebServer.Controllers
 
         public ListTitleModel CreateListTitleModel(ListTitleModelDL titleBasics)
         {
-            Console.WriteLine(titleBasics);
+
+            //var model1 = _mapper.Map<BasicTitleModel>(titleBasics.BasicTitle);
             var model = _mapper.Map<ListTitleModel>(titleBasics);
-            //model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
+            //model.BasicTitle.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.BasicTitle.Tconst });
+            model.BasicTitle = CreateBasicTitleModel(titleBasics.BasicTitle);
 
             return model;
         }
