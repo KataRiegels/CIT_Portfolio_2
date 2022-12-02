@@ -58,6 +58,7 @@ namespace WebServer.Controllers
         [HttpGet("{nconst}", Name = nameof(GetName))]
         public IActionResult GetName(string nconst)
         {
+            Console.WriteLine("ran Get for GetName");
             NameModel name = CreateNameModel(_dataService.GetName(nconst));
 
             if(name == null)
@@ -71,9 +72,12 @@ namespace WebServer.Controllers
         [HttpGet("list")]
         public IActionResult GetListNames(int page = 0, int pagesize = 20)
         {
+            Console.WriteLine("dfkldfk");
+
             //IEnumerable<ListNameModelDL> names =
             IEnumerable<ListNameModel> names =
-              _dataService.GetListNames(page, pagesize).Select(x => CreateListNameModel(x));
+              _dataService.GetListNames(page, pagesize)
+              .Select(x => CreateListNameModel(x));
               //_dataService.GetListNames();
 
             if(names == null)

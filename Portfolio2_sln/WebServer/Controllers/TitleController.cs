@@ -42,6 +42,7 @@ namespace WebServer.Controllers
         [HttpGet("{tconst}", Name = nameof(GetTitle))]
         public IActionResult GetTitle(string tconst)
         {
+            
             //var title = _dataService.GetTitle(tconst);
             TitleModel title = CreateTitleModel(_dataService.GetTitle(tconst));
 
@@ -158,7 +159,7 @@ namespace WebServer.Controllers
 
             //var model1 = _mapper.Map<BasicTitleModel>(titleBasics.BasicTitle);
             var model = _mapper.Map<ListTitleModel>(titleBasics);
-            //model.BasicTitle.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.BasicTitle.Tconst });
+            model.BasicTitle.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.BasicTitle.Tconst });
             model.BasicTitle = CreateBasicTitleModel(titleBasics.BasicTitle);
 
             return model;

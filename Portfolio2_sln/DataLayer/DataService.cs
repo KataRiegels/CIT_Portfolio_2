@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataLayer
@@ -241,7 +242,7 @@ namespace DataLayer
 
         public IList<ListNameModelDL> GetListNames(int page = 0, int pageSize = 20)
         {
-
+            Console.WriteLine("before KnownFor");
             var query =
                 _db.NameBasicss.ToList().GroupJoin(_db.NameKnownFors,
                        basics => basics.Nconst,
@@ -267,16 +268,22 @@ namespace DataLayer
                         //    KnownForTitle = knownFors.Select(x => x.Tconst)
                         //})
                         ;
+            Console.WriteLine("before names2");
 
             var names2 = query.ToList()
                 .GroupBy(t => t.Nconst, (key, model) => new ListNameModelDL
                 {
+                    BasicName = new BasicNameModelDL
+                    { 
                     Nconst = key,
                     PrimaryName = model.First().PrimaryName,
+                    },
+
                     KnownForTitleBasics = model.First().KnownForTitle.Any() ? GetBasicTitle(model.First().KnownForTitle.First()) : null
                 }
                 ).Skip(page * pageSize).Take(pageSize).ToList();
 
+            Console.WriteLine("after names2");
             return names2;
 
 
@@ -452,6 +459,7 @@ namespace DataLayer
         {
             using var db = new ImdbContext();
 
+            Console.WriteLine("dsfsdfs");
             var result = db.Database.ExecuteSqlInterpolated($"select * from save_string_search({username}, {searchContent}, {searchCategory})");
             var searchResult = new SearchResult();
             var titles = db.SearchTitleResults.FromSqlInterpolated($"select * from string_search_titles({searchContent})").ToList();
@@ -499,12 +507,15 @@ namespace DataLayer
 
             //    }).Skip(page * pageSize).Take(pageSize).ToList();
 
+            /*
+             
             var listTitles1 = _db.FullViewTitles.ToList()
                 .GroupJoin(titles,  //inner sequence
                                 std => std.Tconst, //outerKeySelector 
                                 s => s.Tconst,     //innerKeySelector
                                 (std, s) => std
                                 );
+
             var listTitles = listTitles1
 
                 .ToList()
@@ -527,8 +538,9 @@ namespace DataLayer
                 })
                 //.Skip(page * pageSize).Take(pageSize)
                 .ToList();
+             */
 
-
+            var listTitles = GetTitlesForSearch(titles);
             //Console.WriteLine(_db.TitleBasicss.First().Tconst);
 
             //var listTitles = ""];
@@ -540,6 +552,41 @@ namespace DataLayer
 
         }
 
+
+        public IList<ListTitleModelDL> GetTitlesForSearch (List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
+        {
+            var listTitles1 = _db.FullViewTitles.ToList()
+                .GroupJoin(searchedTitles,  //inner sequence
+                    std => std.Tconst, //outerKeySelector 
+                    s => s.Tconst,     //innerKeySelector
+                    (std, s) => std
+                    );
+
+            var listTitles = listTitles1
+
+                .ToList()
+                .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
+                {
+
+                    BasicTitle = new BasicTitleModelDL
+                    {
+                        Tconst = model.First().Tconst,
+                        PrimaryTitle = model.First().PrimaryTitle,
+                        StartYear = model.First().startyear,
+                        TitleType = test(model.First())
+                        //TitleType = x.titletype,
+                    },
+                    //runtime = x.runtime,
+                    //Rating = x.rating,
+                    //Genres = x.genre,
+
+
+                })
+                .Skip(page * pageSize).Take(pageSize)
+                .ToList();
+
+            return listTitles;
+        }
 
 
 

@@ -7,6 +7,7 @@ using DataLayer.Models.UserModels;
 using WebServer.Models.TitleModels;
 using WebServer.Models.UserModels;
 using WebServer.Controllers;
+using WebServer.Controllers;
 using Microsoft.AspNetCore.Mvc;
 //using WebServer.Models;
 
@@ -143,6 +144,9 @@ namespace WebServer.Controllers
             //Console.WriteLine(rate.Rating);
             //UserSearchResultsModel results = _dataService.CreateUserSearch(username, search.SearchContent, search.SearchCategory);
             var results = _dataService.CreateUserSearch(username, searchContent, searchCategory);
+            var titleResults = results.TitleResults; 
+            //Select(x => TitleController.CreateListTitleModel(x.TitleResults));
+            //TitleController.CreateBasicTitleModel(results.TitleResults);
             //var temp = _mapper.Map<UserSearchResultsModel>(results);
             //return CreatedAtRoute(null, CreateUserSearchModel(searching));
             return CreatedAtRoute(null, results);
@@ -150,6 +154,27 @@ namespace WebServer.Controllers
         }
 
 
+        public UserSearchResultsModel CreateUserSearchResultsModel(SearchResult searchResult)
+        {
+            //var temp = searchResult.TitleResults
+            //    .Select(x => TitleController.CreateListTitleModel(x));
+            var model = _mapper.Map<UserSearchResultsModel>(searchResult);
+            var titles = model.TitleResults;
+            return model;
+        }
+
+   
+
+        //public UserSearchModel CreateUserSearchModel(UserSearch search)
+        public UserSearchModel CreateUserSearchModel(UserSearch search)
+        {
+            var model = _mapper.Map<UserSearchModel>(search);
+            
+            //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
+            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
+
+            return model;
+        }
 
         public UserRatingModel CreateUserRatingModel(UserRating rating)
         {
@@ -160,15 +185,6 @@ namespace WebServer.Controllers
             return model;
         }
 
-
-        public UserSearchModel CreateUserSearchModel(UserSearch search)
-        {
-            var model = _mapper.Map<UserSearchModel>(search);
-            //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
-            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
-
-            return model;
-        }
 
 
         //public UserSearchModel CreateUserSearchModel(UserSearch search)
