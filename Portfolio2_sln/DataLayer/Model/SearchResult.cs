@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace DataLayer.Model
 {
     public class SearchResult
-    {
+    {   
+        public string SearchId { get; set; }
         public IList<ListNameModelDL>? NameResults { get; set; }
         public IList<ListTitleModelDL>? TitleResults { get; set; }
 

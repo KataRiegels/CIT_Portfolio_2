@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 
 using DataLayer.Models.TitleModels;
 using Microsoft.EntityFrameworkCore.Query;
-using System.Security.Cryptography.X509Certificates;
 using WebServer.Models.NameModels;
 
 namespace WebServer.Controllers
@@ -187,21 +186,6 @@ namespace WebServer.Controllers
 
 
 
-
-        public OmdbModel CreateOmdbModel(OmdbData omdb)
-        {
-            var model = _mapper.Map<OmdbModel>(omdb);
-            return model;
-        }
-
-        public TitlePrincipalModel CreateTitlePrincipalModel(TitlePrincipal titleprincipal)
-        {
-            var model = _mapper.Map<TitlePrincipalModel>(titleprincipal);
-            //model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleprincipal.Tconst });
-            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
-
-            return model;
-        }
     }
 }
      

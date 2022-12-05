@@ -13,14 +13,19 @@ namespace DataLayer.Model
         public BasicTitleModelDL? BasicTitle { get; set; }
         
         
-        // If it's a movie
-        public int? runtime { get; set; }
+        // If it's a movie/tv series ....
+        public int? Runtime { get; set; }
         public double? Rating { get; set; }
         public IList<string>? Genres { get; set; }
 
         // If it's an episode
 
-        public ListTitleModelDL? ParentTitle { get; set; }
+        public BasicTitleModelDL? ParentTitle { get; set; }
+
+
+
+
+        //public ListTitleModelDL? ParentTitle { get; set; }
         //public string? PrimaryTitle { get; set; }
         //public string? StartYear { get; set; }
         //public string? TitleType { get; set; }

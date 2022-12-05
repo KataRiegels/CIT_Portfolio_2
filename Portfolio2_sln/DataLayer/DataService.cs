@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -38,14 +39,17 @@ namespace DataLayer
 
         public BasicTitleModelDL GetBasicTitle(string tconst)
         {
-            var basicTitle = _db.TitleBasicss
+            using var db = new ImdbContext();
+            Console.WriteLine(tconst);
+            //var basicTitle = _db.TitleBasicss
+            var basicTitle = db.TitleBasicss
                 .FirstOrDefault(x => x.Tconst.Trim() == tconst.Trim());
             var basic = new BasicTitleModelDL
             {
+                Tconst = tconst,
                 TitleType = basicTitle.TitleType,
                 PrimaryTitle = basicTitle.PrimaryTitle,
                 StartYear = basicTitle.StartYear,
-                Tconst = tconst
             };
 
             return basic;
@@ -53,6 +57,7 @@ namespace DataLayer
 
         public IList<BasicTitleModelDL> GetBasicTitles(int page = 0, int pageSize = 20)
         {
+
             Console.WriteLine(_db.TitleBasicss.First().Tconst);
             var basicTitles = _db.TitleBasicss
                 .Select(t => new BasicTitleModelDL
@@ -68,12 +73,6 @@ namespace DataLayer
         }
 
 
-        private string test(FullTitleViewModel x)
-        {
-            Console.WriteLine(x.PrimaryTitle);
-            return "hello";
-        }
-
         public IList<ListTitleModelDL> GetListTitles(int page = 0, int pageSize = 1)
         {
 
@@ -87,8 +86,8 @@ namespace DataLayer
                     {
                         Tconst = model.First().Tconst,
                         PrimaryTitle = model.First().PrimaryTitle,
-                        StartYear = model.First().startyear,
-                        TitleType = test(model.First())
+                        StartYear = model.First().StartYear,
+                        TitleType = model.First().TitleType
                         //TitleType = x.titletype,
                     },
                     //runtime = x.runtime,
@@ -116,15 +115,15 @@ namespace DataLayer
                 .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleModelDL
                 {
                     PrimaryTitle = model.First().PrimaryTitle,
-                    startyear = model.First().startyear,
-                    titletype = model.First().titletype,
-                    runtime = model.First().runtime,
-                    rating = model.First().rating,
-                    plot = model.First().plot,
-                    poster = model.First().poster,
+                    startyear = model.First().StartYear,
+                    titletype = model.First().TitleType,
+                    runtime = model.First().Runtime,
+                    rating = model.First().Rating,
+                    plot = model.First().Plot,
+                    poster = model.First().Poster,
                     Tconst = key,
                     //Tconst = obj.Tconst,
-                    genre = model.Select(m => m.genre).Distinct()
+                    genre = model.Select(m => m.Genre).Distinct()
                     .Skip(page * pageSize).Take(pageSize).ToList()
                 }
                 ).Skip(page * pageSize).Take(pageSize).ToList();
@@ -458,111 +457,41 @@ namespace DataLayer
         public SearchResult CreateUserSearch(string username, string searchContent, string searchCategory = null)
         {
             using var db = new ImdbContext();
-
-            Console.WriteLine("dsfsdfs");
-            var result = db.Database.ExecuteSqlInterpolated($"select * from save_string_search({username}, {searchContent}, {searchCategory})");
+            var searchResults = db.UserSearches.FromSqlInterpolated($"SELECT * FROM save_string_search({username}, {searchContent}, {searchCategory})");
+            
+            Console.WriteLine(searchResults.FirstOrDefault().SearchId);
+            
             var searchResult = new SearchResult();
             var titles = db.SearchTitleResults.FromSqlInterpolated($"select * from string_search_titles({searchContent})").ToList();
-            var names = db.SearchNameResults.FromSqlInterpolated($"select * from string_search_names({searchContent})").ToList();
-            Console.WriteLine(names);
-
-            //var listTitles = db.FullViewTitles
-            //    .ToList()
-            //    .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
-            //    {
-
-            //        BasicTitle = new BasicTitleModelDL
-            //        {
-            //            Tconst = model.First().Tconst,
-            //            PrimaryTitle = model.First().PrimaryTitle,
-            //            StartYear = model.First().startyear,
-            //            TitleType = test(model.First())
-            //            //TitleType = x.titletype,
-            //        },
-            //        //runtime = x.runtime,
-            //        //Rating = x.rating,
-            //        //Genres = x.genre,
-
-
-            //    }).Where(x => )
-            //;
-
-
-            //    .ToList()
-            //    .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
-            //    {
-
-            //        BasicTitle = new BasicTitleModelDL
-            //        {
-            //            Tconst = model.First().Tconst,
-            //            PrimaryTitle = model.First().PrimaryTitle,
-            //            StartYear = model.First().startyear,
-            //            TitleType = test(model.First())
-            //            //TitleType = x.titletype,
-            //        },
-            //        //runtime = x.runtime,
-            //        //Rating = x.rating,
-            //        //Genres = x.genre,
-
-
-            //    }).Skip(page * pageSize).Take(pageSize).ToList();
-
-            /*
-             
-            var listTitles1 = _db.FullViewTitles.ToList()
-                .GroupJoin(titles,  //inner sequence
-                                std => std.Tconst, //outerKeySelector 
-                                s => s.Tconst,     //innerKeySelector
-                                (std, s) => std
-                                );
-
-            var listTitles = listTitles1
-
-                .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
-                {
-
-                    BasicTitle = new BasicTitleModelDL
-                    {
-                        Tconst = model.First().Tconst,
-                        PrimaryTitle = model.First().PrimaryTitle,
-                        StartYear = model.First().startyear,
-                        TitleType = test(model.First())
-                        //TitleType = x.titletype,
-                    },
-                    //runtime = x.runtime,
-                    //Rating = x.rating,
-                    //Genres = x.genre,
-
-
-                })
-                //.Skip(page * pageSize).Take(pageSize)
-                .ToList();
-             */
+            var names  = db.SearchNameResults.FromSqlInterpolated($"select * from string_search_names({searchContent})").ToList();
 
             var listTitles = GetTitlesForSearch(titles);
-            //Console.WriteLine(_db.TitleBasicss.First().Tconst);
 
-            //var listTitles = ""];
             searchResult.TitleResults = listTitles;
-            //searchResult.NameResults = names;
 
 
-            return searchResult; // shouldn't return this
+            return searchResult; 
 
         }
 
 
         public IList<ListTitleModelDL> GetTitlesForSearch (List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
         {
-            var listTitles1 = _db.FullViewTitles.ToList()
-                .GroupJoin(searchedTitles,  //inner sequence
-                    std => std.Tconst, //outerKeySelector 
-                    s => s.Tconst,     //innerKeySelector
-                    (std, s) => std
-                    );
+            using var db = new ImdbContext();
 
-            var listTitles = listTitles1
+            //var filteredTitles = _db.FullViewTitles.ToList()
+            var filteredTitles = db.FullViewTitles.ToList()
+                .Join(searchedTitles,  //inner sequence
+                    fullView => fullView.Tconst, //outerKeySelector 
+                    searchResults => searchResults.Tconst,     //innerKeySelector
+                    (fullView, searchResults)
+                                  => fullView
+                    )
+                ;
+
+
+
+            var groupedTitles = filteredTitles
 
                 .ToList()
                 .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
@@ -572,20 +501,56 @@ namespace DataLayer
                     {
                         Tconst = model.First().Tconst,
                         PrimaryTitle = model.First().PrimaryTitle,
-                        StartYear = model.First().startyear,
-                        TitleType = test(model.First())
-                        //TitleType = x.titletype,
+                        StartYear = model.First().StartYear,
+                        TitleType = model.First().TitleType,
                     },
-                    //runtime = x.runtime,
-                    //Rating = x.rating,
-                    //Genres = x.genre,
-
+                    Runtime = model.First().Runtime,
+                    Rating = model.First().Rating,
+                    Genres = model.Select(m => m.Genre).Distinct().ToList(),
+                    //ParentTitle = GetBasicTitle(model.FirstOrDefault().ParentTconst)
+                    ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst) ? null : GetBasicTitle(model.FirstOrDefault().ParentTconst)
 
                 })
+
+
+
+
                 .Skip(page * pageSize).Take(pageSize)
                 .ToList();
 
-            return listTitles;
+            var listTitles2 = groupedTitles
+                   //.GroupJoin(_db.TitleEpisodes,  //inner sequence
+                   .GroupJoin(db.TitleEpisodes,  //inner sequence
+                       std => std.BasicTitle.Tconst, //outerKeySelector 
+                       s => s.Tconst,     //innerKeySelector
+                       (std, s) => 
+                       //std
+                       new ListTitleModelDL
+                       {
+
+                           BasicTitle = new BasicTitleModelDL
+                           {
+                               Tconst = std.BasicTitle.Tconst,
+                               PrimaryTitle = std.BasicTitle.PrimaryTitle,
+                               StartYear = std.BasicTitle.StartYear,
+                               TitleType = std.BasicTitle.TitleType,
+                               //TitleType = x.titletype,
+                           },
+                           Runtime = std.Runtime,
+                           Rating = std.Rating,
+                           Genres= std.Genres,
+                       }
+                       );
+
+
+
+
+            //var listTitles3 = listTitles2.ToList().Select(
+            //        x => x.ParentTitle = x.
+            //    );
+
+
+            return groupedTitles;
         }
 
 

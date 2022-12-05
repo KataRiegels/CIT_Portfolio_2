@@ -27,6 +27,8 @@ namespace DataLayer
         public DbSet<BookmarkName> BookmarkNames { get; set; }
         public DbSet<UserRating> UserRatings { get; set; }
 
+        public DbSet<UserSearch> UserSearches { get; set; }
+
         public DbSet<SearchTitleModel> SearchTitleResults{ get; set; }
         public DbSet<SearchNameModel> SearchNameResults{ get; set; }
 
@@ -224,16 +226,20 @@ namespace DataLayer
             fullTitleView.HasNoKey();
             fullTitleView.Property(x => x.Tconst).HasColumnName("tconst");
             fullTitleView.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
-            fullTitleView.Property(x => x.startyear).HasColumnName("startyear");
-            fullTitleView.Property(x => x.titletype).HasColumnName("titletype");
-            fullTitleView.Property(x => x.runtime).HasColumnName("runtimeminutes");
-            fullTitleView.Property(x => x.rating).HasColumnName("averagerating");
-            fullTitleView.Property(x => x.genre).HasColumnName("genre");
-            fullTitleView.Property(x => x.plot).HasColumnName("plot");
-            fullTitleView.Property(x => x.poster).HasColumnName("poster");
+            fullTitleView.Property(x => x.StartYear).HasColumnName("startyear");
+            fullTitleView.Property(x => x.TitleType).HasColumnName("titletype");
+            fullTitleView.Property(x => x.Runtime).HasColumnName("runtimeminutes");
+            fullTitleView.Property(x => x.Rating).HasColumnName("averagerating");
+            fullTitleView.Property(x => x.Genre).HasColumnName("genre");
+            fullTitleView.Property(x => x.Plot).HasColumnName("plot");
+            fullTitleView.Property(x => x.Poster).HasColumnName("poster");
+            fullTitleView.Property(x => x.ParentTconst).HasColumnName("parenttconst");
+            fullTitleView.Property(x => x.SeasonNumber).HasColumnName("seasonnumber");
+            fullTitleView.Property(x => x.EpisodeNumber).HasColumnName("episodenumber");
+
             //fullTitleView.Property(x => x.relatedName).HasColumnName("primaryname");
 
-            fullTitleView.Property(x => x.relatedName).HasColumnName("plot");
+            fullTitleView.Property(x => x.RelatedName).HasColumnName("plot");
 
 
 
