@@ -6,6 +6,8 @@ using WebServer.Models.TitleModels;
 using WebServer.Controllers;
 using Microsoft.AspNetCore.Mvc;
 //using WebServer.Models;
+using DataLayer.DataServices;
+
 
 using DataLayer.Models.TitleModels;
 using Microsoft.EntityFrameworkCore.Query;
@@ -36,11 +38,11 @@ namespace WebServer.Controllers
 
     public class NameController : ControllerBase
     {
-        private IDataService _dataService;
+        private IDataServiceNames _dataService;
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
 
-        public NameController(IDataService dataService, LinkGenerator generator, IMapper mapper)
+        public NameController(IDataServiceNames dataService, LinkGenerator generator, IMapper mapper)
         {
             _dataService = dataService;
             _generator = generator;

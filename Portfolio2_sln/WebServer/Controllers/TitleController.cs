@@ -2,6 +2,7 @@
 using DataLayer;
 using DataLayer.Models;
 using DataLayer.Model;
+using DataLayer.DataServices;
 using DataLayer.Models.TitleModels;
 using WebServer.Models.TitleModels;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,11 @@ namespace WebServer.Controllers
     [ApiController]
     public class TitleController : ControllerBase
     {
-        private IDataService _dataService;
+        private IDataServiceTitles _dataService;
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
 
-        public TitleController(IDataService dataService, LinkGenerator generator, IMapper mapper)
+        public TitleController(IDataServiceTitles dataService, LinkGenerator generator, IMapper mapper)
         {
             _dataService = dataService;
             _generator = generator;
@@ -85,35 +86,13 @@ namespace WebServer.Controllers
             return Ok(titles);
         }
 
-        // Get all titles that includes given genre
-        //[HttpGet("genre/{genreName}", Name = nameof(GetTitlesByGenre))]
-        //public IActionResult GetTitlesByGenre(string genreName)
-        //{
-        //    IEnumerable<TitleModel> title = _dataService.GetTitlesByGenre(genreName).Select(x => CreateTitleModel(x));
-        //    //var title = _dataService.GetTitlesByGenre(genreName); // If we want to return normal TitleBasics instead
-
-        //    if (title == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(title);
-        //}
-
-
-
 
         [HttpGet("detailed")]
         public IActionResult GetDetailedTitles(int page = 0, int pageSize = 2)
         {
 
-            //IEnumerable<DetailedTitleModel>? titles =
-
-            //_dataService.GetDetailedTitles().Select(x => CreateDetailedTitleModel(x));
             var titles =
             _dataService.GetDetailedTitles(page, pageSize);
-            //var titles = titles2.Select(x => CreateDetailedTitleModel(x));
-            //var titles = titles2.Select(x => x);
 
             if (titles == null)
             {
@@ -158,11 +137,22 @@ namespace WebServer.Controllers
 
             //var model1 = _mapper.Map<BasicTitleModel>(titleBasics.BasicTitle);
             var model = _mapper.Map<ListTitleModel>(titleBasics);
-            model.BasicTitle.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.BasicTitle.Tconst });
             model.BasicTitle = CreateBasicTitleModel(titleBasics.BasicTitle);
+            model.BasicTitle.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.BasicTitle.Tconst });
+            model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
 
             return model;
         }
+
+        private string CreateTitleUrl(string tconst)
+        {
+            tconst = tconst.Trim();
+            if (string.IsNullOrEmpty(tconst)) return null;
+            return _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { tconst });
+        }
+
+
+
 
         //public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleModelDL titleBasics)
         //{

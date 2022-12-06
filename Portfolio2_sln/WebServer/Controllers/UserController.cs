@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataLayer;
+using DataLayer.DataServices;
 using DataLayer.Model;
 using DataLayer.Models.UserModels;
 using Microsoft.AspNetCore.Mvc;
@@ -15,22 +15,22 @@ namespace WebServer.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private IDataService _dataService;
+        private IDataServiceUser _dataService;
         //private IDataService _dataServiceTitle;
         //private IDataServiceUser _dataServiceUser;
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
         private TitleController _titleController;
 
-        public UserController(IDataService dataService, LinkGenerator generator, IMapper mapper)
+        public UserController(IDataServiceUser dataService, LinkGenerator generator, IMapper mapper)
         {
             _dataService = dataService;
             _generator = generator;
             _mapper = mapper;
 
 
-            _titleController = new TitleController(_dataService, _generator, _mapper);
-            _titleController.ControllerContext = ControllerContext;
+            //_titleController = new TitleController(_dataService, _generator, _mapper);
+            //_titleController.ControllerContext = ControllerContext;
             //_titleController.HttpContext = HttpContext;
         }
 
@@ -183,6 +183,7 @@ namespace WebServer.Controllers
 
         private string CreateTitleUrl(string tconst)
         {
+            tconst = tconst.Trim();
             if (string.IsNullOrEmpty(tconst)) return null;
             return _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { tconst });
         }
@@ -190,6 +191,7 @@ namespace WebServer.Controllers
 
         private string CreateNameUrl(string nconst)
         {
+            nconst = nconst.Trim();
             if (string.IsNullOrEmpty(nconst)) return null;
             return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
         }
