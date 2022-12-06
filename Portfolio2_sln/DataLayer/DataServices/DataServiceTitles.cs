@@ -84,16 +84,9 @@ namespace DataLayer.DataServices
                         PrimaryTitle = model.First().PrimaryTitle,
                         StartYear = model.First().StartYear,
                         TitleType = model.First().TitleType
-                        //TitleType = x.titletype,
                     },
-                    //runtime = x.runtime,
-                    //Rating = x.rating,
-                    //Genres = x.genre,
-
-
                 }).Skip(page * pageSize).Take(pageSize).ToList();
 
-            //return titles;
             return titles;
         }
 
@@ -118,7 +111,6 @@ namespace DataLayer.DataServices
                     plot = model.First().Plot,
                     poster = model.First().Poster,
                     Tconst = key,
-                    //Tconst = obj.Tconst,
                     genre = model.Select(m => m.Genre).Distinct()
                     .Skip(page * pageSize).Take(pageSize).ToList()
                 }

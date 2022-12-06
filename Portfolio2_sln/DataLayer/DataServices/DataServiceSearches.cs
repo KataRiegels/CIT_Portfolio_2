@@ -19,7 +19,6 @@ namespace DataLayer.DataServices
             var basic = new SearchResult
             {
                 SearchId = searchId,
-
             };
 
             return result;
@@ -135,16 +134,17 @@ namespace DataLayer.DataServices
                 {
                     BasicTitle = new BasicTitleModelDL
                     {
-                        Tconst = model.First().Tconst,
+                        Tconst       = model.First().Tconst,
                         PrimaryTitle = model.First().PrimaryTitle,
-                        StartYear = model.First().StartYear,
-                        TitleType = model.First().TitleType,
+                        StartYear    = model.First().StartYear,
+                        TitleType    = model.First().TitleType,
                     },
-                    Runtime = model.First().Runtime,
-                    Rating = model.First().Rating,
-                    Genres = model.Select(m => m.Genre).Distinct().ToList(),
-                    ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst) ? null : new DataService().GetBasicTitle(model.FirstOrDefault().ParentTconst)
-
+                    Runtime     = model.First().Runtime,
+                    Rating      = model.First().Rating,
+                    Genres      = model.Select(m => m.Genre).Distinct().ToList(),
+                    ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst)
+                                    ? null 
+                                    : new DataService().GetBasicTitle(model.FirstOrDefault().ParentTconst)
                 })
                 .Skip(page * pageSize).Take(pageSize)
                 .ToList();

@@ -10,10 +10,9 @@ namespace WebServer.Models.SearchModels
         public IList<ListNameModel>? NameResults { get; set; }
         public IList<ListTitleModel>? TitleResults { get; set; }
 
+        // Technically unnecessary, but here for consistency
         public SearchResultModel ConvertFromSearchResultDTO(SearchResult inputModel)
         {
-            //var convertedModel = new SearchResultModel();
-            
             
             return new SearchResultModel();
 
