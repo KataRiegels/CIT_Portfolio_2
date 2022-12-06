@@ -125,16 +125,6 @@ namespace DataLayer.DataServices
                            KnownForTitle = knownFors.Select(x => x.Tconst)
                        }
                            )
-                        // .GroupJoin(_db.TitleBasicss,
-                        //basics => basics.KnownForTitle,
-                        //knownFor => knownFor.Tconst,
-                        //(basics, knownFors) =>
-                        //new
-                        //{
-                        //    Nconst = basics.basics.Nconst,
-                        //    PrimaryName = basics.basics.PrimaryName,
-                        //    KnownForTitle = knownFors.Select(x => x.Tconst)
-                        //})
                         ;
 
             var names2 = query.ToList()

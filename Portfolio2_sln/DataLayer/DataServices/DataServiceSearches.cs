@@ -13,6 +13,8 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Runtime.InteropServices;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace DataLayer.DataServices
 {
@@ -47,11 +49,13 @@ namespace DataLayer.DataServices
 
             var searchResult = new SearchResult();
             var titles = db.SearchTitleResults.FromSqlInterpolated($"select * from string_search_titles({searchContent})").ToList();
-            var names = db.SearchNameResults.FromSqlInterpolated($"select * from string_search_names({searchContent})").ToList();
+            var names  = db.SearchNameResults.FromSqlInterpolated($"select * from string_search_names({searchContent})").ToList();
 
             var listTitles = GetTitlesForSearch(titles);
+            var listNames = GetNamesForSearch(names);
 
             searchResult.TitleResults = listTitles;
+            searchResult.NameResults = listNames;
 
 
             return searchResult;
@@ -59,9 +63,73 @@ namespace DataLayer.DataServices
 
 
 
-        public IList<ListNameModelDL> GetNamesForSearch(List<SearchNameModel> searchedNames, int page = 1, int pageSize = 5)
+        public IList<ListNameModelDL> GetNamesForSearch(List<SearchNameModel> searchedNames, int page = 0, int pageSize = 20)
         {
-            return null;
+            using var db = new ImdbContext();
+            Console.WriteLine("before join");
+            /*
+            var filteredTitles = db.FullViewNames.ToList()
+                .Join(searchedNames,  //inner sequence
+                    fullView => fullView.Nconst, //outerKeySelector 
+                    searchResults => searchResults.Nconst,     //innerKeySelector
+                    (fullView, searchResults)
+                                  => fullView
+                    )
+                ;
+
+            Console.WriteLine("after join");
+            Console.WriteLine(filteredTitles.Count());
+
+            var groupedTitles = filteredTitles
+
+                .ToList()
+                .GroupBy(t => t.Nconst, (key, model) => new ListNameModelDL
+                {
+                    BasicName = new BasicNameModelDL
+                    {
+                        Nconst = key,
+                        PrimaryName = model.First().PrimaryName,
+                    },
+                    //KnownForTitleBasics = model.Select(m => m.KnownForTitle).Distinct().ToList(),
+                    KnownForTitleBasics = model.First().KnwonForTconst.Any() ? new DataServiceTitles().GetBasicTitle(model.First().KnwonForTconst) : null
+                }
+                ).Skip(page * pageSize).Take(pageSize).ToList();
+
+            return groupedTitles;
+            */
+
+            var filtered = db.NameBasicss.ToList()
+                .Join(searchedNames,  //inner sequence
+                    fullView => fullView.Nconst, //outerKeySelector 
+                    searchResults => searchResults.Nconst,     //innerKeySelector
+                    (fullView, searchResults)
+                                  => fullView
+                    )
+                ;
+
+            var query =
+                filtered.ToList().Distinct().GroupJoin(_db.NameKnownFors,
+                       basics => basics.Nconst,
+                       knownFor => knownFor.Nconst,
+                       (basics, knownFor) =>
+                       new ListNameModelDL
+                       {
+                           BasicName = new BasicNameModelDL
+                           {
+                               Nconst = basics.Nconst,
+                               PrimaryName = basics.PrimaryName,
+                           },
+                           //KnownForTitleBasics = model.Select(m => m.KnownForTitle).Distinct().ToList(),
+                           //KnownForTitleBasics = new DataServiceTitles().GetBasicTitle(knownFor.FirstOrDefault().Tconst),
+                           KnownForTitleBasics = knownFor.Any() ? 
+                                new DataServiceTitles().
+                                GetBasicTitle(knownFor.FirstOrDefault().Tconst) : null
+                       }
+                           ).ToList();
+
+            Console.WriteLine("after join");
+
+            return query;
         }
 
         public IList<ListTitleModelDL> GetTitlesForSearch(List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
@@ -98,10 +166,6 @@ namespace DataLayer.DataServices
                     ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst) ? null : new DataService().GetBasicTitle(model.FirstOrDefault().ParentTconst)
 
                 })
-
-
-
-
                 .Skip(page * pageSize).Take(pageSize)
                 .ToList();
 

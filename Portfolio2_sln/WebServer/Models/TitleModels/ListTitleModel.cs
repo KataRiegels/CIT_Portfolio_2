@@ -39,10 +39,6 @@ namespace WebServer.Models.TitleModels
                 Rating = inputModel.Rating,
                 Genres = inputModel.Genres,
                 ParentTitle = new BasicTitleModel().ConvertBasicTitleModel(inputModel.ParentTitle)
-
-
-
-
             };
         }
 

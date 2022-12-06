@@ -1,12 +1,13 @@
 ﻿using DataLayer.Model;
 using WebServer.Models.TitleModels;
+using WebServer.Models.NameModels;
 
 namespace WebServer.Models.SearchModels
 {
     public class SearchResultModel
     {
         public string? Url { get; set; }
-        public IList<SearchNameModel>? NameResults { get; set; }
+        public IList<ListNameModel>? NameResults { get; set; }
         //public IList<SearchTitleModel>? TitleResults { get; set; }
         public IList<ListTitleModel>? TitleResults { get; set; }
 

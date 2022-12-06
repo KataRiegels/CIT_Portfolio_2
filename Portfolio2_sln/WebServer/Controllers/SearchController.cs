@@ -77,8 +77,12 @@ namespace WebServer.Controllers
             var titleResults = searchResult.TitleResults
                 .Select(x => MapTitleSearchResults(x))
                 .ToList();
-            var nameResults = searchResult.NameResults;
+            var nameResults = searchResult.NameResults
+             .Select(x => MapNameSearchResults(x))
+             .ToList();
+            //var nameResults = searchResult.NameResults;
             model.TitleResults = titleResults;
+            model.NameResults = nameResults;
 
             return model;
             //model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
@@ -112,9 +116,15 @@ namespace WebServer.Controllers
 
         public ListNameModel MapNameSearchResults(ListNameModelDL nameResults)
         {
-            var model = _mapper.Map<ListNameModel>(nameResults);
-            model.BasicName = _mapper.Map<BasicNameModel>(model.BasicName);
-            model.BasicName.Url = _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nameResults.BasicName.Nconst });
+            var model = new ListNameModel().ConvertFromListTitleDTO(nameResults);
+            model.BasicName.Url = CreateTitleUrl(nameResults.BasicName.Nconst);
+            if (nameResults.KnownForTitleBasics != null)
+            {
+                model.KnownForTitleBasics.Url = CreateTitleUrl(nameResults.KnownForTitleBasics.Tconst);
+            }
+            //var model = _mapper.Map<ListNameModel>(nameResults);
+            //model.BasicName = _mapper.Map<BasicNameModel>(model.BasicName);
+            //model.BasicName.Url = _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nameResults.BasicName.Nconst });
             return model;
         }
 
