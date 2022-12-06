@@ -15,7 +15,6 @@ namespace WebServer.Models.NameModels
 
         public ListNameModel ConvertFromListTitleDTO(ListNameModelDL inputModel)
         {
-            Console.WriteLine("test");
 
             //var basic = new BasicTitleModel().ConvertBasicTitleModel(inputModel.BasicTitle);
             return new ListNameModel()

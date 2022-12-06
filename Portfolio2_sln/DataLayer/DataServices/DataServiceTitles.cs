@@ -37,7 +37,6 @@ namespace DataLayer.DataServices
         public BasicTitleModelDL GetBasicTitle(string tconst)
         {
             using var db = new ImdbContext();
-            Console.WriteLine(tconst);
             //var basicTitle = _db.TitleBasicss
             var basicTitle = db.TitleBasicss
                 .FirstOrDefault(x => x.Tconst.Trim() == tconst.Trim());

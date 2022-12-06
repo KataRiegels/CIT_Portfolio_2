@@ -74,15 +74,22 @@ namespace WebServer.Controllers
         {
             //var model = _mapper.Map<UserSearchResultsModel>(searchResult);
             var model = new SearchResultModel().ConvertFromSearchResultDTO(searchResult);
-            var titleResults = searchResult.TitleResults
-                .Select(x => MapTitleSearchResults(x))
-                .ToList();
+            if (searchResult.TitleResults != null)
+            {
+                var titleResults = searchResult.TitleResults
+                    .Select(x => MapTitleSearchResults(x))
+                    .ToList();
+                model.TitleResults = titleResults;
+            }   
+            if (searchResult.NameResults != null)
+            {
+                    Console.WriteLine(searchResult.NameResults.Count());
             var nameResults = searchResult.NameResults
              .Select(x => MapNameSearchResults(x))
              .ToList();
-            //var nameResults = searchResult.NameResults;
-            model.TitleResults = titleResults;
             model.NameResults = nameResults;
+            }
+            //var nameResults = searchResult.NameResults;
 
             return model;
             //model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
@@ -116,6 +123,7 @@ namespace WebServer.Controllers
 
         public ListNameModel MapNameSearchResults(ListNameModelDL nameResults)
         {
+
             var model = new ListNameModel().ConvertFromListTitleDTO(nameResults);
             model.BasicName.Url = CreateTitleUrl(nameResults.BasicName.Nconst);
             if (nameResults.KnownForTitleBasics != null)
