@@ -8,7 +8,7 @@ namespace DataLayer.DataServices
         void CreateBookmarkTitle(string username, string tconst, string annotation);
         void CreateUser(string username, string password, string birthYear, string email);
         bool CreateUserRating(string username, string tconst, int rating);
-        SearchResult CreateUserSearch(string username, string searchContent, string searchCategory = null);
+        int CreateUserSearch(string username, string searchContent, string searchCategory = null);
         bool DeleteBookmarkTitle(string username, string tconst);
         bool DeleteUser(string username);
         BookmarkTitle GetBookmarkTitle(string username, string tconst);

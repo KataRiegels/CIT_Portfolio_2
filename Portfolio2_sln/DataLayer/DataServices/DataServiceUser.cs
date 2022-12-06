@@ -126,23 +126,26 @@ namespace DataLayer.DataServices
 
         }
 
-        public SearchResult CreateUserSearch(string username, string searchContent, string searchCategory = null)
+        public int CreateUserSearch(string username, string searchContent, string searchCategory = null)
         {
+
             using var db = new ImdbContext();
             var searchResults = db.UserSearches.FromSqlInterpolated($"SELECT * FROM save_string_search({username}, {searchContent}, {searchCategory})");
+            var searchId = searchResults.FirstOrDefault().SearchId;
 
-            Console.WriteLine(searchResults.FirstOrDefault().SearchId);
+            //Console.WriteLine(searchResults.FirstOrDefault().SearchId);
+            //Console.WriteLine(searchResults.FirstOrDefault().SearchId);
+            //Console.WriteLine(searchId);
+            //var searchResult = new SearchResult();
+            //var titles = db.SearchTitleResults.FromSqlInterpolated($"select * from string_search_titles({searchContent})").ToList();
+            //var names = db.SearchNameResults.FromSqlInterpolated($"select * from string_search_names({searchContent})").ToList();
 
-            var searchResult = new SearchResult();
-            var titles = db.SearchTitleResults.FromSqlInterpolated($"select * from string_search_titles({searchContent})").ToList();
-            var names = db.SearchNameResults.FromSqlInterpolated($"select * from string_search_names({searchContent})").ToList();
+            //var listTitles = GetTitlesForSearch(titles);
 
-            var listTitles = GetTitlesForSearch(titles);
-
-            searchResult.TitleResults = listTitles;
+            //searchResult.TitleResults = listTitles;
 
 
-            return searchResult;
+            return searchId;
 
         }
 

@@ -142,9 +142,9 @@ namespace WebServer.Controllers
         public IActionResult CreateUserSearch(string username, string searchContent, string? searchCategory = null)
         {
             var results = _dataService.CreateUserSearch(username, searchContent, searchCategory);
-            var titleResults = results.TitleResults;
-            var test = CreateUserSearchResultsModel(results);
-            return CreatedAtRoute(null, test);
+            //var titleResults = results.TitleResults;
+            //var test = CreateUserSearchResultsModel(results);
+            return CreatedAtRoute(null, results);
         }
 
 
