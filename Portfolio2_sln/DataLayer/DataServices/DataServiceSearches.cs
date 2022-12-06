@@ -1,20 +1,5 @@
-﻿using System;
-using DataLayer.Model;
-using DataLayer.Models.NameModels;
-using DataLayer.Models.TitleModels;
-using DataLayer.Models.UserModels;
+﻿using DataLayer.Model;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
-using System;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Runtime.InteropServices;
-using Microsoft.EntityFrameworkCore.Metadata;
 using System.Diagnostics;
 
 namespace DataLayer.DataServices
@@ -41,63 +26,55 @@ namespace DataLayer.DataServices
 
         }
 
-
+        // Generates 
         public SearchResult GenerateSearchResults(string searchContent, string searchCategory = null)
         {
-            Console.WriteLine(searchContent);
             using var db = new ImdbContext();
 
             var searchResult = new SearchResult();
 
+            // Looks for matching names only if client has no specified category as "title" 
             if (searchCategory != "titles")
             {
-
-            var names  = searchCategory != "titles" ? db.SearchNameResults
-                    .FromSqlInterpolated($"select * from string_search_names({searchContent})")
-                    //.ToList() : null;
-                    .ToList() : null;
-            var listNames = GetNamesForSearch(names);
-
-            searchResult.NameResults = listNames;
+                var returnedMathingNames  = searchCategory != "titles" ? db.SearchNameResults
+                        .FromSqlInterpolated($"select * from string_search_names({searchContent})")
+                        .ToList() : null;
+                var matchingNames = GetFilteredNames(returnedMathingNames);
+                searchResult.NameResults = matchingNames;
             }
 
-
+            // Looks for matching titles only if client has no specified category as "names" 
             if (searchCategory != "names")
-
             {
-                var titles = searchCategory != "names" ? db.SearchTitleResults
+                var returnedMatchingTitles = searchCategory != "names" ? db.SearchTitleResults
                     .FromSqlInterpolated($"select * from string_search_titles({searchContent})")
                     .ToList() : null;
-            var listTitles = GetTitlesForSearch(titles);
-            searchResult.TitleResults = listTitles;
-
+                var matchingTitles = GetFilteredTitles(returnedMatchingTitles);
+                searchResult.TitleResults = matchingTitles;
             }
-
-
 
             return searchResult;
         }
 
 
-
-        public IList<ListNameModelDL> GetNamesForSearch(List<SearchNameModel> searchedNames, int page = 0, int pageSize = 20)
+        // Getting filtered list form DTO's for names from based on input list
+        public IList<ListNameModelDL> GetFilteredNames(List<SearchNameModel> searchedNames, int page = 0, int pageSize = 20)
         {
             using var db = new ImdbContext();
+
+
             Console.WriteLine("before join");
-
-
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
+            // Filters names so only contain those that matched the search
             var filtered = db.NameBasicss.ToList()
                 .Join(searchedNames,  
                     fullView => fullView.Nconst, 
                     searchResults => searchResults.Nconst,  
                     (fullView, searchResults)
                                   => fullView
-                    )
-                ;
+                    );
 
 
             stopwatch.Stop();
@@ -107,57 +84,55 @@ namespace DataLayer.DataServices
             Console.WriteLine("after filtered");
 
             stopwatch.Start();
-            var query =
+
+            // Joins the filtered name_basics with known_for to get list form of matching names
+            var searchedTitleResults =
                 filtered.ToList().GroupJoin(_db.NameKnownFors,
                        basics => basics.Nconst,
                        knownFor => knownFor.Nconst,
-                       (basics, knownFor) =>
-                       new ListNameModelDL
-                       {
-                           BasicName = new BasicNameModelDL
+                       (basics, knownFor) => new ListNameModelDL
                            {
-                               Nconst = basics.Nconst,
-                               PrimaryName = basics.PrimaryName,
-                           },
+                               BasicName =
+                               new DataServiceNames().
+                                    GetBasicName(basics.Nconst),
                            KnownForTitleBasics = knownFor.Any() ? 
-                                new DataServiceTitles().
-                                GetBasicTitle(knownFor.FirstOrDefault().Tconst) : null
-                       }
-                           )
+                                    new DataServiceTitles().
+                                    GetBasicTitle(knownFor.FirstOrDefault().Tconst) : null
+                           }
+                    )
                 .Skip(page * pageSize).Take(pageSize)
                 .ToList();
 
-            //var stopwatch = new Stopwatch();
             stopwatch.Stop();
             elapsed_time = stopwatch.ElapsedMilliseconds;
             Console.WriteLine(elapsed_time);
 
             Console.WriteLine("after join");
 
-            return query;
+            return searchedTitleResults;
         }
 
-        public IList<ListTitleModelDL> GetTitlesForSearch(List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
+        // Getting filtered list form DTO's from based on input list
+        public IList<ListTitleModelDL> GetFilteredTitles(List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
         {
             using var db = new ImdbContext();
 
+            // Filters the FullViewTitles to only have those returned from the string search
             var filteredTitles = db.FullViewTitles.ToList()
-                .Join(searchedTitles,  //inner sequence
-                    fullView => fullView.Tconst, //outerKeySelector 
-                    searchResults => searchResults.Tconst,     //innerKeySelector
+                .Join(searchedTitles,  
+                    fullView => fullView.Tconst, 
+                    searchResults => searchResults.Tconst,    
                     (fullView, searchResults)
                                   => fullView
-                    )
-                ;
+                    );
 
-
-
+            // Groups the titles so we can make a list of genres for each title
+            // and creates the list form DTO
             var groupedTitles = filteredTitles
 
                 .ToList()
                 .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
                 {
-
                     BasicTitle = new BasicTitleModelDL
                     {
                         Tconst = model.First().Tconst,
@@ -173,29 +148,6 @@ namespace DataLayer.DataServices
                 })
                 .Skip(page * pageSize).Take(pageSize)
                 .ToList();
-
-            var listTitles2 = groupedTitles
-                   .GroupJoin(db.TitleEpisodes,  //inner sequence
-                       std => std.BasicTitle.Tconst, //outerKeySelector 
-                       s => s.Tconst,     //innerKeySelector
-                       (std, s) =>
-                       //std
-                       new ListTitleModelDL
-                       {
-
-                           BasicTitle = new BasicTitleModelDL
-                           {
-                               Tconst = std.BasicTitle.Tconst,
-                               PrimaryTitle = std.BasicTitle.PrimaryTitle,
-                               StartYear = std.BasicTitle.StartYear,
-                               TitleType = std.BasicTitle.TitleType,
-                           },
-                           Runtime = std.Runtime,
-                           Rating = std.Rating,
-                           Genres = std.Genres,
-                       }
-                       );
-
 
 
             return groupedTitles;

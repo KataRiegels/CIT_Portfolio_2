@@ -149,7 +149,7 @@ namespace DataLayer.DataServices
         /*
          
 
-        public IList<ListTitleModelDL> GetTitlesForSearch(List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
+        public IList<ListTitleModelDL> GetFilteredTitles(List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
         {
             using var db = new ImdbContext();
 

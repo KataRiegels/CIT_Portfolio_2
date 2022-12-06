@@ -140,7 +140,7 @@ namespace DataLayer.DataServices
             //var titles = db.SearchTitleResults.FromSqlInterpolated($"select * from string_search_titles({searchContent})").ToList();
             //var names = db.SearchNameResults.FromSqlInterpolated($"select * from string_search_names({searchContent})").ToList();
 
-            //var listTitles = GetTitlesForSearch(titles);
+            //var listTitles = GetFilteredTitles(titles);
 
             //searchResult.TitleResults = listTitles;
 

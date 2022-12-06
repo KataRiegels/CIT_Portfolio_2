@@ -54,9 +54,14 @@ namespace DataLayer.DataServices
 
         public BasicNameModelDL GetBasicName(string nconst)
         {
-            var namebasic = _db.NameBasicss.FirstOrDefault(x => x.Nconst == nconst);
+            if (string.IsNullOrEmpty(nconst))
+            {
+                return new BasicNameModelDL();
+            }
 
-            var basicname = new BasicNameModelDL()
+            var namebasic = _db.NameBasicss.FirstOrDefault(x => x.Nconst.Trim() == nconst.Trim());
+            Console.WriteLine(namebasic.Nconst);
+            var basicname = new BasicNameModelDL
             {
                 Nconst = nconst,
                 PrimaryName = namebasic.PrimaryName
