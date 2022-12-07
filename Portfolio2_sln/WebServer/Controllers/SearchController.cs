@@ -3,7 +3,7 @@ using DataLayer.DataServices;
 using Microsoft.AspNetCore.Mvc;
 using DataLayer;
 using WebServer.Models.TitleModels;
-using DataLayer.Model;
+using DataLayer.DataTransferObjects;
 using WebServer.Models.NameModels;
 using WebServer.Models.SearchModels;
 using WebServer.Models.UserModels;

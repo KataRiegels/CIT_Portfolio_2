@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataLayer.DataTransferObjects;
 
-namespace DataLayer.Model
+
+namespace DataLayer.DataTransferObjects
 {
     public class ListTitleModelDL
     {

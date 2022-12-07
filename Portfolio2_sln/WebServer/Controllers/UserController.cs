@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using DataLayer.DataServices;
-using DataLayer.Model;
+using DataLayer.DataTransferObjects;
 using DataLayer.Models.UserModels;
 using Microsoft.AspNetCore.Mvc;
 using WebServer.Models.NameModels;
@@ -128,7 +128,7 @@ namespace WebServer.Controllers
             return model;
         }
 
-        [HttpPost("{username}/rating")]
+        [HttpPost("{username}/Rating")]
         public IActionResult CreateRating(string username, UserRatingCreateModel rating)
         {
             var rate = _mapper.Map<UserRating>(rating);

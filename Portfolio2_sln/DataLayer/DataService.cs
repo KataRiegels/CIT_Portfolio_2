@@ -1,4 +1,5 @@
-﻿using DataLayer.Model;
+﻿using DataLayer.DataTransferObjects;
+using DataLayer.DataTransferObjects;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
@@ -87,10 +88,10 @@ namespace DataLayer
                         PrimaryTitle = model.First().PrimaryTitle,
                         StartYear = model.First().StartYear,
                         TitleType = model.First().TitleType
-                        //TitleType = x.titletype,
+                        //TitleType = x.TitleType,
                     },
-                    //runtime = x.runtime,
-                    //Rating = x.rating,
+                    //Runtime = x.Runtime,
+                    //Rating = x.Rating,
                     //Genres = x.genre,
 
 
@@ -114,15 +115,15 @@ namespace DataLayer
                 .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleModelDL
                 {
                     PrimaryTitle = model.First().PrimaryTitle,
-                    startyear = model.First().StartYear,
-                    titletype = model.First().TitleType,
-                    runtime = model.First().Runtime,
-                    rating = model.First().Rating,
-                    plot = model.First().Plot,
-                    poster = model.First().Poster,
+                    StartYear = model.First().StartYear,
+                    TitleType = model.First().TitleType,
+                    Runtime = model.First().Runtime,
+                    Rating = model.First().Rating,
+                    Plot = model.First().Plot,
+                    Poster = model.First().Poster,
                     Tconst = key,
                     //Tconst = obj.Tconst,
-                    genre = model.Select(m => m.Genre).Distinct()
+                    Genres = model.Select(m => m.Genre).Distinct()
                     .Skip(page * pageSize).Take(pageSize).ToList()
                 }
                 ).Skip(page * pageSize).Take(pageSize).ToList();
@@ -533,7 +534,7 @@ namespace DataLayer
                                PrimaryTitle = std.BasicTitle.PrimaryTitle,
                                StartYear = std.BasicTitle.StartYear,
                                TitleType = std.BasicTitle.TitleType,
-                               //TitleType = x.titletype,
+                               //TitleType = x.TitleType,
                            },
                            Runtime = std.Runtime,
                            Rating = std.Rating,

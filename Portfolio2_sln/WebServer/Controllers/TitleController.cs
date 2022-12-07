@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DataLayer;
 using DataLayer.Models;
-using DataLayer.Model;
+using DataLayer.DataTransferObjects;
 using DataLayer.DataServices;
 using DataLayer.Models.TitleModels;
 using WebServer.Models.TitleModels;
@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataLayer.Models.TitleModels;
 using Microsoft.EntityFrameworkCore.Query;
 using WebServer.Models.NameModels;
+using NpgsqlTypes;
 
 namespace WebServer.Controllers
 {
@@ -102,6 +103,22 @@ namespace WebServer.Controllers
             return Ok(titles);
         }
 
+
+        [HttpGet("detailed/{tconst}", Name = nameof(GetDetailedTitle))]
+        public IActionResult GetDetailedTitle(string tconst)
+        {
+
+            var detailedTitle =
+            CreateDetailedTitleModel(_dataService.GetDetailedTitle(tconst));
+
+            if (detailedTitle == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(detailedTitle);
+        }
+
         /* -----------
             HELPERS
          ------------- */
@@ -118,7 +135,9 @@ namespace WebServer.Controllers
 
         public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleModelDL? detailedTitle)
         {
-            var model = _mapper.Map<DetailedTitleModel>(detailedTitle);
+            //var model = _mapper.Map<DetailedTitleModel>(detailedTitle);
+            var model = new DetailedTitleModel().ConvertFromDetailedTitleDTO(detailedTitle);
+            model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { detailedTitle.Tconst });
 
             return model;
         }

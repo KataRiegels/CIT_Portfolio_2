@@ -1,4 +1,4 @@
-﻿using DataLayer.Model;
+﻿using DataLayer.DataTransferObjects;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
@@ -96,22 +96,22 @@ namespace DataLayer.DataServices
         public IList<DetailedTitleModelDL>? GetDetailedTitles(int page, int pageSize)
         {
 
+            using var db = new ImdbContext();
 
-
-            var titles = _db.FullViewTitles
+            var titles = db.FullViewTitles
 
                 .ToList()
                 .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleModelDL
                 {
                     PrimaryTitle = model.First().PrimaryTitle,
-                    startyear = model.First().StartYear,
-                    titletype = model.First().TitleType,
-                    runtime = model.First().Runtime,
-                    rating = model.First().Rating,
-                    plot = model.First().Plot,
-                    poster = model.First().Poster,
+                    StartYear = model.First().StartYear,
+                    TitleType = model.First().TitleType,
+                    Runtime = model.First().Runtime,
+                    Rating = model.First().Rating,
+                    Plot = model.First().Plot,
+                    Poster = model.First().Poster,
                     Tconst = key,
-                    genre = model.Select(m => m.Genre).Distinct()
+                    Genres = model.Select(m => m.Genre).Distinct()
                     .Skip(page * pageSize).Take(pageSize).ToList()
                 }
                 ).Skip(page * pageSize).Take(pageSize).ToList();
@@ -132,7 +132,51 @@ namespace DataLayer.DataServices
 
         public DetailedTitleModelDL GetDetailedTitle(string tconst)
         {
+            using var db = new ImdbContext();
+            var filteredTitle = db.FullViewTitles.ToList()
+                .Where(t => t.Tconst.Trim() == tconst.Trim())
+                .ToList();
 
+
+            var groupedTitle = filteredTitle.ToList()
+                .GroupBy(t => t.Tconst, (key, model) =>
+                new DetailedTitleModelDL
+                {
+                    PrimaryTitle = model.First().PrimaryTitle,
+                    StartYear = model.First().StartYear,
+                    TitleType = model.First().TitleType,
+                    Runtime = model.First().Runtime,
+                    Rating = model.First().Rating,
+                    Plot = model.First().Plot,
+                    Poster = model.First().Poster,
+                    Tconst = key,
+                    Genres = model.Select(m => m.Genre).Distinct()
+                        .ToList()
+                }).FirstOrDefault();
+
+            return groupedTitle;
+            //var titles = _db.FullViewTitles
+
+            //    .ToList()
+            //    .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleModelDL
+            //    {
+            //        PrimaryTitle = model.First().PrimaryTitle,
+            //        StartYear = model.First().StartYear,
+            //        TitleType = model.First().TitleType,
+            //        Runtime = model.First().Runtime,
+            //        Rating = model.First().Rating,
+            //        Plot = model.First().Plot,
+            //        Poster = model.First().Poster,
+            //        Tconst = key,
+            //        Genres = model.Select(m => m.Genres).Distinct()
+            //        .Skip(page * pageSize).Take(pageSize).ToList()
+            //    }
+            //    ).Skip(page * pageSize).Take(pageSize).ToList();
+
+
+
+            //var temp = new List<DetailedTitleModelDL>();
+            //return titles;
             return null;
         }
 
@@ -172,7 +216,7 @@ namespace DataLayer.DataServices
                     },
                     Runtime = model.First().Runtime,
                     Rating = model.First().Rating,
-                    Genres = model.Select(m => m.Genre).Distinct().ToList(),
+                    Genres = model.Select(m => m.Genres).Distinct().ToList(),
                     //ParentTitle = GetBasicTitle(model.FirstOrDefault().ParentTconst)
                     ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst) ? null : GetBasicTitle(model.FirstOrDefault().ParentTconst)
 
@@ -200,7 +244,7 @@ namespace DataLayer.DataServices
                                PrimaryTitle = std.BasicTitle.PrimaryTitle,
                                StartYear = std.BasicTitle.StartYear,
                                TitleType = std.BasicTitle.TitleType,
-                               //TitleType = x.titletype,
+                               //TitleType = x.TitleType,
                            },
                            Runtime = std.Runtime,
                            Rating = std.Rating,

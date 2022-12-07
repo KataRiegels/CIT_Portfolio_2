@@ -1,4 +1,4 @@
-﻿using DataLayer.Model;
+﻿using DataLayer.DataTransferObjects;
 using DataLayer.Models.TitleModels;
 
 namespace DataLayer.DataServices

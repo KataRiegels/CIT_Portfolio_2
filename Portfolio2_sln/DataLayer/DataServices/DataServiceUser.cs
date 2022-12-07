@@ -1,4 +1,4 @@
-﻿using DataLayer.Model;
+﻿using DataLayer.DataTransferObjects;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
@@ -209,7 +209,7 @@ namespace DataLayer.DataServices
                                PrimaryTitle = std.BasicTitle.PrimaryTitle,
                                StartYear = std.BasicTitle.StartYear,
                                TitleType = std.BasicTitle.TitleType,
-                               //TitleType = x.titletype,
+                               //TitleType = x.TitleType,
                            },
                            Runtime = std.Runtime,
                            Rating = std.Rating,

@@ -4,7 +4,7 @@ using DataLayer.Models.TitleModels;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.UserModels;
 using System.ComponentModel.DataAnnotations;
-using DataLayer.Model;
+using DataLayer.DataTransferObjects;
 
 namespace DataLayer
 {
@@ -158,7 +158,7 @@ namespace DataLayer
             userRatingTable.ToTable("user_rating");
             userRatingTable.HasKey(x => new { x.Username, x.Tconst });
             userRatingTable.Property(x => x.Username).HasColumnName("username");
-            userRatingTable.Property(x => x.Tconst).HasColumnName("Tconst");
+            userRatingTable.Property(x => x.Tconst).HasColumnName("tconst");
             userRatingTable.Property(x => x.Rating).HasColumnName("rating");
             userRatingTable.Property(x => x.Date).HasColumnName("date");
 
@@ -207,19 +207,6 @@ namespace DataLayer
             titleRatingsTable.Property(x => x.AverageRating).HasColumnName("averagerating");
             titleRatingsTable.Property(x => x.NumVotes).HasColumnName("numvotes");
 
-            //var detailedTitle = modelBuilder.Entity<DetailedTitleModelDL>();
-            //detailedTitle.ToView("detailed_titles");
-            //detailedTitle.HasNoKey();
-            //detailedTitle.Property(x => x.Tconst).HasColumnName("tconst");
-            //detailedTitle.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
-            //detailedTitle.Property(x => x.startyear).HasColumnName("startyear");
-            //detailedTitle.Property(x => x.titletype).HasColumnName("titletype");
-            //detailedTitle.Property(x => x.runtime).HasColumnName("runtimeminutes");
-            //detailedTitle.Property(x => x.rating).HasColumnName("averagerating");
-            //detailedTitle.Property(x => x.genre).HasColumnName("genre");
-            //detailedTitle.Property(x => x.plot).HasColumnName("plot");
-            //detailedTitle.Property(x => x.poster).HasColumnName("poster");
-            //detailedTitle.Property(x => x.relatedName).HasColumnName("primaryname");
 
             var fullTitleView = modelBuilder.Entity<FullTitleViewModel>();
             fullTitleView.ToView("detailed_titles");
