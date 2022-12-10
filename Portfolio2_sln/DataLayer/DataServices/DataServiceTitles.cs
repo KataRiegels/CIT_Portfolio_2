@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace DataLayer.DataServices
 {
@@ -120,6 +121,141 @@ namespace DataLayer.DataServices
 
             var temp = new List<DetailedTitleModelDL>();
             return titles;
+        }
+
+
+        public TvSeriesSeasonDTO GetTvSeriesSeason(string tconst, int seasonNumber)
+        {
+            using var db = new ImdbContext();
+
+            var filteredParentTitle = db.TitleEpisodes
+                .Where(p => p.ParentTconst.Trim() == tconst.Trim())
+                .Where(s => s.SeasonNumber == seasonNumber)
+                .ToList();
+
+            /*
+            var filteredEpisodeTitles = filteredParentTitle
+                .Join(db.TitleBasicss,
+                    episodeTable => episodeTable.Tconst,
+                    titleBasicsTable => titleBasicsTable.Tconst,
+                    (episodeTable, titleBasicsTable)
+                            => new
+                            {
+                                EpisodeTconst = episodeTable.Tconst,
+                                EpisodeTitle = titleBasicsTable.PrimaryTitle,
+                                ParentTconst = episodeTable.ParentTconst,
+                                SeasonNumber = episodeTable.SeasonNumber
+                            }
+                    ).ToList();
+             */
+
+            var filteredEpisodeTitles = filteredParentTitle
+            .Join(db.TitleBasicss,
+                episodeTable => episodeTable.Tconst,
+                titleBasicsTable => titleBasicsTable.Tconst,
+                (episodeTable, titleBasicsTable)
+                        => new TvSeriesEpisodeDTO
+                        {
+                            Tconst = episodeTable.Tconst,
+                            PrimaryTitle = titleBasicsTable.PrimaryTitle,
+                            EpisodeNumber = episodeTable.EpisodeNumber,
+                            //EpisodeTconst = episodeTable.Tconst,
+                            //EpisodeTitle = titleBasicsTable.PrimaryTitle,
+                            //ParentTconst = episodeTable.ParentTconst,
+                            //SeasonNumber = episodeTable.SeasonNumber
+                        }
+                ).OrderBy(e => e.EpisodeNumber)
+                .ToList();
+
+            var result = new TvSeriesSeasonDTO
+            {
+                ParentTconst = tconst,
+                SeasonNumber = seasonNumber,
+                Episodes = filteredEpisodeTitles
+            };
+
+            var test = filteredEpisodeTitles
+                
+                
+                ;
+            /*
+             
+            var groupedTitle = filteredEpisodeTitles.ToList()
+                .GroupBy(t => t.SeasonNumber, (key, model) =>
+                new TvSeriesSeasonDTO
+                    {
+                        ParentTconst = model.First().ParentTconst,
+
+                    //PrimaryTitle = model.First().PrimaryTitle,
+                    //StartYear = model.First().StartYear,
+                    //TitleType = model.First().TitleType,
+                    //Runtime = model.First().Runtime,
+                    //Rating = model.First().Rating,
+                    //Plot = model.First().Plot,
+                    //Poster = model.First().Poster,
+                    //Tconst = key,
+                    //Genres = model.Select(m => m.Genre).Distinct()
+                    //    .ToList()
+                }).FirstOrDefault();
+             */
+
+
+
+            return result;
+        }
+
+            public List<TvSeriesSeasonDTO> GetTvSeriesSeasons(string tconst)
+        {
+            using var db = new ImdbContext();
+
+            var filteredParentTitle = db.TitleEpisodes
+                .Where(t => t.ParentTconst.Trim() == tconst.Trim())
+                .ToList();
+
+            var filteredEpisodeTitles = filteredParentTitle
+                .Join(db.TitleBasicss,
+                    episodeTable => episodeTable.Tconst, 
+                    titleBasicsTable => titleBasicsTable.Tconst,  
+                    (episodeTable, titleBasicsTable)
+                            => new { 
+                                      EpisodeTconst = episodeTable.Tconst,
+                                    EpisodeTitle = titleBasicsTable.PrimaryTitle,      
+                                    ParentTconst  = episodeTable.ParentTconst,
+                                    SeasonNumber = episodeTable.SeasonNumber
+                            }
+                    );
+
+
+            /*
+             
+             
+            var seasons = filteredEpisodeTitles
+                .GroupBy(t => t.SeasonNumber, (key, model) =>
+                new DetailedTitleModelDL
+                {
+
+                    PrimaryTitle = model.First().PrimaryTitle,
+                    StartYear = model.First().StartYear,
+                    TitleType = model.First().TitleType,
+                    Runtime = model.First().Runtime,
+                    Rating = model.First().Rating,
+                    Plot = model.First().Plot,
+                    Poster = model.First().Poster,
+                    Tconst = key,
+                    Genres = model.Select(m => m.Genre).Distinct()
+                        .ToList()
+                }
+                )
+                ;
+             */
+
+            return null;
+
+
+
+            //var seasons = 
+
+
         }
 
 

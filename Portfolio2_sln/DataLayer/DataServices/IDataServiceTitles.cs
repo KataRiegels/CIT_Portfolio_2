@@ -13,5 +13,7 @@ namespace DataLayer.DataServices
         IList<ListTitleModelDL> GetListTitles(int page = 0, int pageSize = 1);
         TitleBasics GetTitle(string tconst);
         IList<TitleBasics> GetTitles(int page = 0, int pageSize = 20);
+
+        public TvSeriesSeasonDTO GetTvSeriesSeason(string tconst, int seasonNumber);
     }
 }

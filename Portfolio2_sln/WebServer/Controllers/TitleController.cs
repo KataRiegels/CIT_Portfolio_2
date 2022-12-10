@@ -104,6 +104,7 @@ namespace WebServer.Controllers
         }
 
 
+
         [HttpGet("detailed/{tconst}", Name = nameof(GetDetailedTitle))]
         public IActionResult GetDetailedTitle(string tconst)
         {
@@ -119,9 +120,55 @@ namespace WebServer.Controllers
             return Ok(detailedTitle);
         }
 
+        [HttpGet("{tconst}/seasons/{seasonNumber}", Name = nameof(GetTitleSeason))]
+        public IActionResult GetTitleSeason(string tconst, int seasonNumber)
+        {
+
+            var detailedTitle =
+            CreateTvSeasonModel(_dataService.GetTvSeriesSeason(tconst, seasonNumber))
+            ;
+
+            if (detailedTitle == null)
+            {
+                return NotFound();
+            }
+
+
+
+            return Ok(detailedTitle);
+        }
+
+        private TvSeriesSeasonModel CreateTvSeasonModel(TvSeriesSeasonDTO tvSeason)
+        {
+            var convertedSeason = new TvSeriesSeasonModel().ConvertFromDTO(tvSeason);
+
+            if (tvSeason.Episodes != null)
+            {
+                var titleResults = tvSeason.Episodes
+                    .Select(x => MapTvEpisodeModel(x))
+                    .ToList();
+                convertedSeason.Episodes = titleResults;
+            }
+            return convertedSeason;
+
+        }
+
+        private TvSeriesEpisodeModel MapTvEpisodeModel(TvSeriesEpisodeDTO episode)
+        {
+            var model = new TvSeriesEpisodeModel().ConvertFromDTO(episode);
+            model.Url = CreateTitleUrl(episode.Tconst);
+            if (episode.Tconst != null)
+            {
+                model.Url = CreateTitleUrl(episode.Tconst);
+            }
+
+            return model;
+        }
         /* -----------
             HELPERS
          ------------- */
+
+        //public TvSeriesSeasonDTO CreateSeasonModel()
 
         // Take TitleBasics from Datalayer and makes it into TitleModel to display for client
         public TitleModel CreateTitleModel(TitleBasics titleBasics)
