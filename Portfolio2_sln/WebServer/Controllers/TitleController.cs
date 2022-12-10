@@ -125,22 +125,33 @@ namespace WebServer.Controllers
         public IActionResult GetTitleCast(string tconst)
         {
 
-            var season = _dataService
+            var cast = _dataService
                 .GetTitleCast(tconst)
-                .Select(x => MapToCastModel(x))
+                .Select(x => MapToCastModel(x));
 
-
-
-
-            //CreateTvSeasonModel(_dataService.GetTvSeriesSeason(tconst, seasonNumber))
-            ;
-
-            if (season == null)
+            if (cast == null)
             {
                 return NotFound();
             }
 
-            return Ok(season);
+            return Ok(cast);
+        }
+
+        [HttpGet("{tconst}/crew", Name = nameof(GetTitleCrew))]
+        public IActionResult GetTitleCrew(string tconst)
+        {
+
+            var crew = _dataService
+                .GetTitleCrew(tconst)
+                .Select(x => MapToCastModel(x));
+
+
+            if (crew == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(crew);
         }
 
 
@@ -159,6 +170,10 @@ namespace WebServer.Controllers
 
             return Ok(season);
         }
+
+
+
+
 
         private TvSeriesSeasonModel CreateTvSeasonModel(TvSeriesSeasonDTO tvSeason)
         {

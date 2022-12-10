@@ -147,6 +147,30 @@ namespace DataLayer.DataServices
             return cast;
         }
 
+        public IList<TitleCastDTO> GetTitleCrew(string tconst)
+        {
+            using var db = new ImdbContext();
+
+
+            var cast = db.Jobs
+                .Where(c => c.Tconst.Trim() == tconst.Trim())
+                .Join(db.NameBasicss,
+                     crew => crew.Nconst,
+                     nameBasics => nameBasics.Nconst,
+                     (crew, nameBasics)
+                             => new TitleCastDTO
+                             {
+                                 Tconst = tconst,
+                                 Nconst = nameBasics.Nconst,
+                                 PrimaryName = nameBasics.PrimaryName,
+                                 CharacterName = crew.JobName
+                             }
+             )
+             .ToList();
+
+            return cast;
+        }
+
 
         public TvSeriesSeasonDTO GetTvSeriesSeason(string tconst, int seasonNumber)
         {
