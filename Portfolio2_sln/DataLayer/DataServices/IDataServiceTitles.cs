@@ -5,6 +5,7 @@ namespace DataLayer.DataServices
 {
     public interface IDataServiceTitles
     {
+        public IList<TitleCastDTO> GetTitleCast(string tconst);
         BasicTitleModelDL GetBasicTitle(string tconst);
         IList<BasicTitleModelDL> GetBasicTitles(int page = 0, int pageSize = 20);
         DetailedTitleModelDL GetDetailedTitle(string tconst);

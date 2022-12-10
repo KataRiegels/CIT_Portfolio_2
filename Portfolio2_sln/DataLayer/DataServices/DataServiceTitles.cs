@@ -123,6 +123,30 @@ namespace DataLayer.DataServices
             return titles;
         }
 
+        public IList<TitleCastDTO> GetTitleCast(string tconst)
+        {
+            using var db = new ImdbContext();
+
+
+            var cast = db.Characters
+                .Where(c => c.Tconst.Trim() == tconst.Trim())
+                .Join(db.NameBasicss,
+                     chars => chars.Nconst,
+                     nameBasics => nameBasics.Nconst,
+                     (chars, nameBasics)
+                             => new TitleCastDTO
+                             {
+                                 Tconst = tconst,
+                                 Nconst = nameBasics.Nconst,
+                                 PrimaryName = nameBasics.PrimaryName,
+                                 CharacterName = chars.CharacterName
+                             }
+             )
+             .ToList();
+
+            return cast;
+        }
+
 
         public TvSeriesSeasonDTO GetTvSeriesSeason(string tconst, int seasonNumber)
         {
@@ -133,21 +157,6 @@ namespace DataLayer.DataServices
                 .Where(s => s.SeasonNumber == seasonNumber)
                 .ToList();
 
-            /*
-            var filteredEpisodeTitles = filteredParentTitle
-                .Join(db.TitleBasicss,
-                    episodeTable => episodeTable.Tconst,
-                    titleBasicsTable => titleBasicsTable.Tconst,
-                    (episodeTable, titleBasicsTable)
-                            => new
-                            {
-                                EpisodeTconst = episodeTable.Tconst,
-                                EpisodeTitle = titleBasicsTable.PrimaryTitle,
-                                ParentTconst = episodeTable.ParentTconst,
-                                SeasonNumber = episodeTable.SeasonNumber
-                            }
-                    ).ToList();
-             */
 
             var filteredEpisodeTitles = filteredParentTitle
             .Join(db.TitleBasicss,
@@ -159,10 +168,6 @@ namespace DataLayer.DataServices
                             Tconst = episodeTable.Tconst,
                             PrimaryTitle = titleBasicsTable.PrimaryTitle,
                             EpisodeNumber = episodeTable.EpisodeNumber,
-                            //EpisodeTconst = episodeTable.Tconst,
-                            //EpisodeTitle = titleBasicsTable.PrimaryTitle,
-                            //ParentTconst = episodeTable.ParentTconst,
-                            //SeasonNumber = episodeTable.SeasonNumber
                         }
                 ).OrderBy(e => e.EpisodeNumber)
                 .ToList();
@@ -173,33 +178,6 @@ namespace DataLayer.DataServices
                 SeasonNumber = seasonNumber,
                 Episodes = filteredEpisodeTitles
             };
-
-            var test = filteredEpisodeTitles
-                
-                
-                ;
-            /*
-             
-            var groupedTitle = filteredEpisodeTitles.ToList()
-                .GroupBy(t => t.SeasonNumber, (key, model) =>
-                new TvSeriesSeasonDTO
-                    {
-                        ParentTconst = model.First().ParentTconst,
-
-                    //PrimaryTitle = model.First().PrimaryTitle,
-                    //StartYear = model.First().StartYear,
-                    //TitleType = model.First().TitleType,
-                    //Runtime = model.First().Runtime,
-                    //Rating = model.First().Rating,
-                    //Plot = model.First().Plot,
-                    //Poster = model.First().Poster,
-                    //Tconst = key,
-                    //Genres = model.Select(m => m.Genre).Distinct()
-                    //    .ToList()
-                }).FirstOrDefault();
-             */
-
-
 
             return result;
         }

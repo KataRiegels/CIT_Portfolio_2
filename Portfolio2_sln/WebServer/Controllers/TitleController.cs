@@ -120,22 +120,44 @@ namespace WebServer.Controllers
             return Ok(detailedTitle);
         }
 
-        [HttpGet("{tconst}/seasons/{seasonNumber}", Name = nameof(GetTitleSeason))]
-        public IActionResult GetTitleSeason(string tconst, int seasonNumber)
+
+        [HttpGet("{tconst}/cast", Name = nameof(GetTitleCast))]
+        public IActionResult GetTitleCast(string tconst)
         {
 
-            var detailedTitle =
-            CreateTvSeasonModel(_dataService.GetTvSeriesSeason(tconst, seasonNumber))
+            var season = _dataService
+                .GetTitleCast(tconst)
+                .Select(x => MapToCastModel(x))
+
+
+
+
+            //CreateTvSeasonModel(_dataService.GetTvSeriesSeason(tconst, seasonNumber))
             ;
 
-            if (detailedTitle == null)
+            if (season == null)
             {
                 return NotFound();
             }
 
+            return Ok(season);
+        }
 
 
-            return Ok(detailedTitle);
+        [HttpGet("{tconst}/seasons/{seasonNumber}", Name = nameof(GetTitleSeason))]
+        public IActionResult GetTitleSeason(string tconst, int seasonNumber)
+        {
+
+            var season =
+            CreateTvSeasonModel(_dataService.GetTvSeriesSeason(tconst, seasonNumber))
+            ;
+
+            if (season == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(season);
         }
 
         private TvSeriesSeasonModel CreateTvSeasonModel(TvSeriesSeasonDTO tvSeason)
@@ -164,13 +186,19 @@ namespace WebServer.Controllers
 
             return model;
         }
+
+
         /* -----------
             HELPERS
          ------------- */
 
-        //public TvSeriesSeasonDTO CreateSeasonModel()
+        private CastModel MapToCastModel(TitleCastDTO castDTO)
+        {
+            var model = new CastModel().ConvertFromDTO(castDTO);
+            model.BasicName.Url = CreateNameUrl(castDTO.Nconst);
+            return model;
+        }
 
-        // Take TitleBasics from Datalayer and makes it into TitleModel to display for client
         public TitleModel CreateTitleModel(TitleBasics titleBasics)
         {
             var model = _mapper.Map<TitleModel>(titleBasics);
@@ -217,7 +245,12 @@ namespace WebServer.Controllers
             return _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { tconst });
         }
 
-
+        private string CreateNameUrl(string nconst)
+        {
+            nconst = nconst.Trim();
+            if (string.IsNullOrEmpty(nconst)) return null;
+            return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
+        }
 
 
         //public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleModelDL titleBasics)

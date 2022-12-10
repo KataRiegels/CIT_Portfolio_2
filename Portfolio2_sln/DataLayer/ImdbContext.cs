@@ -34,6 +34,7 @@ namespace DataLayer
 
         public DbSet<BookmarkTitleTest> BookmarkTitlesTests { get; set; }
 
+        public DbSet<Character> Characters { get; set; }
 
         // TITLES
 
@@ -110,6 +111,14 @@ namespace DataLayer
             name_profession.HasKey(x => x.Nconst);
             name_profession.Property(x => x.Nconst).HasColumnName("nconst");
             name_profession.Property(x => x.Profession).HasColumnName("profession");
+
+
+            var characterTable = modelBuilder.Entity<Character>();
+            characterTable.ToTable("character");
+            characterTable.HasKey(x => new { x.Tconst, x.Nconst, x.CharacterName});
+            characterTable.Property(x => x.Nconst).HasColumnName("nconst");
+            characterTable.Property(x => x.Tconst).HasColumnName("tconst");
+            characterTable.Property(x => x.CharacterName).HasColumnName("character");
 
             var list_names = modelBuilder.Entity<FullNameViewModel>();
             list_names.ToView("detailed_names");
