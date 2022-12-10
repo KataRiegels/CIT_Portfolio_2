@@ -3,10 +3,12 @@ using DataLayer.DataTransferObjects;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
+using DataLayer.DataServices;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -96,7 +98,56 @@ namespace DataLayer.DataServices
         //----------------------------------------------------------------------------------------------
 
 
+        public IList<NameTitleRelationDTO> GetNameTitleRelations(string nconst)
+        {
+            using var db = new ImdbContext();
+            Console.WriteLine(nconst);
+            var jobsJoin = db.Jobs
+                 .Where(n => n.Nconst.Trim().Contains(nconst.Trim()))
+                 .Join(db.TitleBasicss,
+                     job => job.Tconst,
+                     title => title.Tconst,
+                     (job, title) => new NameTitleRelationDTO
+                     {
+                         Nconst = nconst,
+                         Relation = job.JobName,
+                         Title = new BasicTitleModelDL
+                         {
+                             Tconst = title.Tconst,
+                             TitleType = title.TitleType,
+                             PrimaryTitle = title.PrimaryTitle,
+                             StartYear = title.StartYear,
+                         }
+                        }
+                     )
+                 .ToList();
 
+            Console.WriteLine(jobsJoin.Count());
+
+            var characterJoin = db.Characters 
+              //.Where(t => t.)
+                 .Where(n => n.Nconst.Trim() == nconst.Trim())
+              .Join(db.TitleBasicss,
+                  character => character.Tconst,
+                  title => title.Tconst,
+                  (character, title) => new NameTitleRelationDTO
+                  {
+                      Nconst = nconst,
+                      Relation = character.CharacterName,
+                      Title = new BasicTitleModelDL
+                      {
+                          Tconst = title.Tconst,
+                          TitleType = title.TitleType,
+                          PrimaryTitle = title.PrimaryTitle,
+                          StartYear = title.StartYear,
+                      }
+                  }
+
+                  )
+              .ToList();
+            return jobsJoin.Concat(characterJoin).ToList();
+
+        }
 
 
 
@@ -183,7 +234,30 @@ namespace DataLayer.DataServices
             //return null;
         }
 
+        public DetailedNameModelDL GetDetailedName(string nconst)
+        {
+            var names = _db.FullViewNames
+                .Where(n => n.Nconst.Trim() == nconst.Trim())
+                .ToList()
+                .GroupBy(t => t.Nconst, (key, model) => new DetailedNameModelDL
+                {
+                    Nconst = key,
+                    PrimaryName = model.First().PrimaryName,
+                    BirthYear = model.First().BirthYear,
+                    DeathYear = model.First().DeathYear,
+                    //Professions = model.Select(p => p.Profession).Distinct().ToList(),
+                    //KnwonForTconst = model.Select(m => m.KnwonForTconst).Distinct().ToList(),
+                    //Characters = model.Select(m => new Tuple<string, string>(m.Character, m.CharacterTconst)).Distinct().ToList(),
+                    //Jobs = model.AsEnumerable().Select(m => new Tuple<string, string>(m.Job, m.JobTconst)).Distinct().ToList()
+                    //plot = model.First().plot,
+                    //poster = model.First().poster,
+                    ////Tconst = obj.Tconst,
+                    //genre = model.Select(m => m.genre).Distinct().ToList()
+                }
+                ).FirstOrDefault();
 
+            return names;
+        }
         public IList<DetailedNameModelDL>? GetDetailedNames(int page = 0, int pageSize = 20)
         {
             var names = _db.FullViewNames
@@ -195,10 +269,10 @@ namespace DataLayer.DataServices
                     PrimaryName = model.First().PrimaryName,
                     BirthYear = model.First().BirthYear,
                     DeathYear = model.First().DeathYear,
-                    Professions = model.Select(p => p.Profession).Distinct().ToList(),
-                    KnwonForTconst = model.Select(m => m.KnwonForTconst).Distinct().ToList(),
-                    Characters = model.Select(m => new Tuple<string, string>(m.Character, m.CharacterTconst)).Distinct().ToList(),
-                    Jobs = model.AsEnumerable().Select(m => new Tuple<string, string>(m.Job, m.JobTconst)).Distinct().ToList()
+                    //Professions = model.Select(p => p.Profession).Distinct().ToList(),
+                    //KnwonForTconst = model.Select(m => m.KnwonForTconst).Distinct().ToList(),
+                    //Characters = model.Select(m => new Tuple<string, string>(m.Character, m.CharacterTconst)).Distinct().ToList(),
+                    //Jobs = model.AsEnumerable().Select(m => new Tuple<string, string>(m.Job, m.JobTconst)).Distinct().ToList()
                     //plot = model.First().plot,
                     //poster = model.First().poster,
                     ////Tconst = obj.Tconst,

@@ -332,10 +332,10 @@ namespace DataLayer
                     PrimaryName = model.First().PrimaryName,
                     BirthYear = model.First().BirthYear,
                     DeathYear = model.First().DeathYear,
-                    Professions = model.Select(p => p.Profession).Distinct().ToList(),
-                    KnwonForTconst = model.Select(m => m.KnwonForTconst).Distinct().ToList(),
-                    Characters = model.Select(m => new Tuple<string, string>(m.Character, m.CharacterTconst)).Distinct().ToList(),
-                    Jobs = model.AsEnumerable().Select(m => new Tuple<string, string>(m.Job, m.JobTconst)).Distinct().ToList()
+                    //Professions = model.Select(p => p.Profession).Distinct().ToList(),
+                    //KnwonForTconst = model.Select(m => m.KnwonForTconst).Distinct().ToList(),
+                    //Characters = model.Select(m => new Tuple<string, string>(m.Character, m.CharacterTconst)).Distinct().ToList(),
+                    //Jobs = model.AsEnumerable().Select(m => new Tuple<string, string>(m.Job, m.JobTconst)).Distinct().ToList()
                     //plot = model.First().plot,
                     //poster = model.First().poster,
                     ////Tconst = obj.Tconst,

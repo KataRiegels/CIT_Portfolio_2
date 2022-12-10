@@ -145,7 +145,6 @@ namespace WebServer.Controllers
                 .GetTitleCrew(tconst)
                 .Select(x => MapToCastModel(x));
 
-
             if (crew == null)
             {
                 return NotFound();

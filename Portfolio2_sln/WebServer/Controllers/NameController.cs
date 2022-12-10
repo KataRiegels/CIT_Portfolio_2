@@ -60,7 +60,6 @@ namespace WebServer.Controllers
         [HttpGet("{nconst}", Name = nameof(GetName))]
         public IActionResult GetName(string nconst)
         {
-            Console.WriteLine("ran Get for GetName");
             NameModel name = CreateNameModel(_dataService.GetName(nconst));
 
             if(name == null)
@@ -70,6 +69,38 @@ namespace WebServer.Controllers
 
             return Ok(name);
         }
+
+        [HttpGet("{nconst}/contributing", Name = nameof(GetTitleRelations))]
+        public IActionResult GetTitleRelations(string nconst)
+        {
+
+            var relations = _dataService
+                .GetNameTitleRelations(nconst)
+                .Select(x => MapNameTitleRelation(x))
+
+                ;
+
+            if (relations == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(relations);
+        }
+
+        
+        private NameTitleRelationModel MapNameTitleRelation(NameTitleRelationDTO nameTitleDTO)
+        {
+            var model = new NameTitleRelationModel().ConvertFromDTO(nameTitleDTO);
+            model.Title.Url = CreateTitleUrl(nameTitleDTO.Title.Tconst);
+            if (nameTitleDTO.Title.Tconst != null)
+            {
+                model.Title.Url = CreateTitleUrl(nameTitleDTO.Title.Tconst);
+            }
+
+            return model;
+        }
+
 
         [HttpGet("list")]
         public IActionResult GetListNames(int page = 0, int pagesize = 20)
@@ -104,10 +135,34 @@ namespace WebServer.Controllers
             return Ok(names);
         }
 
+
+        [HttpGet("detailed/{nconst}", Name = nameof(GetDetailedName))]
+        public IActionResult GetDetailedName(string nconst)
+        {
+
+            var detailedTitle =
+            CreateDetailedNameModel(_dataService.GetDetailedName(nconst));
+
+            if (detailedTitle == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(detailedTitle);
+        }
+
+
+
         private DetailedNameModel CreateDetailedNameModel(DetailedNameModelDL detailModel)
         {
-            var model = _mapper.Map<DetailedNameModel>(detailModel);
+            var model = new DetailedNameModel().ConvertFromDTO(detailModel);
+            model.Url = CreateNameUrl(detailModel.Nconst);
+
+            //var model = _mapper.Map<DetailedNameModel>(detailModel);
+
             return model;
+        
+        
         }
 
 
@@ -134,6 +189,18 @@ namespace WebServer.Controllers
             return model;
         }
 
+        private string CreateTitleUrl(string tconst)
+        {
+            tconst = tconst.Trim();
+            if (string.IsNullOrEmpty(tconst)) return null;
+            return _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { tconst });
+        }
 
+        private string CreateNameUrl(string nconst)
+        {
+            nconst = nconst.Trim();
+            if (string.IsNullOrEmpty(nconst)) return null;
+            return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
+        }
     }
 }
