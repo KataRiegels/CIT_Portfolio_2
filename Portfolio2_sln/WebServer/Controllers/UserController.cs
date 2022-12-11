@@ -3,6 +3,7 @@ using DataLayer.DataServices;
 using DataLayer.DataTransferObjects;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebServer.Models.NameModels;
 using WebServer.Models.TitleModels;
@@ -181,7 +182,7 @@ namespace WebServer.Controllers
             return model;
         }
 
-        [HttpPost("{username}/search")]
+        [HttpPost("{username}/searches")]
         //public IActionResult CreateUserSearch(string username, UserSearchCreateModel search)
         public IActionResult CreateUserSearch(string username, string searchContent, string? searchCategory = null)
         {
@@ -191,7 +192,21 @@ namespace WebServer.Controllers
             return CreatedAtRoute(null, results);
         }
 
+        [HttpGet("{username}/searches")]
+        public IActionResult GetUserSearches(string username)
+        {
+            var searches = _dataService.GetUserSearches(username)
+               .Select(x => MapUserSearch(x))
+                ;
 
+            if (searches == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(searches);
+
+        }
 
 
 
@@ -320,9 +335,11 @@ namespace WebServer.Controllers
 
 
         //public UserSearchModel CreateUserSearchModel(UserSearch search)
-        public UserSearchModel CreateUserSearchModel(UserSearch search)
+        public UserSearchModel MapUserSearch(UserSearch search)
         {
-            var model = _mapper.Map<UserSearchModel>(search);
+            var model = new UserSearchModel().ConvertFromDTO(search);
+            //var model = _mapper.Map<UserSearchModel>(search);
+            model.Url = _generator.GetUriByName(HttpContext, nameof(SearchController.GetSearchResult), new { model.SearchContent, model.SearchCategory });
 
             //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
             //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);

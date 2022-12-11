@@ -237,7 +237,8 @@ namespace DataLayer.DataServices
         {
             using var db = new ImdbContext();
 
-            var ratings = db.UserRatings.Where(u => u.Username.Equals(username))
+            var ratings = db.UserRatings
+                .Where(u => u.Username.Equals(username))
                 .Join(db.TitleBasicss,
                     rating => rating.Tconst,
                     title => title.Tconst,
@@ -259,7 +260,6 @@ namespace DataLayer.DataServices
                 )
                 .OrderBy(r => r.Date)
                 .ToList();
-
             return ratings;
 
         }
@@ -290,6 +290,12 @@ namespace DataLayer.DataServices
 
         public IList<UserSearch> GetUserSearches(string username)
         {
+
+            using var db = new ImdbContext();
+
+            return db.UserSearches.Where(u => u.Username.Equals(username)).ToList();
+
+
             return null;
         }
 
