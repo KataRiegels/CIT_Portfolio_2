@@ -11,7 +11,7 @@ namespace DataLayer.Models.UserModels
         public string Username { get; set; }
         public string Tconst { get; set; }
         public int Rating { get; set; }
-        public DateOnly Date { get; set; }
+        public DateTime? Date { get; set; }
 
     }
 }

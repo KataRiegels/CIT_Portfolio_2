@@ -5,6 +5,11 @@ namespace DataLayer.DataServices
 {
     public interface IDataServiceUser
     {
+        public IList<UserSearch> GetUserSearches(string username);
+
+        public bool DeleteUserRating(string username, string tconst);
+
+        public IList<UserRatingDTO> GetUserRatings(string username);
         public bool DeleteBookmarkName(string username, string nconst);
 
         public BookmarkName GetBookmarkName(string username, string nconst);

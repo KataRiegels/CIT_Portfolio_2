@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DataLayer.DataServices;
 using DataLayer.DataTransferObjects;
+using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 using Microsoft.AspNetCore.Mvc;
 using WebServer.Models.NameModels;
@@ -142,13 +143,42 @@ namespace WebServer.Controllers
             return CreatedAtRoute(null, result);
         }
 
-        [HttpPost("{username}/rating")]
+        [HttpPost("{username}/ratings")]
         public IActionResult CreateRating(string username, UserRatingCreateModel rating)
         {
             var rate = _mapper.Map<UserRating>(rating);
             //Console.WriteLine(rate.Rating);
             _dataService.CreateUserRating(username, rate.Tconst, rate.Rating);
             return CreatedAtRoute(null, CreateUserRatingModel(rate));
+        }
+
+        [HttpGet("{username}/ratings")]
+        public IActionResult GetUserRatings(string username)
+        {
+            var rating = _dataService.GetUserRatings(username)
+               .Select(x => MapUserRating(x))
+                ;
+
+            if (rating == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(rating);
+
+        }
+
+
+        private UserRatingModel MapUserRating(UserRatingDTO rating)
+        {
+            var model = new UserRatingModel().ConvertFromDTO(rating);
+            model.TitleModel.Url = CreateTitleUrl(rating.TitleModel.Tconst);
+            //if (titleBasics.ParentTitle != null)
+            //{
+            //    model.ParentTitle.Url = CreateTitleUrl(titleBasics.ParentTitle.Tconst);
+            //}
+
+            return model;
         }
 
         [HttpPost("{username}/search")]
