@@ -80,36 +80,124 @@ namespace WebServer.Controllers
             return Ok();
         }
 
-        //[HttpGet("{username}/titlebookmark/{tconst}", Name = nameof(GetBookmarkTitle))]
-        //[HttpGet("bookmark")]
-        ////public IActionResult GetBookmarkTitle(string username, string tconst)
-        //public IActionResult GetBookmarkTitle()
-        //{
-        //    //BookmarkTitleModel title = CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
-        //    //CreateBookmarkTitleModel(_dataService.GetBookmarkTitle(username,tconst));
-        //    var something = _dataService.GetTitleBookmarks();
-
-
-        //    //if (title == null)
-        //    //{
-        //    //    return NotFound();
-        //    //}
-        //    //return Ok(title);
-        //    return Ok(something);
-        //}
 
         [HttpGet("{username}/titlebookmarks")]
-        public IActionResult GetBookmarksTitleaByUser(string username)
+        public IActionResult GetBookmarksTitleByUser(string username)
         {
-            IEnumerable<BookmarkTitleModel> bookmark =
-                _dataService.GetBookmarkTitlesByUser(username).Select(x => CreateBookmarkTitleModel(x));
-            Console.WriteLine("IS THIS WORKING?????");
+            var bookmark = _dataService.GetBookmarkTitlesByUser(username)
+                .Select(x => MapTitleList(x));
+
+            if (bookmark == null)
+            {
+                return NotFound();
+            }
 
             return Ok(bookmark);
         }
 
 
+        [HttpGet("{username}/namebookmarks")]
+        public IActionResult GetBookmarksNameByUser(string username)
+        {
+            var bookmark = _dataService.GetBookmarkNamesByUser(username)
+                .Select(x => MapNameList(x));
 
+            if (bookmark == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(bookmark);
+        }
+
+        [HttpPost("{username}/namebookmarks")]
+        public IActionResult CreateNameBookmark(string username, CreateBookmarkName bookmark)
+        {
+            var result = _dataService.CreateBookmarkName(username, bookmark.Nconst, bookmark.Annotation);
+
+            return CreatedAtRoute(null, result);
+        }
+
+        [HttpPost("{username}/titlebookmarks")]
+        public IActionResult CreateTitleBookmark(string username, CreateBookmarkTitle bookmark)
+        {
+            var result = _dataService.CreateBookmarkTitle(username, bookmark.Tconst, bookmark.Annotation);
+
+            return CreatedAtRoute(null, result);
+        }
+
+        [HttpDelete("{username}/titlebookmarks")]
+        public IActionResult DeleteTitleBookmark(string username, string tconst)
+        {
+            var result = _dataService.DeleteBookmarkTitle(username, tconst);
+
+            return CreatedAtRoute(null, result);
+        }
+
+        [HttpDelete("{username}/namebookmarks")]
+        public IActionResult DeleteNameBookmark(string username, string nconst)
+        {
+            var result = _dataService.DeleteBookmarkName(username, nconst);
+
+            return CreatedAtRoute(null, result);
+        }
+
+        [HttpPost("{username}/rating")]
+        public IActionResult CreateRating(string username, UserRatingCreateModel rating)
+        {
+            var rate = _mapper.Map<UserRating>(rating);
+            //Console.WriteLine(rate.Rating);
+            _dataService.CreateUserRating(username, rate.Tconst, rate.Rating);
+            return CreatedAtRoute(null, CreateUserRatingModel(rate));
+        }
+
+        [HttpPost("{username}/search")]
+        //public IActionResult CreateUserSearch(string username, UserSearchCreateModel search)
+        public IActionResult CreateUserSearch(string username, string searchContent, string? searchCategory = null)
+        {
+            var results = _dataService.CreateUserSearch(username, searchContent, searchCategory);
+            //var titleResults = results.TitleResults;
+            //var test = CreateUserSearchResultsModel(results);
+            return CreatedAtRoute(null, results);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        public ListNameModel MapNameList(ListNameModelDL nameResults)
+        {
+
+            var model = new ListNameModel().ConvertFromListTitleDTO(nameResults);
+            model.BasicName.Url = CreateTitleUrl(nameResults.BasicName.Nconst);
+            if (nameResults.KnownForTitleBasics != null)
+            {
+                model.KnownForTitleBasics.Url = CreateTitleUrl(nameResults.KnownForTitleBasics.Tconst);
+            }
+            //var model = _mapper.Map<ListNameModel>(nameResults);
+            //model.BasicName = _mapper.Map<BasicNameModel>(model.BasicName);
+            //model.BasicName.Url = _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nameResults.BasicName.Nconst });
+            return model;
+        }
+
+        public ListTitleModel MapTitleList(ListTitleModelDL titleBasics)
+        {
+            var model = new ListTitleModel().ConvertFromListTitleDTO(titleBasics);
+            model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
+            if (titleBasics.ParentTitle != null)
+            {
+                model.ParentTitle.Url = CreateTitleUrl(titleBasics.ParentTitle.Tconst);
+            }
+
+            return model;
+        }
 
         public BookmarkTitleModel CreateBookmarkTitleModel(BookmarkTitle bookmark)
         {
@@ -128,24 +216,7 @@ namespace WebServer.Controllers
             return model;
         }
 
-        [HttpPost("{username}/Rating")]
-        public IActionResult CreateRating(string username, UserRatingCreateModel rating)
-        {
-            var rate = _mapper.Map<UserRating>(rating);
-            //Console.WriteLine(rate.Rating);
-            _dataService.CreateUserRating(username, rate.Tconst, rate.Rating);
-            return CreatedAtRoute(null, CreateUserRatingModel(rate));
-        }
-
-        [HttpPost("{username}/search")]
-        //public IActionResult CreateUserSearch(string username, UserSearchCreateModel search)
-        public IActionResult CreateUserSearch(string username, string searchContent, string? searchCategory = null)
-        {
-            var results = _dataService.CreateUserSearch(username, searchContent, searchCategory);
-            //var titleResults = results.TitleResults;
-            //var test = CreateUserSearchResultsModel(results);
-            return CreatedAtRoute(null, results);
-        }
+       
 
 
         public UserSearchResultsModel CreateUserSearchResultsModel(SearchResult searchResult)

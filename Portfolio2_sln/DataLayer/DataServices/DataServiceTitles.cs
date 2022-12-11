@@ -407,7 +407,46 @@ namespace DataLayer.DataServices
 
 
 
+        public IList<ListTitleModelDL> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5)
+        {
+            using var db = new ImdbContext();
 
+            // Filters the FullViewTitles to only have those returned from the string search
+            var filteredTitles = db.FullViewTitles.ToList()
+                .Join(searchedTitles,
+                    fullView => fullView.Tconst,
+                    searchResults => searchResults.Tconst,
+                    (fullView, searchResults)
+                                  => fullView
+                    );
+
+            // Groups the titles so we can make a list of genres for each title
+            // and creates the list form DTO
+            var groupedTitles = filteredTitles
+
+                .ToList()
+                .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
+                {
+                    BasicTitle = new BasicTitleModelDL
+                    {
+                        Tconst = model.First().Tconst,
+                        PrimaryTitle = model.First().PrimaryTitle,
+                        StartYear = model.First().StartYear,
+                        TitleType = model.First().TitleType,
+                    },
+                    Runtime = model.First().Runtime,
+                    Rating = model.First().Rating,
+                    Genres = model.Select(m => m.Genre).Distinct().ToList(),
+                    ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst)
+                                    ? null
+                                    : new DataService().GetBasicTitle(model.FirstOrDefault().ParentTconst)
+                })
+                .Skip(page * pageSize).Take(pageSize)
+                .ToList();
+
+
+            return groupedTitles;
+        }
 
 
 

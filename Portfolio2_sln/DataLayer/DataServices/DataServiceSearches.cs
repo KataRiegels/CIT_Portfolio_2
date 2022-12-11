@@ -38,7 +38,11 @@ namespace DataLayer.DataServices
                 var returnedMathingNames  = searchCategory != "titles" ? db.SearchNameResults
                         .FromSqlInterpolated($"select * from string_search_names({searchContent})")
                         .ToList() : null;
-                var matchingNames = GetFilteredNames(returnedMathingNames);
+                var matchingNames = 
+                    new DataServiceNames().GetFilteredNames(
+                    returnedMathingNames
+                    .Select(x => new NconstObject { Nconst = x.Nconst }).ToList())
+                    ;
                 searchResult.NameResults = matchingNames;
             }
 
@@ -48,7 +52,10 @@ namespace DataLayer.DataServices
                 var returnedMatchingTitles = searchCategory != "names" ? db.SearchTitleResults
                     .FromSqlInterpolated($"select * from string_search_titles({searchContent})")
                     .ToList() : null;
-                var matchingTitles = GetFilteredTitles(returnedMatchingTitles);
+                var matchingTitles = new DataServiceTitles().GetFilteredTitles(
+                    returnedMatchingTitles
+                    .Select(x => new TconstObject { Tconst= x.Tconst}).ToList())
+                    ;
                 searchResult.TitleResults = matchingTitles;
             }
 
@@ -56,63 +63,12 @@ namespace DataLayer.DataServices
         }
 
 
+        
         // Getting filtered list form DTO's for names from based on input list
-        public IList<ListNameModelDL> GetFilteredNames(List<SearchNameModel> searchedNames, int page = 0, int pageSize = 20)
-        {
-            using var db = new ImdbContext();
-
-
-            Console.WriteLine("before join");
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            // Filters names so only contain those that matched the search
-            var filtered = db.NameBasicss.ToList()
-                .Join(searchedNames,  
-                    fullView => fullView.Nconst, 
-                    searchResults => searchResults.Nconst,  
-                    (fullView, searchResults)
-                                  => fullView
-                    );
-
-
-            stopwatch.Stop();
-            var elapsed_time = stopwatch.ElapsedMilliseconds;
-            Console.WriteLine("joining name basics with searched list: ms: " + elapsed_time);
-
-            Console.WriteLine("after filtered");
-
-            stopwatch.Start();
-
-            // Joins the filtered name_basics with known_for to get list form of matching names
-            var searchedTitleResults =
-                filtered.ToList().GroupJoin(_db.NameKnownFors,
-                       basics => basics.Nconst,
-                       knownFor => knownFor.Nconst,
-                       (basics, knownFor) => new ListNameModelDL
-                           {
-                               BasicName =
-                               new DataServiceNames().
-                                    GetBasicName(basics.Nconst),
-                           KnownForTitleBasics = knownFor.Any() ? 
-                                    new DataServiceTitles().
-                                    GetBasicTitle(knownFor.FirstOrDefault().Tconst) : null
-                           }
-                    )
-                .Skip(page * pageSize).Take(pageSize)
-                .ToList();
-
-            stopwatch.Stop();
-            elapsed_time = stopwatch.ElapsedMilliseconds;
-            Console.WriteLine(elapsed_time);
-
-            Console.WriteLine("after join");
-
-            return searchedTitleResults;
-        }
-
+      
         // Getting filtered list form DTO's from based on input list
-        public IList<ListTitleModelDL> GetFilteredTitles(List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
+        //public IList<ListTitleModelDL> GetFilteredTitles(List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
+        public IList<ListTitleModelDL> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5)
         {
             using var db = new ImdbContext();
 

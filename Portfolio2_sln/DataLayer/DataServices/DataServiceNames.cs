@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace DataLayer.DataServices
 {
@@ -96,6 +97,61 @@ namespace DataLayer.DataServices
         //----------------------------------------------------------------------------------------------
         //         NAME HELPERS
         //----------------------------------------------------------------------------------------------
+
+
+        public IList<ListNameModelDL> GetFilteredNames(List<NconstObject> searchedNames, int page = 0, int pageSize = 20)
+        {
+            using var db = new ImdbContext();
+
+
+            Console.WriteLine("before join");
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            // Filters names so only contain those that matched the search
+            var filtered = db.NameBasicss.ToList()
+                .Join(searchedNames,
+                    fullView => fullView.Nconst,
+                    searchResults => searchResults.Nconst,
+                    (fullView, searchResults)
+                                  => fullView
+                    );
+
+
+            stopwatch.Stop();
+            var elapsed_time = stopwatch.ElapsedMilliseconds;
+            Console.WriteLine("joining name basics with searched list: ms: " + elapsed_time);
+
+            Console.WriteLine("after filtered");
+
+            stopwatch.Start();
+
+            // Joins the filtered name_basics with known_for to get list form of matching names
+            var searchedTitleResults =
+                filtered.ToList().GroupJoin(_db.NameKnownFors,
+                       basics => basics.Nconst,
+                       knownFor => knownFor.Nconst,
+                       (basics, knownFor) => new ListNameModelDL
+                       {
+                           BasicName =
+                               new DataServiceNames().
+                                    GetBasicName(basics.Nconst),
+                           KnownForTitleBasics = knownFor.Any() ?
+                                    new DataServiceTitles().
+                                    GetBasicTitle(knownFor.FirstOrDefault().Tconst) : null
+                       }
+                    )
+                .Skip(page * pageSize).Take(pageSize)
+                .ToList();
+
+            stopwatch.Stop();
+            elapsed_time = stopwatch.ElapsedMilliseconds;
+            Console.WriteLine(elapsed_time);
+
+            Console.WriteLine("after join");
+
+            return searchedTitleResults;
+        }
 
 
         public IList<NameTitleRelationDTO> GetNameTitleRelations(string nconst)
