@@ -6,15 +6,15 @@ namespace DataLayer.DataServices
 {
     public interface IDataServiceTitles
     {
-        public IList<ListTitleModelDL> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5);
-        public IList<TitleCastDTO> GetTitleCrew(string tconst);
+        public IList<TitleForListDTO> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5);
+        public IList<TitleCrewDTO> GetTitleCrew(string tconst);
         public IList<TitleCastDTO> GetTitleCast(string tconst);
-        BasicTitleModelDL GetBasicTitle(string tconst);
-        IList<BasicTitleModelDL> GetBasicTitles(int page = 0, int pageSize = 20);
-        DetailedTitleModelDL GetDetailedTitle(string tconst);
-        IList<DetailedTitleModelDL>? GetDetailedTitles(int page, int pageSize);
-        ListTitleModelDL GetListTitle(string tconst);
-        IList<ListTitleModelDL> GetListTitles(int page = 0, int pageSize = 1);
+        BasicTitleDTO GetBasicTitle(string tconst);
+        IList<BasicTitleDTO> GetBasicTitles(int page = 0, int pageSize = 20);
+        DetailedTitleDTO GetDetailedTitle(string tconst);
+        IList<DetailedTitleDTO>? GetDetailedTitles(int page, int pageSize);
+        TitleForListDTO GetListTitle(string tconst);
+        IList<TitleForListDTO> GetListTitles(int page = 0, int pageSize = 1);
         TitleBasics GetTitle(string tconst);
         IList<TitleBasics> GetTitles(int page = 0, int pageSize = 20);
 

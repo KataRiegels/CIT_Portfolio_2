@@ -107,7 +107,7 @@ namespace DataLayer.DataServices
             return true;
         }
 
-        public IList<ListNameModelDL> GetBookmarkNamesByUser(string username)
+        public IList<NameForListDTO> GetBookmarkNamesByUser(string username)
         {
             using var db = new ImdbContext();
 
@@ -123,7 +123,7 @@ namespace DataLayer.DataServices
             return result;
         }
 
-        public IList<ListTitleModelDL> GetBookmarkTitlesByUser(string username)
+        public IList<TitleForListDTO> GetBookmarkTitlesByUser(string username)
         {
             using var db = new ImdbContext();
 
@@ -139,7 +139,7 @@ namespace DataLayer.DataServices
             return result;
         }
 
-        public IList<ListTitleModelDL> GetFilteredTitles(List<BookmarkTitle> searchedTitles, int page = 1, int pageSize = 5)
+        public IList<TitleForListDTO> GetFilteredTitles(List<BookmarkTitle> searchedTitles, int page = 1, int pageSize = 5)
         {
             using var db = new ImdbContext();
 
@@ -157,9 +157,9 @@ namespace DataLayer.DataServices
             var groupedTitles = filteredTitles
 
                 .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
+                .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
                 {
-                    BasicTitle = new BasicTitleModelDL
+                    BasicTitle = new BasicTitleDTO
                     {
                         Tconst = model.First().Tconst,
                         PrimaryTitle = model.First().PrimaryTitle,
@@ -249,7 +249,7 @@ namespace DataLayer.DataServices
                                   => new UserRatingDTO
                                   {
                                       Rating = rating.Rating,
-                                      TitleModel = new BasicTitleModelDL
+                                      TitleModel = new BasicTitleDTO
                                       {
                                           Tconst = title.Tconst,
                                           StartYear = title.StartYear,

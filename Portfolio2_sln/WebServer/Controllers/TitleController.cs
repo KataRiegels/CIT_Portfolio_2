@@ -73,8 +73,8 @@ namespace WebServer.Controllers
         public IActionResult GetListTitles(int page = 0, int pageSize = 20)
         {
             Console.WriteLine(page);
-            //IEnumerable<ListTitleModel> titles =
-            IEnumerable<ListTitleModel> titles =
+            //IEnumerable<TitleForListModel> titles =
+            IEnumerable<TitleForListModel> titles =
                 _dataService.GetListTitles(page, pageSize)
                 .Select(x => CreateListTitleModel(x));
 
@@ -143,7 +143,8 @@ namespace WebServer.Controllers
 
             var crew = _dataService
                 .GetTitleCrew(tconst)
-                .Select(x => MapToCastModel(x));
+                .Select(x => MapToCrewModel(x))
+                ;
 
             if (crew == null)
             {
@@ -213,6 +214,14 @@ namespace WebServer.Controllers
             return model;
         }
 
+
+        private CrewModel MapToCrewModel(TitleCrewDTO crewDTO)
+        {
+            var model = new CrewModel().ConvertFromDTO(crewDTO);
+            model.BasicName.Url = CreateNameUrl(crewDTO.Nconst);
+            return model;
+        }
+
         public TitleModel CreateTitleModel(TitleBasics titleBasics)
         {
             var model = _mapper.Map<TitleModel>(titleBasics);
@@ -222,7 +231,7 @@ namespace WebServer.Controllers
             return model;
         }
 
-        public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleModelDL? detailedTitle)
+        public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleDTO? detailedTitle)
         {
             //var model = _mapper.Map<DetailedTitleModel>(detailedTitle);
             var model = new DetailedTitleModel().ConvertFromDetailedTitleDTO(detailedTitle);
@@ -231,7 +240,7 @@ namespace WebServer.Controllers
             return model;
         }
 
-        public BasicTitleModel CreateBasicTitleModel(BasicTitleModelDL titleBasics)
+        public BasicTitleModel CreateBasicTitleModel(BasicTitleDTO titleBasics)
         {
 
             var model = _mapper.Map<BasicTitleModel>(titleBasics);
@@ -240,11 +249,11 @@ namespace WebServer.Controllers
             return model;
         }
 
-        public ListTitleModel CreateListTitleModel(ListTitleModelDL titleBasics)
+        public TitleForListModel CreateListTitleModel(TitleForListDTO titleBasics)
         {
 
             //var model1 = _mapper.Map<BasicTitleModel>(titleBasics.BasicTitle);
-            var model = _mapper.Map<ListTitleModel>(titleBasics);
+            var model = _mapper.Map<TitleForListModel>(titleBasics);
             model.BasicTitle = CreateBasicTitleModel(titleBasics.BasicTitle);
             model.BasicTitle.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.BasicTitle.Tconst });
             model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
@@ -267,7 +276,7 @@ namespace WebServer.Controllers
         }
 
 
-        //public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleModelDL titleBasics)
+        //public DetailedTitleModel CreateDetailedTitleModel(DetailedTitleDTO titleBasics)
         //{
         //    var model = _mapper.Map<DetailedTitleModel>(titleBasics);
         //    model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });

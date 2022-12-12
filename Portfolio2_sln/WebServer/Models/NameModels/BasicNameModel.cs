@@ -7,7 +7,7 @@ namespace WebServer.Models.NameModels
         public string Url { get; set; }
         public string PrimaryName { get; set; }
 
-        public BasicNameModel ConvertFromBasicNameModelDTO(BasicNameModelDL inputModel)
+        public BasicNameModel ConvertFromBasicNameModelDTO(BasicNameDTO inputModel)
         {
             return new BasicNameModel
             {

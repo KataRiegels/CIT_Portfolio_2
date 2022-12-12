@@ -6,9 +6,9 @@ namespace DataLayer.DataServices
 {
     public interface IDataServiceSearches
     {
-        SearchResult GenerateSearchResults(string searchContent, string searchCategory = null);
-        SearchResult GetSearchResult(int searchId);
-        //IList<ListTitleModelDL> GetFilteredTitles(List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5);
-        IList<ListTitleModelDL> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5);
+        SearchResultDTO GenerateSearchResults(string searchContent, string searchCategory = null);
+        SearchResultDTO GetSearchResult(int searchId);
+        //IList<TitleForListDTO> GetFilteredTitles(List<TitleSearchResult> searchedTitles, int page = 1, int pageSize = 5);
+        IList<TitleForListDTO> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5);
     }
 }

@@ -107,7 +107,7 @@ namespace WebServer.Controllers
         {
             Console.WriteLine("dfkldfk");
 
-            //IEnumerable<ListNameModelDL> names =
+            //IEnumerable<NameForListDTO> names =
             IEnumerable<ListNameModel> names =
               _dataService.GetListNames(page, pagesize)
               .Select(x => CreateListNameModel(x));
@@ -153,7 +153,7 @@ namespace WebServer.Controllers
 
 
 
-        private DetailedNameModel CreateDetailedNameModel(DetailedNameModelDL detailModel)
+        private DetailedNameModel CreateDetailedNameModel(DetailedNameDTO detailModel)
         {
             var model = new DetailedNameModel().ConvertFromDTO(detailModel);
             model.Url = CreateNameUrl(detailModel.Nconst);
@@ -166,7 +166,7 @@ namespace WebServer.Controllers
         }
 
 
-        private ListNameModel CreateListNameModel(ListNameModelDL listModel)
+        private ListNameModel CreateListNameModel(NameForListDTO listModel)
         {
             var model1 = _mapper.Map<BasicTitleModel>(listModel.KnownForTitleBasics);
             var model = _mapper.Map<ListNameModel>(listModel);

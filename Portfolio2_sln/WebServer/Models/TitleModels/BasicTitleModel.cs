@@ -12,7 +12,7 @@ namespace WebServer.Models.TitleModels
         public BasicTitleModel() { }
 
 
-        public BasicTitleModel ConvertBasicTitleModel(BasicTitleModelDL inputModel)
+        public BasicTitleModel ConvertBasicTitleModel(BasicTitleDTO inputModel)
         {
             if (inputModel != null)
             {

@@ -152,7 +152,7 @@ namespace WebServer.Controllers
         {
             var rate = _mapper.Map<UserRating>(rating);
             //Console.WriteLine(rate.Rating);
-            _dataService.CreateUserRating(username, rate.Tconst, rate.Rating);
+            _dataService.CreateUserRating(username, rating.Tconst, rating.Rating);
             return CreatedAtRoute(null, CreateUserRatingModel(rate));
         }
 
@@ -213,7 +213,7 @@ namespace WebServer.Controllers
 
 
 
-        public ListNameModel MapNameList(ListNameModelDL nameResults)
+        public ListNameModel MapNameList(NameForListDTO nameResults)
         {
 
             var model = new ListNameModel().ConvertFromListTitleDTO(nameResults);
@@ -228,9 +228,9 @@ namespace WebServer.Controllers
             return model;
         }
 
-        public ListTitleModel MapTitleList(ListTitleModelDL titleBasics)
+        public TitleForListModel MapTitleList(TitleForListDTO titleBasics)
         {
-            var model = new ListTitleModel().ConvertFromListTitleDTO(titleBasics);
+            var model = new TitleForListModel().ConvertFromListTitleDTO(titleBasics);
             model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
             if (titleBasics.ParentTitle != null)
             {
@@ -260,7 +260,7 @@ namespace WebServer.Controllers
        
 
 
-        public UserSearchResultsModel CreateUserSearchResultsModel(SearchResult searchResult)
+        public UserSearchResultsModel CreateUserSearchResultsModel(SearchResultDTO searchResult)
         {
             var model = _mapper.Map<UserSearchResultsModel>(searchResult);
             var titleResults = searchResult.TitleResults
@@ -273,9 +273,9 @@ namespace WebServer.Controllers
         }
 
         // Map tite list form DTO to WebServer model, including adding URL's
-        public ListTitleModel MapTitleSearchResults(ListTitleModelDL titleBasics)
+        public TitleForListModel MapTitleSearchResults(TitleForListDTO titleBasics)
         {
-            var model = new ListTitleModel().ConvertFromListTitleDTO(titleBasics);
+            var model = new TitleForListModel().ConvertFromListTitleDTO(titleBasics);
             model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
             if (titleBasics.ParentTitle != null)
             {
@@ -285,7 +285,7 @@ namespace WebServer.Controllers
             return model;
         }
 
-        public ListNameModel MapNameSearchResults(ListNameModelDL nameResults)
+        public ListNameModel MapNameSearchResults(NameForListDTO nameResults)
         {
             var model = _mapper.Map<ListNameModel>(nameResults);
             model.BasicName = _mapper.Map<BasicNameModel>(model.BasicName);

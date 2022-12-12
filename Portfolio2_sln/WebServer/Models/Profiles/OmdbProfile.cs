@@ -16,9 +16,7 @@ namespace WebServer.Models.Profiles
     {
         public OmdbProfile()
         {
-            CreateMap<OmdbData, OmdbModel>();
 
-            CreateMap<OmdbCreateModel, OmdbData>();
         }
     }
 }

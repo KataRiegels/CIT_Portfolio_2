@@ -18,7 +18,7 @@ namespace DataLayer.DataServices
 
         public bool CreateBookmarkName(string username, string nconst, string annotation);
 
-        public IList<ListNameModelDL> GetBookmarkNamesByUser(string username);
+        public IList<NameForListDTO> GetBookmarkNamesByUser(string username);
         int CreateBookmarkTitle(string username, string tconst, string annotation);
         void CreateUser(string username, string password, string birthYear, string email);
         bool CreateUserRating(string username, string tconst, int rating);
@@ -27,8 +27,8 @@ namespace DataLayer.DataServices
         bool DeleteUser(string username);
         BookmarkTitle GetBookmarkTitle(string username, string tconst);
         IList<BookmarkTitle> GetBookmarkTitles();
-        IList<ListTitleModelDL> GetBookmarkTitlesByUser(string username);
-        //IList<ListTitleModelDL> GetTitlesForSearch(List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5);
+        IList<TitleForListDTO> GetBookmarkTitlesByUser(string username);
+        //IList<TitleForListDTO> GetTitlesForSearch(List<TitleSearchResult> searchedTitles, int page = 1, int pageSize = 5);
         User GetUser(string username);
         IList<User> GetUsers();
     }

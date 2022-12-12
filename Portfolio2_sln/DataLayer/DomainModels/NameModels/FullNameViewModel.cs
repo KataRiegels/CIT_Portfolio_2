@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.DTOs.NameObjects
+namespace DataLayer.DomainModels.NameModels
 {
     public class FullNameViewModel
 

@@ -5,8 +5,8 @@ using DataLayer.Models.NameModels;
 using DataLayer.Models.UserModels;
 using System.ComponentModel.DataAnnotations;
 using DataLayer.DTOs.TitleObjects;
-using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.SearchObjects;
+using DataLayer.DomainModels.NameModels;
 
 namespace DataLayer
 {
@@ -15,9 +15,9 @@ namespace DataLayer
         const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
         //const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
-        //public DbSet<DetailedTitleModelDL> DetailedTitles { get; set; }
+        //public DbSet<DetailedTitleDTO> DetailedTitles { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }
-        //public DbSet<DetailedNameModelDL> DetailedNames { get; set; }
+        //public DbSet<DetailedNameDTO> DetailedNames { get; set; }
         public DbSet<FullTitleViewModel> FullViewTitles { get; set; }
         public DbSet<FullNameViewModel> FullViewNames { get; set; }
 
@@ -31,8 +31,8 @@ namespace DataLayer
 
         public DbSet<UserSearch> UserSearches { get; set; }
 
-        public DbSet<SearchTitleModel> SearchTitleResults{ get; set; }
-        public DbSet<SearchNameModel> SearchNameResults{ get; set; }
+        public DbSet<TitleSearchResult> SearchTitleResults{ get; set; }
+        public DbSet<NameSearchResult> SearchNameResults{ get; set; }
 
         public DbSet<BookmarkTitleTest> BookmarkTitlesTests { get; set; }
 
@@ -193,12 +193,12 @@ namespace DataLayer
             userSearchTable.Property(x => x.SearchContent).HasColumnName("search_content");
             userSearchTable.Property(x => x.SearchCategory).HasColumnName("search_category");
 
-            var searchResultTitles = modelBuilder.Entity<SearchTitleModel>();
+            var searchResultTitles = modelBuilder.Entity<TitleSearchResult>();
             searchResultTitles.HasNoKey();
             searchResultTitles.Property(x => x.Tconst).HasColumnName("tconst");
             searchResultTitles.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
 
-            var searchResultNames = modelBuilder.Entity<SearchNameModel>();
+            var searchResultNames = modelBuilder.Entity<NameSearchResult>();
             searchResultNames.HasNoKey();
             searchResultNames.Property(x => x.Nconst).HasColumnName("nconst");
             searchResultNames.Property(x => x.PrimaryName).HasColumnName("primaryname");
@@ -215,7 +215,7 @@ namespace DataLayer
 
 
             var titlePrincipleTable = modelBuilder.Entity<TitlePrincipal>();
-            titlePrincipleTable.ToTable("title_principals");
+            titlePrincipleTable.ToTable("title_principal");
             titlePrincipleTable.HasKey(t => new { t.Tconst, t.Nconst, t.Category });
             titlePrincipleTable.Property(x => x.Tconst).HasColumnName("tconst");
             titlePrincipleTable.Property(x => x.Nconst).HasColumnName("nconst");

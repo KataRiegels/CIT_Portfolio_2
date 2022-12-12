@@ -7,17 +7,19 @@ namespace WebServer.Models.TitleModels
     {
         public string Tconst { get; set; }
         public BasicNameModel BasicName { get; set; }
-        //public string Nconst { get; set; }
-        //public string PrimaryName { get; set; }
+        public string Category { get; set; }
+        public string CharacterName { get; set; }
         public string JobName { get; set; }
 
-        public CrewModel ConvertFromDTO(TitleCastDTO inputModl)
+        public CrewModel ConvertFromDTO(TitleCrewDTO inputModel)
         {
             return new CrewModel
             {
-                Tconst = inputModl.Tconst,
-                BasicName = new BasicNameModel { PrimaryName = inputModl.PrimaryName },
-                JobName = inputModl.CharacterName
+                Tconst = inputModel.Tconst,
+                Category = inputModel.Category,
+                BasicName = new BasicNameModel { PrimaryName = inputModel.PrimaryName },
+                JobName = inputModel.JobName,
+                CharacterName = inputModel.CharacterName
             };
         }
 

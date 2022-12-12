@@ -7,8 +7,6 @@ namespace WebServer.Models.TitleModels
     {
         public string Tconst { get; set; }
         public BasicNameModel BasicName { get; set; }
-        //public string Nconst { get; set; }
-        //public string PrimaryName { get; set; }
         public string CharacterName { get; set; }
 
         public CastModel ConvertFromDTO(TitleCastDTO inputModl)

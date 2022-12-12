@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer.DTOs.SearchObjects
 {
-    public class SearchNameModel
+    public class NameSearchResult
     {
         public string Nconst { get; set; }
         public string? PrimaryName { get; set; }

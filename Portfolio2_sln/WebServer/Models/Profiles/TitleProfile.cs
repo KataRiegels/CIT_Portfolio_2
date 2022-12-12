@@ -15,13 +15,12 @@ namespace WebServer.Models.Profiles
     {
         public TitleProfile()
         {
-            CreateMap<BasicTitleModelDL, BasicTitleModel>();
-            CreateMap<ListTitleModelDL, ListTitleModel>();
-            CreateMap<DetailedTitleModelDL, DetailedTitleModel>();
+            CreateMap<BasicTitleDTO, BasicTitleModel>();
+            CreateMap<TitleForListDTO, TitleForListModel>();
+            CreateMap<DetailedTitleDTO, DetailedTitleModel>();
 
             CreateMap<TitleBasics, TitleModel>();
 
-            CreateMap<TitleCreateModel, TitleBasics>();
         }
     }
 }

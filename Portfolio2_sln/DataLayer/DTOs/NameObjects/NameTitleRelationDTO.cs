@@ -10,7 +10,7 @@ namespace DataLayer.DTOs.NameObjects
     public class NameTitleRelationDTO
     {
         public string Nconst { get; set; }
-        public BasicTitleModelDL Title { get; set; }
+        public BasicTitleDTO Title { get; set; }
         public string Relation { get; set; }
 
 

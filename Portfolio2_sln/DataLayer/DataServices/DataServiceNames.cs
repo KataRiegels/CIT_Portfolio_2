@@ -44,10 +44,10 @@ namespace DataLayer.DataServices
         //----------------------------------------------------------------------------------------------
 
 
-        public IList<BasicNameModelDL> GetBasicNames(int page = 0, int pageSize = 20)
+        public IList<BasicNameDTO> GetBasicNames(int page = 0, int pageSize = 20)
         {
             var basicnames = _db.NameBasicss
-                .Select(n => new BasicNameModelDL
+                .Select(n => new BasicNameDTO
                 {
                     Nconst = n.Nconst,
                     PrimaryName = n.PrimaryName
@@ -57,16 +57,16 @@ namespace DataLayer.DataServices
             return basicnames;
         }
 
-        public BasicNameModelDL GetBasicName(string nconst)
+        public BasicNameDTO GetBasicName(string nconst)
         {
             if (string.IsNullOrEmpty(nconst))
             {
-                return new BasicNameModelDL();
+                return new BasicNameDTO();
             }
 
             var namebasic = _db.NameBasicss.FirstOrDefault(x => x.Nconst.Trim() == nconst.Trim());
             Console.WriteLine(namebasic.Nconst);
-            var basicname = new BasicNameModelDL
+            var basicname = new BasicNameDTO
             {
                 Nconst = nconst,
                 PrimaryName = namebasic.PrimaryName
@@ -77,10 +77,10 @@ namespace DataLayer.DataServices
 
 
 
-        //public IList<ListNameModelDL> GetListNames(int page = 0, int pageSize = 20)
+        //public IList<NameForListDTO> GetListNames(int page = 0, int pageSize = 20)
         //{
         //    var names = GetDetailedNames()
-        //        .Select(x => new ListNameModelDL()
+        //        .Select(x => new NameForListDTO()
         //        {
         //            Nconst = x.Nconst,
         //            PrimaryName = x.PrimaryName,
@@ -100,7 +100,7 @@ namespace DataLayer.DataServices
         //----------------------------------------------------------------------------------------------
 
 
-        public IList<ListNameModelDL> GetFilteredNames(List<NconstObject> searchedNames, int page = 0, int pageSize = 20)
+        public IList<NameForListDTO> GetFilteredNames(List<NconstObject> searchedNames, int page = 0, int pageSize = 20)
         {
             using var db = new ImdbContext();
 
@@ -132,7 +132,7 @@ namespace DataLayer.DataServices
                 filtered.ToList().GroupJoin(_db.NameKnownFors,
                        basics => basics.Nconst,
                        knownFor => knownFor.Nconst,
-                       (basics, knownFor) => new ListNameModelDL
+                       (basics, knownFor) => new NameForListDTO
                        {
                            BasicName =
                                new DataServiceNames().
@@ -168,7 +168,7 @@ namespace DataLayer.DataServices
                      {
                          Nconst = nconst,
                          Relation = job.JobName,
-                         Title = new BasicTitleModelDL
+                         Title = new BasicTitleDTO
                          {
                              Tconst = title.Tconst,
                              TitleType = title.TitleType,
@@ -191,7 +191,7 @@ namespace DataLayer.DataServices
                   {
                       Nconst = nconst,
                       Relation = character.CharacterName,
-                      Title = new BasicTitleModelDL
+                      Title = new BasicTitleDTO
                       {
                           Tconst = title.Tconst,
                           TitleType = title.TitleType,
@@ -222,7 +222,7 @@ namespace DataLayer.DataServices
 
 
 
-        public IList<ListNameModelDL> GetListNames(int page = 0, int pageSize = 20)
+        public IList<NameForListDTO> GetListNames(int page = 0, int pageSize = 20)
         {
             Console.WriteLine("before KnownFor");
             var query =
@@ -242,9 +242,9 @@ namespace DataLayer.DataServices
                         ;
 
             var names2 = query.ToList()
-                .GroupBy(t => t.Nconst, (key, model) => new ListNameModelDL
+                .GroupBy(t => t.Nconst, (key, model) => new NameForListDTO
                 {
-                    BasicName = new BasicNameModelDL
+                    BasicName = new BasicNameDTO
                     {
                         Nconst = key,
                         PrimaryName = model.First().PrimaryName,
@@ -262,8 +262,8 @@ namespace DataLayer.DataServices
             //    var names = _db.FullViewNames
 
             //        .ToList()
-            //        //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
-            //        .GroupBy(t => t.Nconst, (key, model) => new ListNameModelDL
+            //        //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleDTO
+            //        .GroupBy(t => t.Nconst, (key, model) => new NameForListDTO
             //        {
             //            Nconst = key,
             //            PrimaryName = model.First().PrimaryName,
@@ -291,12 +291,12 @@ namespace DataLayer.DataServices
             //return null;
         }
 
-        public DetailedNameModelDL GetDetailedName(string nconst)
+        public DetailedNameDTO GetDetailedName(string nconst)
         {
             var names = _db.FullViewNames
                 .Where(n => n.Nconst.Trim() == nconst.Trim())
                 .ToList()
-                .GroupBy(t => t.Nconst, (key, model) => new DetailedNameModelDL
+                .GroupBy(t => t.Nconst, (key, model) => new DetailedNameDTO
                 {
                     Nconst = key,
                     PrimaryName = model.First().PrimaryName,
@@ -315,12 +315,12 @@ namespace DataLayer.DataServices
 
             return names;
         }
-        public IList<DetailedNameModelDL>? GetDetailedNames(int page = 0, int pageSize = 20)
+        public IList<DetailedNameDTO>? GetDetailedNames(int page = 0, int pageSize = 20)
         {
             var names = _db.FullViewNames
 
                 .ToList()
-                .GroupBy(t => t.Nconst, (key, model) => new DetailedNameModelDL
+                .GroupBy(t => t.Nconst, (key, model) => new DetailedNameDTO
                 {
                     Nconst = key,
                     PrimaryName = model.First().PrimaryName,

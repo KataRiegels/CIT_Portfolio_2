@@ -12,7 +12,7 @@ using WebServer.Models.TitleModels;
 
 namespace WebServer.Models.TitleModels
 {
-    public class ListTitleModel
+    public class TitleForListModel
     {
 
         public BasicTitleModel? BasicTitle { get; set; }
@@ -27,11 +27,11 @@ namespace WebServer.Models.TitleModels
 
         public BasicTitleModel? ParentTitle { get; set; }
 
-        public ListTitleModel ConvertFromListTitleDTO(ListTitleModelDL inputModel)
+        public TitleForListModel ConvertFromListTitleDTO(TitleForListDTO inputModel)
         {
 
             //var basic = new BasicTitleModel().ConvertBasicTitleModel(inputModel.BasicTitle);
-            return new ListTitleModel()
+            return new TitleForListModel()
             {
                 BasicTitle = new BasicTitleModel().ConvertBasicTitleModel(inputModel.BasicTitle),
                 Runtime = inputModel.Runtime,
@@ -45,12 +45,12 @@ namespace WebServer.Models.TitleModels
 
         /*
          
-        public ListTitleModel ListMap(ListTitleModelDL titleBasics)
+        public TitleForListModel ListMap(TitleForListDTO titleBasics)
         {
 
             //var model1 = _mapper.Map<BasicTitleModel>(titleBasics.BasicTitle);
             var _mapper = new IMapper();
-            var model = _mapper.Map<ListTitleModel>(titleBasics);
+            var model = _mapper.Map<TitleForListModel>(titleBasics);
             model.BasicTitle.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.BasicTitle.Tconst });
             model.BasicTitle = CreateBasicTitleModel(titleBasics.BasicTitle);
 

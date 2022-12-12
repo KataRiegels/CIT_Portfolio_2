@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer.DTOs.NameObjects
 {
-    public class DetailedNameModelDL
+    public class DetailedNameDTO
     {
         public string Nconst { get; set; }
         public string? PrimaryName { get; set; }

@@ -8,14 +8,12 @@ namespace WebServer.Models.SearchModels
     {
         public string? Url { get; set; }
         public IList<ListNameModel>? NameResults { get; set; }
-        public IList<ListTitleModel>? TitleResults { get; set; }
+        public IList<TitleForListModel>? TitleResults { get; set; }
 
         // Technically unnecessary, but here for consistency
-        public SearchResultModel ConvertFromSearchResultDTO(SearchResult inputModel)
+        public SearchResultModel ConvertFromDTO(SearchResultDTO inputModel)
         {
-            
             return new SearchResultModel();
-
         }
 
 

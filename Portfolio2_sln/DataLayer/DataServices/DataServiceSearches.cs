@@ -10,7 +10,7 @@ namespace DataLayer.DataServices
     {
         private static ImdbContext _db = new ImdbContext();
 
-        public SearchResult GetSearchResult(int searchId)
+        public SearchResultDTO GetSearchResult(int searchId)
         {
             using var db = new ImdbContext();
             var basicTitle = db.UserSearches
@@ -18,7 +18,7 @@ namespace DataLayer.DataServices
 
             var result = GenerateSearchResults(basicTitle.SearchContent, basicTitle.SearchCategory);
             result.SearchId = searchId;
-            var basic = new SearchResult
+            var basic = new SearchResultDTO
             {
                 SearchId = searchId,
             };
@@ -28,11 +28,11 @@ namespace DataLayer.DataServices
         }
 
         // Generates 
-        public SearchResult GenerateSearchResults(string searchContent, string searchCategory = null)
+        public SearchResultDTO GenerateSearchResults(string searchContent, string searchCategory = null)
         {
             using var db = new ImdbContext();
 
-            var searchResult = new SearchResult();
+            var searchResult = new SearchResultDTO();
 
             // Looks for matching names only if client has no specified category as "title" 
             if (searchCategory != "titles")
@@ -69,8 +69,8 @@ namespace DataLayer.DataServices
         // Getting filtered list form DTO's for names from based on input list
       
         // Getting filtered list form DTO's from based on input list
-        //public IList<ListTitleModelDL> GetFilteredTitles(List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
-        public IList<ListTitleModelDL> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5)
+        //public IList<TitleForListDTO> GetFilteredTitles(List<TitleSearchResult> searchedTitles, int page = 1, int pageSize = 5)
+        public IList<TitleForListDTO> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5)
         {
             using var db = new ImdbContext();
 
@@ -88,9 +88,9 @@ namespace DataLayer.DataServices
             var groupedTitles = filteredTitles
 
                 .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
+                .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
                 {
-                    BasicTitle = new BasicTitleModelDL
+                    BasicTitle = new BasicTitleDTO
                     {
                         Tconst       = model.First().Tconst,
                         PrimaryTitle = model.First().PrimaryTitle,

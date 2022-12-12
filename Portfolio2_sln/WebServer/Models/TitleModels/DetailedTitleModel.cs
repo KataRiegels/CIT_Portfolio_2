@@ -16,7 +16,7 @@ namespace WebServer.Models.TitleModels
         public string? relatedName { get; set; }
 
 
-        public DetailedTitleModel ConvertFromDetailedTitleDTO(DetailedTitleModelDL inputModel)
+        public DetailedTitleModel ConvertFromDetailedTitleDTO(DetailedTitleDTO inputModel)
         {
             var model = new DetailedTitleModel()
             {

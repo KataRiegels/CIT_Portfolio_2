@@ -39,13 +39,13 @@ namespace DataLayer
             return temp;
         }
 
-        public BasicTitleModelDL GetBasicTitle(string tconst)
+        public BasicTitleDTO GetBasicTitle(string tconst)
         {
             using var db = new ImdbContext();
             //var basicTitle = _db.TitleBasicss
             var basicTitle = db.TitleBasicss
                 .FirstOrDefault(x => x.Tconst.Trim() == tconst.Trim());
-            var basic = new BasicTitleModelDL
+            var basic = new BasicTitleDTO
             {
                 Tconst = tconst,
                 TitleType = basicTitle.TitleType,
@@ -56,12 +56,12 @@ namespace DataLayer
             return basic;
         }
 
-        public IList<BasicTitleModelDL> GetBasicTitles(int page = 0, int pageSize = 20)
+        public IList<BasicTitleDTO> GetBasicTitles(int page = 0, int pageSize = 20)
         {
 
             Console.WriteLine(_db.TitleBasicss.First().Tconst);
             var basicTitles = _db.TitleBasicss
-                .Select(t => new BasicTitleModelDL
+                .Select(t => new BasicTitleDTO
                 {
                     Tconst = t.Tconst,
                     TitleType = t.TitleType,
@@ -74,16 +74,16 @@ namespace DataLayer
         }
 
 
-        public IList<ListTitleModelDL> GetListTitles(int page = 0, int pageSize = 1)
+        public IList<TitleForListDTO> GetListTitles(int page = 0, int pageSize = 1)
         {
 
             var titles = _db.FullViewTitles
 
                 .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
+                .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
                 {
 
-                    BasicTitle = new BasicTitleModelDL
+                    BasicTitle = new BasicTitleDTO
                     {
                         Tconst = model.First().Tconst,
                         PrimaryTitle = model.First().PrimaryTitle,
@@ -105,7 +105,7 @@ namespace DataLayer
 
 
 
-        public IList<DetailedTitleModelDL>? GetDetailedTitles(int page, int pageSize)
+        public IList<DetailedTitleDTO>? GetDetailedTitles(int page, int pageSize)
         {
 
 
@@ -113,7 +113,7 @@ namespace DataLayer
             var titles = _db.FullViewTitles
 
                 .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleModelDL
+                .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleDTO
                 {
                     PrimaryTitle = model.First().PrimaryTitle,
                     StartYear = model.First().StartYear,
@@ -131,19 +131,19 @@ namespace DataLayer
 
 
 
-            var temp = new List<DetailedTitleModelDL>();
+            var temp = new List<DetailedTitleDTO>();
             return titles;
         }
 
 
 
 
-        public ListTitleModelDL GetListTitle(string tconst)
+        public TitleForListDTO GetListTitle(string tconst)
         {
             return null;
         }
 
-        public DetailedTitleModelDL GetDetailedTitle(string tconst)
+        public DetailedTitleDTO GetDetailedTitle(string tconst)
         {
 
             return null;
@@ -171,10 +171,10 @@ namespace DataLayer
         //----------------------------------------------------------------------------------------------
 
 
-        public IList<BasicNameModelDL> GetBasicNames(int page = 0, int pageSize = 20)
+        public IList<BasicNameDTO> GetBasicNames(int page = 0, int pageSize = 20)
         {
             var basicnames = _db.NameBasicss
-                .Select(n => new BasicNameModelDL
+                .Select(n => new BasicNameDTO
                 {
                     Nconst = n.Nconst,
                     PrimaryName = n.PrimaryName
@@ -184,11 +184,11 @@ namespace DataLayer
             return basicnames;
         }
 
-        public BasicNameModelDL GetBasicName(string nconst)
+        public BasicNameDTO GetBasicName(string nconst)
         {
             var namebasic = _db.NameBasicss.FirstOrDefault(x => x.Nconst == nconst);
 
-            var basicname = new BasicNameModelDL()
+            var basicname = new BasicNameDTO()
             {
                 Nconst = nconst,
                 PrimaryName = namebasic.PrimaryName
@@ -199,10 +199,10 @@ namespace DataLayer
 
 
 
-        //public IList<ListNameModelDL> GetListNames(int page = 0, int pageSize = 20)
+        //public IList<NameForListDTO> GetListNames(int page = 0, int pageSize = 20)
         //{
         //    var names = GetDetailedNames()
-        //        .Select(x => new ListNameModelDL()
+        //        .Select(x => new NameForListDTO()
         //        {
         //            Nconst = x.Nconst,
         //            PrimaryName = x.PrimaryName,
@@ -240,7 +240,7 @@ namespace DataLayer
 
 
 
-        public IList<ListNameModelDL> GetListNames(int page = 0, int pageSize = 20)
+        public IList<NameForListDTO> GetListNames(int page = 0, int pageSize = 20)
         {
             Console.WriteLine("before KnownFor");
             var query =
@@ -271,9 +271,9 @@ namespace DataLayer
             Console.WriteLine("before names2");
 
             var names2 = query.ToList()
-                .GroupBy(t => t.Nconst, (key, model) => new ListNameModelDL
+                .GroupBy(t => t.Nconst, (key, model) => new NameForListDTO
                 {
-                    BasicName = new BasicNameModelDL
+                    BasicName = new BasicNameDTO
                     { 
                     Nconst = key,
                     PrimaryName = model.First().PrimaryName,
@@ -292,8 +292,8 @@ namespace DataLayer
             //    var names = _db.FullViewNames
 
             //        .ToList()
-            //        //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleModelDL
-            //        .GroupBy(t => t.Nconst, (key, model) => new ListNameModelDL
+            //        //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleDTO
+            //        .GroupBy(t => t.Nconst, (key, model) => new NameForListDTO
             //        {
             //            Nconst = key,
             //            PrimaryName = model.First().PrimaryName,
@@ -322,12 +322,12 @@ namespace DataLayer
         }
 
 
-        public IList<DetailedNameModelDL>? GetDetailedNames(int page = 0, int pageSize = 20)
+        public IList<DetailedNameDTO>? GetDetailedNames(int page = 0, int pageSize = 20)
         {
             var names = _db.FullViewNames
 
                 .ToList()
-                .GroupBy(t => t.Nconst, (key, model) => new DetailedNameModelDL
+                .GroupBy(t => t.Nconst, (key, model) => new DetailedNameDTO
                 {
                     Nconst = key,
                     PrimaryName = model.First().PrimaryName,
@@ -455,14 +455,14 @@ namespace DataLayer
 
         }
 
-        public SearchResult CreateUserSearch(string username, string searchContent, string searchCategory = null)
+        public SearchResultDTO CreateUserSearch(string username, string searchContent, string searchCategory = null)
         {
             using var db = new ImdbContext();
             var searchResults = db.UserSearches.FromSqlInterpolated($"SELECT * FROM save_string_search({username}, {searchContent}, {searchCategory})");
             
             Console.WriteLine(searchResults.FirstOrDefault().SearchId);
             
-            var searchResult = new SearchResult();
+            var searchResult = new SearchResultDTO();
             var titles = db.SearchTitleResults.FromSqlInterpolated($"select * from string_search_titles({searchContent})").ToList();
             var names  = db.SearchNameResults.FromSqlInterpolated($"select * from string_search_names({searchContent})").ToList();
 
@@ -476,7 +476,7 @@ namespace DataLayer
         }
 
 
-        public IList<ListTitleModelDL> GetTitlesForSearch (List<SearchTitleModel> searchedTitles, int page = 1, int pageSize = 5)
+        public IList<TitleForListDTO> GetTitlesForSearch (List<TitleSearchResult> searchedTitles, int page = 1, int pageSize = 5)
         {
             using var db = new ImdbContext();
 
@@ -495,10 +495,10 @@ namespace DataLayer
             var groupedTitles = filteredTitles
 
                 .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
+                .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
                 {
 
-                    BasicTitle = new BasicTitleModelDL
+                    BasicTitle = new BasicTitleDTO
                     {
                         Tconst = model.First().Tconst,
                         PrimaryTitle = model.First().PrimaryTitle,
@@ -526,10 +526,10 @@ namespace DataLayer
                        s => s.Tconst,     //innerKeySelector
                        (std, s) => 
                        //std
-                       new ListTitleModelDL
+                       new TitleForListDTO
                        {
 
-                           BasicTitle = new BasicTitleModelDL
+                           BasicTitle = new BasicTitleDTO
                            {
                                Tconst = std.BasicTitle.Tconst,
                                PrimaryTitle = std.BasicTitle.PrimaryTitle,

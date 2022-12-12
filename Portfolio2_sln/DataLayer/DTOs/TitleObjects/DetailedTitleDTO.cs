@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer.DTOs.TitleObjects
 {
-    public class DetailedTitleModelDL
+    public class DetailedTitleDTO
     {
 
         public string Tconst { get; set; }

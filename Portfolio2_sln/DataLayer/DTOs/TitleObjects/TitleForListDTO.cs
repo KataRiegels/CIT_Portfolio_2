@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace DataLayer.DTOs.TitleObjects
 {
-    public class ListTitleModelDL
+    public class TitleForListDTO
     {
-        //public BasicTitleModelDL BasicTitle { get; set; }
+        //public BasicTitleDTO BasicTitle { get; set; }
 
-        public BasicTitleModelDL? BasicTitle { get; set; }
+        public BasicTitleDTO? BasicTitle { get; set; }
 
 
         // If it's a movie/tv series ....
@@ -21,12 +21,12 @@ namespace DataLayer.DTOs.TitleObjects
 
         // If it's an episode
 
-        public BasicTitleModelDL? ParentTitle { get; set; }
+        public BasicTitleDTO? ParentTitle { get; set; }
 
 
 
 
-        //public ListTitleModelDL? ParentTitle { get; set; }
+        //public TitleForListDTO? ParentTitle { get; set; }
         //public string? PrimaryTitle { get; set; }
         //public string? StartYear { get; set; }
         //public string? TitleType { get; set; }

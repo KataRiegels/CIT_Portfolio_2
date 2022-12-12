@@ -19,12 +19,11 @@ namespace WebServer.Models.Profiles
         {
             CreateMap<NameBasics, NameModel>();
 
-            CreateMap<NameCreateModel, NameBasics>();
 
-            CreateMap<BasicNameModelDL, BasicNameModel>();
-            CreateMap<ListNameModelDL, ListNameModel>();
+            CreateMap<BasicNameDTO, BasicNameModel>();
+            CreateMap<NameForListDTO, ListNameModel>();
 
-            CreateMap<DetailedNameModelDL, DetailedNameModel>();
+            CreateMap<DetailedNameDTO, DetailedNameModel>();
         }
     }
 }

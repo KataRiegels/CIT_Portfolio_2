@@ -8,9 +8,6 @@ namespace WebServer.Models.Profiles
     {
         public TitlePrincipalProfile()
         {
-            CreateMap<TitlePrincipal, TitlePrincipalModel>();
-
-            CreateMap<TitlePrincipalCreateModel, TitlePrincipal>();
         }
     }
 }

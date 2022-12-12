@@ -36,13 +36,13 @@ namespace DataLayer.DataServices
             return temp;
         }
 
-        public BasicTitleModelDL GetBasicTitle(string tconst)
+        public BasicTitleDTO GetBasicTitle(string tconst)
         {
             using var db = new ImdbContext();
             //var basicTitle = _db.TitleBasicss
             var basicTitle = db.TitleBasicss
                 .FirstOrDefault(x => x.Tconst.Trim() == tconst.Trim());
-            var basic = new BasicTitleModelDL
+            var basic = new BasicTitleDTO
             {
                 Tconst = tconst,
                 TitleType = basicTitle.TitleType,
@@ -53,12 +53,12 @@ namespace DataLayer.DataServices
             return basic;
         }
 
-        public IList<BasicTitleModelDL> GetBasicTitles(int page = 0, int pageSize = 20)
+        public IList<BasicTitleDTO> GetBasicTitles(int page = 0, int pageSize = 20)
         {
 
             Console.WriteLine(_db.TitleBasicss.First().Tconst);
             var basicTitles = _db.TitleBasicss
-                .Select(t => new BasicTitleModelDL
+                .Select(t => new BasicTitleDTO
                 {
                     Tconst = t.Tconst,
                     TitleType = t.TitleType,
@@ -71,16 +71,16 @@ namespace DataLayer.DataServices
         }
 
 
-        public IList<ListTitleModelDL> GetListTitles(int page = 0, int pageSize = 1)
+        public IList<TitleForListDTO> GetListTitles(int page = 0, int pageSize = 1)
         {
 
             var titles = _db.FullViewTitles
 
                 .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
+                .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
                 {
 
-                    BasicTitle = new BasicTitleModelDL
+                    BasicTitle = new BasicTitleDTO
                     {
                         Tconst = model.First().Tconst,
                         PrimaryTitle = model.First().PrimaryTitle,
@@ -95,7 +95,7 @@ namespace DataLayer.DataServices
 
 
 
-        public IList<DetailedTitleModelDL>? GetDetailedTitles(int page, int pageSize)
+        public IList<DetailedTitleDTO>? GetDetailedTitles(int page, int pageSize)
         {
 
             using var db = new ImdbContext();
@@ -103,7 +103,7 @@ namespace DataLayer.DataServices
             var titles = db.FullViewTitles
 
                 .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleModelDL
+                .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleDTO
                 {
                     PrimaryTitle = model.First().PrimaryTitle,
                     StartYear = model.First().StartYear,
@@ -120,7 +120,7 @@ namespace DataLayer.DataServices
 
 
 
-            var temp = new List<DetailedTitleModelDL>();
+            var temp = new List<DetailedTitleDTO>();
             return titles;
         }
 
@@ -148,27 +148,88 @@ namespace DataLayer.DataServices
             return cast;
         }
 
-        public IList<TitleCastDTO> GetTitleCrew(string tconst)
+        public IList<TitleCrewDTO> GetTitleCrew(string tconst)
         {
             using var db = new ImdbContext();
 
-
-            var cast = db.Jobs
+            var cast1 = db.TitlePrincipals
                 .Where(c => c.Tconst.Trim() == tconst.Trim())
                 .Join(db.NameBasicss,
                      crew => crew.Nconst,
                      nameBasics => nameBasics.Nconst,
                      (crew, nameBasics)
-                             => new TitleCastDTO
+                     => new
+                     {
+                         Tconst = tconst,
+                         Nconst = nameBasics.Nconst,
+                         PrimaryName = nameBasics.PrimaryName,
+                         Category = crew.Category
+                     }
+                             //=> new TitleCrewDTO
+                             //{
+                             //    Tconst = tconst,
+                             //    Nconst = nameBasics.Nconst,
+                             //    PrimaryName = nameBasics.PrimaryName,
+                             //    CharacterName = crew.JobName
+                             //}
+             );
+            /*
+             
+            var qry = Foo.GroupJoin(
+          Bar,
+          foo => foo.Foo_Id,
+          bar => bar.Foo_Id,
+          (x, y) => new { Foo = x, Bars = y })
+       .SelectMany(
+           x => x.Bars.DefaultIfEmpty(),
+           (x, y) => new { Foo = x.Foo, Bar = y });
+             */
+
+            var cast = cast1
+                //.Where(c => c.Tconst.Trim() == tconst.Trim())
+                .GroupJoin(db.Jobs,
+                     crew => new { crew.Nconst, crew.Tconst },
+                     job => new { job.Nconst, job.Tconst },
+                     (crew, job)
+                     => new { Outer = crew, Inner = job })
+                .SelectMany(
+                x => x.Inner.DefaultIfEmpty(),
+                (crew, job)
+                             => new
+                             //TitleCrewDTO
                              {
                                  Tconst = tconst,
-                                 Nconst = nameBasics.Nconst,
-                                 PrimaryName = nameBasics.PrimaryName,
-                                 CharacterName = crew.JobName
+                                 Nconst = crew.Outer.Nconst,
+                                 PrimaryName = crew.Outer.PrimaryName,
+                                 Category = crew.Outer.Category,
+                                 JobName = job.JobName
                              }
              )
-             .ToList();
+                .GroupJoin(db.Characters,
+                     crew => new { crew.Nconst, crew.Tconst },
+                     chars => new { chars.Nconst, chars.Tconst },
+                     (crew, chars)
+                     => new { Outer = crew, Inner = chars })
+                .SelectMany(
+                x => x.Inner.DefaultIfEmpty(),
+                (crew, chars)
+                             => new
+                             TitleCrewDTO
+                             {
+                                 Tconst = tconst,
+                                 Nconst = crew.Outer.Nconst,
+                                 PrimaryName = crew.Outer.PrimaryName,
+                                 Category = crew.Outer.Category,
+                                 JobName = crew.Outer.JobName,
+                                 CharacterName = chars.CharacterName
+                             }
 
+             )
+                             .ToList();
+
+
+            Console.WriteLine(cast.Count());
+            Console.WriteLine(cast1.Count());
             return cast;
         }
 
@@ -234,7 +295,7 @@ namespace DataLayer.DataServices
              
             var seasons = filteredEpisodeTitles
                 .GroupBy(t => t.SeasonNumber, (key, model) =>
-                new DetailedTitleModelDL
+                new DetailedTitleDTO
                 {
 
                     PrimaryTitle = model.First().PrimaryTitle,
@@ -264,12 +325,12 @@ namespace DataLayer.DataServices
 
 
 
-        public ListTitleModelDL GetListTitle(string tconst)
+        public TitleForListDTO GetListTitle(string tconst)
         {
             return null;
         }
 
-        public DetailedTitleModelDL GetDetailedTitle(string tconst)
+        public DetailedTitleDTO GetDetailedTitle(string tconst)
         {
             using var db = new ImdbContext();
             var filteredTitle = db.FullViewTitles.ToList()
@@ -279,7 +340,7 @@ namespace DataLayer.DataServices
 
             var groupedTitle = filteredTitle.ToList()
                 .GroupBy(t => t.Tconst, (key, model) =>
-                new DetailedTitleModelDL
+                new DetailedTitleDTO
                 {
                     PrimaryTitle = model.First().PrimaryTitle,
                     StartYear = model.First().StartYear,
@@ -298,7 +359,7 @@ namespace DataLayer.DataServices
 
 
 
-        public IList<ListTitleModelDL> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5)
+        public IList<TitleForListDTO> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5)
         {
             using var db = new ImdbContext();
 
@@ -316,9 +377,9 @@ namespace DataLayer.DataServices
             var groupedTitles = filteredTitles
 
                 .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new ListTitleModelDL
+                .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
                 {
-                    BasicTitle = new BasicTitleModelDL
+                    BasicTitle = new BasicTitleDTO
                     {
                         Tconst = model.First().Tconst,
                         PrimaryTitle = model.First().PrimaryTitle,
