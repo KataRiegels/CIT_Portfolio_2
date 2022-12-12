@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.DataTransferObjects
+namespace DataLayer.DTOs.NameObjects
 {
     public class BasicNameModelDL
     {

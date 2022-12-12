@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using DataLayer.DataServices;
-using DataLayer.DataTransferObjects;
+using DataLayer.DTOs.NameObjects;
+using DataLayer.DTOs.SearchObjects;
+using DataLayer.DTOs.TitleObjects;
+using DataLayer.DTOs.UserObjects;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 using Microsoft.AspNetCore.Http;
@@ -174,21 +177,14 @@ namespace WebServer.Controllers
         {
             var model = new UserRatingModel().ConvertFromDTO(rating);
             model.TitleModel.Url = CreateTitleUrl(rating.TitleModel.Tconst);
-            //if (titleBasics.ParentTitle != null)
-            //{
-            //    model.ParentTitle.Url = CreateTitleUrl(titleBasics.ParentTitle.Tconst);
-            //}
 
             return model;
         }
 
         [HttpPost("{username}/searches")]
-        //public IActionResult CreateUserSearch(string username, UserSearchCreateModel search)
         public IActionResult CreateUserSearch(string username, string searchContent, string? searchCategory = null)
         {
             var results = _dataService.CreateUserSearch(username, searchContent, searchCategory);
-            //var titleResults = results.TitleResults;
-            //var test = CreateUserSearchResultsModel(results);
             return CreatedAtRoute(null, results);
         }
 

@@ -3,15 +3,17 @@ using DataLayer.DataServices;
 using Microsoft.AspNetCore.Mvc;
 using DataLayer;
 using WebServer.Models.TitleModels;
-using DataLayer.DataTransferObjects;
 using WebServer.Models.NameModels;
 using WebServer.Models.SearchModels;
 using WebServer.Models.UserModels;
 using DataLayer.Models.TitleModels;
+using DataLayer.DTOs.NameObjects;
+using DataLayer.DTOs.TitleObjects;
+using DataLayer.DTOs.SearchObjects;
 
 namespace WebServer.Controllers
 {
-        [Route("api/search")]
+    [Route("api/search")]
         [ApiController]
         public class SearchController : ControllerBase
         {

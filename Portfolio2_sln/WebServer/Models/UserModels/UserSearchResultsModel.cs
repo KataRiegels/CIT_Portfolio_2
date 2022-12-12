@@ -1,4 +1,4 @@
-﻿using DataLayer.DataTransferObjects;
+﻿using DataLayer.DTOs.SearchObjects;
 using WebServer.Models.TitleModels;
 
 namespace WebServer.Models.UserModels

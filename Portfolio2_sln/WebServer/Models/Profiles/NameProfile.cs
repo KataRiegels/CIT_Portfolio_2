@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using DataLayer;
-using DataLayer.DataTransferObjects;
+using DataLayer.DTOs.NameObjects;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using System;

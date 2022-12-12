@@ -1,4 +1,4 @@
-﻿using DataLayer.DataTransferObjects;
+﻿using DataLayer.DTOs.UserObjects;
 using DataLayer.Models.UserModels;
 using WebServer.Models.TitleModels;
 

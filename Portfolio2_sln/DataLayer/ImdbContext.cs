@@ -4,7 +4,9 @@ using DataLayer.Models.TitleModels;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.UserModels;
 using System.ComponentModel.DataAnnotations;
-using DataLayer.DataTransferObjects;
+using DataLayer.DTOs.TitleObjects;
+using DataLayer.DTOs.NameObjects;
+using DataLayer.DTOs.SearchObjects;
 
 namespace DataLayer
 {

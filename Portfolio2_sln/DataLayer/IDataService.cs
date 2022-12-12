@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataLayer.DataTransferObjects;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
-using DataLayer.DataTransferObjects;
+using DataLayer.DTOs.NameObjects;
+using DataLayer.DTOs.TitleObjects;
+using DataLayer.DTOs.SearchObjects;
 
 namespace DataLayer
 {

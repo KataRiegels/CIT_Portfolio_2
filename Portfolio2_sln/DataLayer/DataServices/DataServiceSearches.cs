@@ -1,4 +1,6 @@
 ﻿using DataLayer.DataTransferObjects;
+using DataLayer.DTOs.SearchObjects;
+using DataLayer.DTOs.TitleObjects;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 

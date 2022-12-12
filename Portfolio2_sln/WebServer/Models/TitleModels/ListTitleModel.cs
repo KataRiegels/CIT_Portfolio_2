@@ -5,7 +5,7 @@
 
 
 using AutoMapper;
-using DataLayer.DataTransferObjects;
+using DataLayer.DTOs.TitleObjects;
 using System.Reflection.Emit;
 using WebServer.Models.TitleModels;
 

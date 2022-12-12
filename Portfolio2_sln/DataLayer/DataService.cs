@@ -1,5 +1,6 @@
-﻿using DataLayer.DataTransferObjects;
-using DataLayer.DataTransferObjects;
+﻿using DataLayer.DTOs.NameObjects;
+using DataLayer.DTOs.SearchObjects;
+using DataLayer.DTOs.TitleObjects;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;

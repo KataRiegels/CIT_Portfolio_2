@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using DataLayer;
 using DataLayer.Models.TitleModels;
-using DataLayer.DataTransferObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebServer.Models.TitleModels;
+using DataLayer.DTOs.TitleObjects;
 
 namespace WebServer.Models.Profiles
 {

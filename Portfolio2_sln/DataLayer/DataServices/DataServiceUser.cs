@@ -1,4 +1,7 @@
 ﻿using DataLayer.DataTransferObjects;
+using DataLayer.DTOs.NameObjects;
+using DataLayer.DTOs.TitleObjects;
+using DataLayer.DTOs.UserObjects;
 using DataLayer.Models.NameModels;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;

@@ -1,5 +1,4 @@
-﻿
-using DataLayer.DataTransferObjects;
+﻿using DataLayer.DTOs.TitleObjects;
 using WebServer.Models.NameModels;
 
 namespace WebServer.Models.TitleModels

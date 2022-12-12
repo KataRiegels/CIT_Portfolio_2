@@ -4,19 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using DataLayer.Model;
-using DataLayer.Models;
-
-
-
-namespace DataLayer.DataTransferObjects
+namespace DataLayer.DTOs.SearchObjects
 {
-    public class TvSeriesEpisodeDTO
+    public class SearchTitleModel
     {
         public string Tconst { get; set; }
         public string PrimaryTitle { get; set; }
-        public int EpisodeNumber { get; set; }  
-
 
     }
 }

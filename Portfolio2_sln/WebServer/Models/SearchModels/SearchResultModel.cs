@@ -1,6 +1,6 @@
-﻿using DataLayer.DataTransferObjects;
-using WebServer.Models.TitleModels;
+﻿using WebServer.Models.TitleModels;
 using WebServer.Models.NameModels;
+using DataLayer.DTOs.SearchObjects;
 
 namespace WebServer.Models.SearchModels
 {

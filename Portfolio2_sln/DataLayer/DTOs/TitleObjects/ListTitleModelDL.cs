@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataLayer.DataTransferObjects;
 
 
-namespace DataLayer.DataTransferObjects
+namespace DataLayer.DTOs.TitleObjects
 {
     public class ListTitleModelDL
     {
         //public BasicTitleModelDL BasicTitle { get; set; }
 
         public BasicTitleModelDL? BasicTitle { get; set; }
-        
-        
+
+
         // If it's a movie/tv series ....
         public int? Runtime { get; set; }
         public double? Rating { get; set; }

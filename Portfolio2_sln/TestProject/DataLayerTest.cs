@@ -1,10 +1,10 @@
-using DataLayer;
+﻿using DataLayer;
 using WebServer.Models.NameModels;
 
 namespace TestProject
 
 {
-    public class UnitTest1
+    public class DataLayerTest
     {
         [Fact]
         public void Check_Paging()

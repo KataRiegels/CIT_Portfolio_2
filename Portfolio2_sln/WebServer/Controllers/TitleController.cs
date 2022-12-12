@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using DataLayer;
 using DataLayer.Models;
-using DataLayer.DataTransferObjects;
 using DataLayer.DataServices;
 using DataLayer.Models.TitleModels;
 using WebServer.Models.TitleModels;
@@ -12,6 +11,7 @@ using DataLayer.Models.TitleModels;
 using Microsoft.EntityFrameworkCore.Query;
 using WebServer.Models.NameModels;
 using NpgsqlTypes;
+using DataLayer.DTOs.TitleObjects;
 
 namespace WebServer.Controllers
 {

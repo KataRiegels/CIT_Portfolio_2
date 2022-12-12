@@ -14,12 +14,10 @@ using Microsoft.EntityFrameworkCore.Query;
 using System.Security.Cryptography.X509Certificates;
 using DataLayer.Models.NameModels;
 using WebServer.Models.NameModels;
-using DataLayer.DataTransferObjects;
 using NpgsqlTypes;
 using AutoMapper;
 using DataLayer;
 using DataLayer.Models;
-using DataLayer.DataTransferObjects;
 using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 using WebServer.Models.TitleModels;
@@ -31,6 +29,8 @@ using Microsoft.AspNetCore.Mvc;
 using DataLayer.Models.TitleModels;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Security.Cryptography.X509Certificates;
+using DataLayer.DTOs.NameObjects;
+
 namespace WebServer.Controllers
 {
     [Route("api/names")]

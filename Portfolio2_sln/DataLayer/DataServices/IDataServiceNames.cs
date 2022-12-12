@@ -1,6 +1,6 @@
 ﻿using DataLayer.DataTransferObjects;
 using DataLayer.Models.NameModels;
-using DataLayer.DataTransferObjects;
+using DataLayer.DTOs.NameObjects;
 
 namespace DataLayer.DataServices
 {

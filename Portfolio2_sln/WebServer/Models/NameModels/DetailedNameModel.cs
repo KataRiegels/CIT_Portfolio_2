@@ -1,4 +1,4 @@
-﻿using DataLayer.DataTransferObjects;
+﻿using DataLayer.DTOs.NameObjects;
 
 namespace WebServer.Models.NameModels
 {

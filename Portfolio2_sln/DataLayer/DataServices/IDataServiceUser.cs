@@ -1,4 +1,6 @@
-﻿using DataLayer.DataTransferObjects;
+﻿using DataLayer.DTOs.NameObjects;
+using DataLayer.DTOs.TitleObjects;
+using DataLayer.DTOs.UserObjects;
 using DataLayer.Models.UserModels;
 
 namespace DataLayer.DataServices
