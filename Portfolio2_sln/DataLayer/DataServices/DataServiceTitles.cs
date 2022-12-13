@@ -165,28 +165,9 @@ namespace DataLayer.DataServices
                          PrimaryName = nameBasics.PrimaryName,
                          Category = crew.Category
                      }
-                             //=> new TitleCrewDTO
-                             //{
-                             //    Tconst = tconst,
-                             //    Nconst = nameBasics.Nconst,
-                             //    PrimaryName = nameBasics.PrimaryName,
-                             //    CharacterName = crew.JobName
-                             //}
              );
-            /*
-             
-            var qry = Foo.GroupJoin(
-          Bar,
-          foo => foo.Foo_Id,
-          bar => bar.Foo_Id,
-          (x, y) => new { Foo = x, Bars = y })
-       .SelectMany(
-           x => x.Bars.DefaultIfEmpty(),
-           (x, y) => new { Foo = x.Foo, Bar = y });
-             */
 
             var cast = cast1
-                //.Where(c => c.Tconst.Trim() == tconst.Trim())
                 .GroupJoin(db.Jobs,
                      crew => new { crew.Nconst, crew.Tconst },
                      job => new { job.Nconst, job.Tconst },
@@ -196,7 +177,6 @@ namespace DataLayer.DataServices
                 x => x.Inner.DefaultIfEmpty(),
                 (crew, job)
                              => new
-                             //TitleCrewDTO
                              {
                                  Tconst = tconst,
                                  Nconst = crew.Outer.Nconst,
@@ -216,20 +196,18 @@ namespace DataLayer.DataServices
                              => new
                              TitleCrewDTO
                              {
-                                 Tconst = tconst,
-                                 Nconst = crew.Outer.Nconst,
-                                 PrimaryName = crew.Outer.PrimaryName,
-                                 Category = crew.Outer.Category,
-                                 JobName = crew.Outer.JobName,
-                                 CharacterName = chars.CharacterName
+                                 Tconst         = tconst,
+                                 Nconst         = crew.Outer.Nconst,
+                                 PrimaryName    = crew.Outer.PrimaryName,
+                                 Category       = crew.Outer.Category,
+                                 JobName        = crew.Outer.JobName,
+                                 CharacterName  = chars.CharacterName
                              }
 
              )
-                             .ToList();
+            .ToList();
 
 
-            Console.WriteLine(cast.Count());
-            Console.WriteLine(cast1.Count());
             return cast;
         }
 
