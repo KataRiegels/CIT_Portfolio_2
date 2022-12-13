@@ -29,6 +29,11 @@ namespace DataLayer.DataServices
             return result;
         }
 
+        public int GetNumberOfTitles()
+        {
+            return _db.TitleBasicss.Count();
+        }
+
         public TitleBasics GetTitle(string tconst)
         {
             var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst == tconst);
@@ -377,7 +382,6 @@ namespace DataLayer.DataServices
 
             return groupedTitles;
         }
-
 
 
 

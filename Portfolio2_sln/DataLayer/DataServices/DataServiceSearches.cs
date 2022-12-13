@@ -1,4 +1,5 @@
 ﻿using DataLayer.DataTransferObjects;
+using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.SearchObjects;
 using DataLayer.DTOs.TitleObjects;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,57 @@ namespace DataLayer.DataServices
         }
 
         // Generates 
+
+        public (IList<NameForListDTO>,int) GeneratePersonSearchResult(string searchContent, int page = 1, int pageSize = 3)
+        {
+            using var db = new ImdbContext();
+
+            var searchResult = new SearchResultDTO();
+
+            // Looks for matching names only if client has no specified category as "title" 
+            var returnedMatchingNames = db.SearchNameResults
+                    .FromSqlInterpolated($"select * from string_search_names({searchContent})")
+                    .ToList() ;
+            var matchingNames =
+                new DataServiceNames().GetFilteredNames(
+                returnedMatchingNames
+                .Select(x => new NconstObject { Nconst = x.Nconst }).ToList()
+                , page, pageSize
+                )
+                ;
+            searchResult.NameResults = matchingNames;
+
+            return( matchingNames,returnedMatchingNames.Count());
+        }
+
+        public (IList<TitleForListDTO>, int) GenerateTitleSearchResult(string searchContent, int page = 1, int pageSize = 3)
+        {
+            using var db = new ImdbContext();
+
+
+            var returnedMatchingTitles = db.SearchTitleResults
+                    .FromSqlInterpolated($"select * from string_search_titles({searchContent})")
+                    .ToList();
+            var matchingTitles = new DataServiceTitles().GetFilteredTitles(
+                returnedMatchingTitles
+                .Select(x => new TconstObject { Tconst = x.Tconst }).ToList(),
+                page, pageSize)
+                ;
+
+            //return (matchingTitles, returnedMatchingTitles.Count());
+            return (matchingTitles, returnedMatchingTitles.Count());
+
+        }
+
+        /* 
+         * 
+         * 
+         * 
+         * DELETABLE 
+         
+         
+         
+         */
         public SearchResultDTO GenerateSearchResults(string searchContent, string searchCategory = null)
         {
             using var db = new ImdbContext();
@@ -37,12 +89,12 @@ namespace DataLayer.DataServices
             // Looks for matching names only if client has no specified category as "title" 
             if (searchCategory != "titles")
             {
-                var returnedMathingNames  = searchCategory != "titles" ? db.SearchNameResults
+                var returnedMatchingNames  = searchCategory != "titles" ? db.SearchNameResults
                         .FromSqlInterpolated($"select * from string_search_names({searchContent})")
                         .ToList() : null;
                 var matchingNames = 
                     new DataServiceNames().GetFilteredNames(
-                    returnedMathingNames
+                    returnedMatchingNames
                     .Select(x => new NconstObject { Nconst = x.Nconst }).ToList())
                     ;
                 searchResult.NameResults = matchingNames;

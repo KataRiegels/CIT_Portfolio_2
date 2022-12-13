@@ -22,7 +22,7 @@ namespace WebServer.Controllers
         private IDataServiceTitles _dataService;
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
-
+        private const int MaxPageSize = 25;
         public TitleController(IDataServiceTitles dataService, LinkGenerator generator, IMapper mapper)
         {
             _dataService = dataService;
@@ -63,9 +63,9 @@ namespace WebServer.Controllers
 
             IEnumerable<BasicTitleModel> titles =
                 _dataService.GetBasicTitles(page, pageSize).Select(x => CreateBasicTitleModel(x));
+            var total = _dataService.GetNumberOfTitles();
 
-
-            return Ok(titles);
+            return Ok(Paging(page, pageSize, total, titles));
         }
 
 
@@ -285,9 +285,53 @@ namespace WebServer.Controllers
         //}
 
 
+        private object Paging<T>(int page, int pageSize, int total, IEnumerable<T> items)
+        {
+            pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
 
+            //if (pageSize > MaxPageSize)
+            //{
+            //    pageSize = MaxPageSize;
+            //}
 
+            var pages = (int)Math.Ceiling((double)total / (double)pageSize)
+                ;
 
+            var first = total > 0
+                ? CreateLink(0, pageSize)
+                : null;
+
+            var prev = page > 0
+                ? CreateLink(page - 1, pageSize)
+                : null;
+
+            var current = CreateLink(page, pageSize);
+
+            var next = page < pages - 1
+                ? CreateLink(page + 1, pageSize)
+                : null;
+
+            var result = new
+            {
+                first,
+                prev,
+                next,
+                current,
+                total,
+                pages,
+                items
+            };
+            return result;
+        }
+
+        private string? CreateLink(int page, int pageSize)
+        {
+            var uri = _generator.GetUriByName(
+                HttpContext,
+                nameof(GetTitles), new { page, pageSize });
+            Console.WriteLine(uri);
+            return uri;
+        }
 
 
 
