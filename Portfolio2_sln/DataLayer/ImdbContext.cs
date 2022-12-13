@@ -12,7 +12,8 @@ namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
-        const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
+        const string ConnectionString = "host=localhost;db=imdb_new_tester;uid=postgres;pwd=Jse33pjp";
+        //const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
         //const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
         public DbSet<TitleBasics> TitleBasicss { get; set; }
         //public DbSet<DetailedTitleDTO> DetailedTitles { get; set; }
@@ -34,7 +35,6 @@ namespace DataLayer
         public DbSet<TitleSearchResult> SearchTitleResults{ get; set; }
         public DbSet<NameSearchResult> SearchNameResults{ get; set; }
 
-        public DbSet<BookmarkTitleTest> BookmarkTitlesTests { get; set; }
 
         public DbSet<Character> Characters { get; set; }
         public DbSet<Job> Jobs { get; set; }
@@ -60,15 +60,10 @@ namespace DataLayer
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<BookmarkTitleTest>().HasNoKey();
-            modelBuilder.Entity<BookmarkTitleTest>().Property(x => x.PrimaryName).HasColumnName("name");
-            modelBuilder.Entity<BookmarkTitleTest>().Property(x => x.Tconst).HasColumnName("tconst");
-            modelBuilder.Entity<BookmarkTitleTest>().Property(x => x.Annotation).HasColumnName("annotation");
-
 
             var tb_mb = modelBuilder.Entity<TitleBasics>();
 
-            tb_mb.ToTable("title_basics");
+            tb_mb.ToTable("title");
             tb_mb.HasKey(x => x.Tconst);
             tb_mb.Property(x => x.Tconst).HasColumnName("tconst");
             tb_mb.Property(x => x.TitleType).HasColumnName("titletype");
@@ -80,14 +75,14 @@ namespace DataLayer
             tb_mb.Property(x => x.RunTimeMinutes).HasColumnName("runtimeminutes");
 
             var genre_table = modelBuilder.Entity<TitleGenre>();
-            genre_table.ToTable("genre");
+            genre_table.ToTable("title_genre");
             genre_table.HasKey(t => new { t.Tconst, t.GenreName });
             genre_table.Property(x => x.Tconst).HasColumnName("tconst");
             genre_table.Property(x => x.GenreName).HasColumnName("genre");
 
 
             var name_table = modelBuilder.Entity<NameBasics>();
-            name_table.ToTable("name_basics");
+            name_table.ToTable("person");
             name_table.HasKey(x => x.Nconst);
             name_table.Property(x => x.Nconst).HasColumnName("nconst");
             name_table.Property(x => x.PrimaryName).HasColumnName("primaryname");
@@ -104,27 +99,27 @@ namespace DataLayer
             episodeTable.Property(x => x.SeasonNumber).HasColumnName("seasonnumber");
 
             var KnownFor_table = modelBuilder.Entity<NameKnownFor>();
-            KnownFor_table.ToTable("known_for");
+            KnownFor_table.ToTable("person_known_for_title");
             KnownFor_table.HasKey(x => new { x.Tconst, x.Nconst});
             KnownFor_table.Property(x => x.Tconst).HasColumnName("tconst");
             KnownFor_table.Property(x => x.Nconst).HasColumnName("nconst");
 
             var name_profession = modelBuilder.Entity<NameProfession>();
-            name_profession.ToTable("profession");
+            name_profession.ToTable("person_profession");
             name_profession.HasKey(x => x.Nconst);
             name_profession.Property(x => x.Nconst).HasColumnName("nconst");
             name_profession.Property(x => x.Profession).HasColumnName("profession");
 
 
             var characterTable = modelBuilder.Entity<Character>();
-            characterTable.ToTable("character");
+            characterTable.ToTable("title_cast_character");
             characterTable.HasKey(x => new { x.Tconst, x.Nconst, x.CharacterName});
             characterTable.Property(x => x.Nconst).HasColumnName("nconst");
             characterTable.Property(x => x.Tconst).HasColumnName("tconst");
             characterTable.Property(x => x.CharacterName).HasColumnName("character");
 
             var jobTable = modelBuilder.Entity<Job>();
-            jobTable.ToTable("job");
+            jobTable.ToTable("title_crew_job_description");
             jobTable.HasKey(x => new { x.Tconst, x.Nconst, x.JobName });
             jobTable.Property(x => x.Nconst).HasColumnName("nconst");
             jobTable.Property(x => x.Tconst).HasColumnName("tconst");
@@ -212,6 +207,10 @@ namespace DataLayer
             titleAkaTable.Property(x => x.Title).HasColumnName("title");
             titleAkaTable.Property(x => x.Region).HasColumnName("region");
             titleAkaTable.Property(x => x.IsOriginalTitle).HasColumnName("isoriginaltitle");
+            titleAkaTable.Property(x => x.Language).HasColumnName("language");
+            titleAkaTable.Property(x => x.Types).HasColumnName("types");
+            titleAkaTable.Property(x => x.Attributes).HasColumnName("attributes");
+
 
 
             var titlePrincipleTable = modelBuilder.Entity<TitlePrincipal>();
@@ -245,13 +244,10 @@ namespace DataLayer
             fullTitleView.Property(x => x.SeasonNumber).HasColumnName("seasonnumber");
             fullTitleView.Property(x => x.EpisodeNumber).HasColumnName("episodenumber");
 
-            //fullTitleView.Property(x => x.relatedName).HasColumnName("primaryname");
-
-            fullTitleView.Property(x => x.RelatedName).HasColumnName("plot");
 
 
 
-            //titlePrincipleTable.Property(x => x.).HasColumnName("");
+
 
             var omdbTalbe = modelBuilder.Entity<OmdbData>();
             omdbTalbe.ToTable("omdb_data");
@@ -259,6 +255,17 @@ namespace DataLayer
             omdbTalbe.Property(x => x.Tconst).HasColumnName("tconst");
             omdbTalbe.Property(x => x.Poster).HasColumnName("poster");
             omdbTalbe.Property(x => x.Plot).HasColumnName("plot");
+
+
+            var wiTable = modelBuilder.Entity<Wi>();
+            wiTable.ToTable("wi");
+            wiTable.HasKey(x => new { x.Tconst, x.Word, x.Field });
+            wiTable.Property(x => x.Tconst).HasColumnName("tconst");
+            wiTable.Property(x => x.Word).HasColumnName("word");
+            wiTable.Property(x => x.Field).HasColumnName("field");
+            wiTable.Property(x => x.Lexeme).HasColumnName("lexeme");
+            ;
+
         }
 
     }
