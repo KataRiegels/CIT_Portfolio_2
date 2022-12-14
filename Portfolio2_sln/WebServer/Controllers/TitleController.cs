@@ -65,18 +65,19 @@ namespace WebServer.Controllers
                 _dataService.GetBasicTitles(page, pageSize).Select(x => CreateBasicTitleModel(x));
             var total = _dataService.GetNumberOfTitles();
 
-            return Ok(Paging(page, pageSize, total, titles));
+            return Ok(Paging(page, pageSize, total, titles, nameof(GetBasicTitles)));
         }
 
 
-        [HttpGet("list")]
+        [HttpGet("list", Name = nameof(GetListTitles))]
         public IActionResult GetListTitles(int page = 0, int pageSize = 20)
         {
             Console.WriteLine(page);
             //IEnumerable<TitleForListModel> titles =
-            IEnumerable<TitleForListModel> titles =
+            var titles =
                 _dataService.GetListTitles(page, pageSize)
                 .Select(x => CreateListTitleModel(x));
+            var total = _dataService.GetNumberOfTitles();
 
 
             if (titles == null)
@@ -84,7 +85,7 @@ namespace WebServer.Controllers
                 return NotFound();
             }
 
-            return Ok(titles);
+            return Ok(Paging(page, pageSize, total, titles, nameof(GetListTitles)));
         }
 
 
@@ -285,52 +286,55 @@ namespace WebServer.Controllers
         //}
 
 
-        private object Paging<T>(int page, int pageSize, int total, IEnumerable<T> items)
+        private string? CreateLinkList(int page, int pageSize, string method)
+        {
+            var uri = _generator.GetUriByName(
+                HttpContext,
+                method,
+                new { page, pageSize });
+            return uri;
+        }
+
+
+
+
+        private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method)
         {
             pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
 
-            //if (pageSize > MaxPageSize)
-            //{
-            //    pageSize = MaxPageSize;
-            //}
-
-            var pages = (int)Math.Ceiling((double)total / (double)pageSize)
+            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize) - 1
                 ;
 
-            var first = total > 0
-                ? CreateLink(0, pageSize)
+            var firstPageUrl = totalItems > 0
+                ? CreateLinkList(0, pageSize, method)
                 : null;
 
-            var prev = page > 0
-                ? CreateLink(page - 1, pageSize)
+            var prevPageUrl = page > 0 && totalItems > 0
+                ? CreateLinkList(page - 1, pageSize, method)
                 : null;
 
-            var current = CreateLink(page, pageSize);
+            var lastPageUrl = totalItems > 0
+                ? CreateLinkList(totalPages, pageSize, method)
+                : null;
 
-            var next = page < pages - 1
-                ? CreateLink(page + 1, pageSize)
+            var currentPageUrl = CreateLinkList(page, pageSize, method);
+
+            var nextPageUrl = page < totalPages - 1 && totalItems > 0
+                ? CreateLinkList(page + 1, pageSize, method)
                 : null;
 
             var result = new
             {
-                first,
-                prev,
-                next,
-                current,
-                total,
-                pages,
+                firstPageUrl,
+                prevPageUrl,
+                nextPageUrl,
+                lastPageUrl,
+                currentPageUrl,
+                totalItems,
+                totalPages,
                 items
             };
             return result;
-        }
-
-        private string? CreateLink(int page, int pageSize)
-        {
-            var uri = _generator.GetUriByName(
-                HttpContext,
-                nameof(GetTitles), new { page, pageSize });
-            Console.WriteLine(uri);
-            return uri;
         }
 
 

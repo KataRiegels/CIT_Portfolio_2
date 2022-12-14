@@ -197,11 +197,13 @@ namespace DataLayer
             searchResultTitles.HasNoKey();
             searchResultTitles.Property(x => x.Tconst).HasColumnName("tconst");
             searchResultTitles.Property(x => x.PrimaryTitle).HasColumnName("primarytitle");
+            searchResultTitles.Property(x => x.Rank).HasColumnName("rank");
 
             var searchResultNames = modelBuilder.Entity<NameSearchResult>();
             searchResultNames.HasNoKey();
             searchResultNames.Property(x => x.Nconst).HasColumnName("nconst");
             searchResultNames.Property(x => x.PrimaryName).HasColumnName("primaryname");
+            searchResultNames.Property(x => x.Rank).HasColumnName("rank");
 
             // TITLES
             var titleAkaTable = modelBuilder.Entity<TitleAka>();

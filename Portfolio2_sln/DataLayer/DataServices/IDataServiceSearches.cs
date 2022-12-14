@@ -13,5 +13,6 @@ namespace DataLayer.DataServices
         SearchResultDTO GetSearchResult(int searchId);
         //IList<TitleForListDTO> GetFilteredTitles(List<TitleSearchResult> searchedTitles, int page = 1, int pageSize = 5);
         IList<TitleForListDTO> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5);
+        IList<TitleForListDTO> GetFilteredTitles(List<TitleSearchResult> searchedTitles, int page = 1, int pageSize = 5);
     }
 }

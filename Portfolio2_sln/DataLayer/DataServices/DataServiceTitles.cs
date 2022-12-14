@@ -75,24 +75,46 @@ namespace DataLayer.DataServices
             return basicTitles;
         }
 
-
+     
         public IList<TitleForListDTO> GetListTitles(int page = 0, int pageSize = 1)
         {
 
+            //var titles = _db.FullViewTitles
+
+            //    .ToList()
+            //    .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
+            //    {
+
+            //        BasicTitle = new BasicTitleDTO
+            //        {
+            //            Tconst = model.First().Tconst,
+            //            PrimaryTitle = model.First().PrimaryTitle,
+            //            StartYear = model.First().StartYear,
+            //            TitleType = model.First().TitleType
+            //        },
+            //    }).Skip(page * pageSize).Take(pageSize).ToList();
+
             var titles = _db.FullViewTitles
 
-                .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
-                {
-
-                    BasicTitle = new BasicTitleDTO
-                    {
-                        Tconst = model.First().Tconst,
-                        PrimaryTitle = model.First().PrimaryTitle,
-                        StartYear = model.First().StartYear,
-                        TitleType = model.First().TitleType
-                    },
-                }).Skip(page * pageSize).Take(pageSize).ToList();
+           .ToList()
+           .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
+           {
+               BasicTitle = new BasicTitleDTO
+               {
+                   Tconst = model.First().Tconst,
+                   PrimaryTitle = model.First().PrimaryTitle,
+                   StartYear = model.First().StartYear,
+                   TitleType = model.First().TitleType,
+               },
+               Runtime = model.First().Runtime,
+               Rating = model.First().Rating,
+               Genres = model.Select(m => m.Genre).Distinct().ToList(),
+               ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst)
+                               ? null
+                               : new DataService().GetBasicTitle(model.FirstOrDefault().ParentTconst)
+           })
+           .Skip(page * pageSize).Take(pageSize)
+           .ToList();
 
             return titles;
         }

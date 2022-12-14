@@ -85,7 +85,7 @@ namespace WebServer.Controllers
                 return NotFound();
             }
 
-            return Ok(model);
+            return Ok(Paging(page, pageSize, totalItems, model, nameof(GetSearchResultNames), searchContent));
         }
 
         [HttpGet("titles", Name = nameof(GetSearchResultTitles))]
@@ -162,28 +162,20 @@ namespace WebServer.Controllers
         }
 
 
-        private string? CreateLink2<T>(T extra, string method)
-        {
 
-            var endpoint = new { };
-            return _generator.GetUriByName(
-                HttpContext,
-                method,
-                extra);
-        }
 
         private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method, string searchContent)
         {
             pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
 
-            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize)
+            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize) - 1
                 ;
 
             var firstPageUrl = totalItems > 0
                 ? CreateLink(0, pageSize, method, searchContent)
                 : null;
 
-            var prevPageUrl = page > 0
+            var prevPageUrl = page > 0 && totalItems > 0
                 ? CreateLink(page - 1, pageSize, method, searchContent)
                 : null;
 
@@ -191,13 +183,9 @@ namespace WebServer.Controllers
                 ? CreateLink(totalPages, pageSize, method, searchContent)
                 : null;
 
-            //var prevPageUrl = page > 0
-            //    ? CreateLink2(new {page = page - 1, pageSize = pageSize}, method)
-            //    : null;
-
             var currentPageUrl = CreateLink(page, pageSize, method, searchContent);
 
-            var nextPageUrl = page < totalPages - 1
+            var nextPageUrl = page < totalPages - 1 && totalItems > 0
                 ? CreateLink(page + 1, pageSize, method, searchContent)
                 : null;
 
