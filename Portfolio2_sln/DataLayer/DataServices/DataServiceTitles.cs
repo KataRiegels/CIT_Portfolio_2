@@ -78,6 +78,7 @@ namespace DataLayer.DataServices
      
         public IList<TitleForListDTO> GetListTitles(int page = 0, int pageSize = 1)
         {
+            using var db = new ImdbContext();
 
             //var titles = _db.FullViewTitles
 
@@ -94,7 +95,21 @@ namespace DataLayer.DataServices
             //        },
             //    }).Skip(page * pageSize).Take(pageSize).ToList();
 
-            var titles = _db.FullViewTitles
+            var result = db.TitleBasicss
+                .Skip(page * pageSize).Take(pageSize).ToList()
+                .Join(db.FullViewTitles,
+                    searchResults => searchResults.Tconst,
+                    fullView => fullView.Tconst,
+                    (searchResults, fullView)
+                                  => fullView
+                    );
+
+            ;
+
+
+
+            //var titles = _db.FullViewTitles
+            var titles = result
 
            .ToList()
            .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
@@ -111,9 +126,9 @@ namespace DataLayer.DataServices
                Genres = model.Select(m => m.Genre).Distinct().ToList(),
                ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst)
                                ? null
-                               : new DataService().GetBasicTitle(model.FirstOrDefault().ParentTconst)
+                               : GetBasicTitle(model.FirstOrDefault().ParentTconst)
            })
-           .Skip(page * pageSize).Take(pageSize)
+           //.Skip(page * pageSize).Take(pageSize)
            .ToList();
 
             return titles;
