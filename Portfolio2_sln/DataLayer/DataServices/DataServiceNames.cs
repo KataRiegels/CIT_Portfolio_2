@@ -159,7 +159,6 @@ namespace DataLayer.DataServices
         public IList<NameTitleRelationDTO> GetNameTitleRelations(string nconst)
         {
             using var db = new ImdbContext();
-            Console.WriteLine(nconst);
             var jobsJoin = db.Jobs
                  .Where(n => n.Nconst.Trim().Contains(nconst.Trim()))
                  .Join(db.TitleBasicss,
@@ -180,10 +179,8 @@ namespace DataLayer.DataServices
                      )
                  .ToList();
 
-            Console.WriteLine(jobsJoin.Count());
 
             var characterJoin = db.Characters 
-              //.Where(t => t.)
                  .Where(n => n.Nconst.Trim() == nconst.Trim())
               .Join(db.TitleBasicss,
                   character => character.Tconst,
