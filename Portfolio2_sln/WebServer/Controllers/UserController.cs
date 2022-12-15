@@ -128,6 +128,7 @@ namespace WebServer.Controllers
         {
             var result = _dataService.CreateBookmarkTitle(username, bookmark.Tconst, bookmark.Annotation);
 
+            
             return CreatedAtRoute(null, result);
         }
 
@@ -136,7 +137,8 @@ namespace WebServer.Controllers
         {
             var result = _dataService.DeleteBookmarkTitle(username, tconst);
 
-            return CreatedAtRoute(null, result);
+
+            return Ok(result);
         }
 
         [HttpDelete("{username}/namebookmarks")]
@@ -144,7 +146,7 @@ namespace WebServer.Controllers
         {
             var result = _dataService.DeleteBookmarkName(username, nconst);
 
-            return CreatedAtRoute(null, result);
+            return Ok(result);
         }
 
         [HttpPost("{username}/ratings")]

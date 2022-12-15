@@ -4,12 +4,31 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Text;
 using WebServer.Models.NameModels;
+using DataLayer.DataServices;
+using Moq;
+using DataLayer.Models.TitleModels;
+using WebServer.Controllers;
+using System.Web.Http;
+using AutoMapper;
+using Microsoft.AspNetCore.Routing;
+using System.Reflection.Emit;
 
 namespace TestProject
 
 {
     public class WebServiceTest
     {
+        //private Mock<IRepository<Comment>> _mockRepository;
+        private Mock<IDataServiceTitles> _mockRepository;
+        private IDataServiceTitles _service;
+        //private ModelStateDictionary _modelState;
+
+        public WebServiceTest()
+        {
+            //_modelState = new ModelStateDictionary();
+            _mockRepository = new Mock<IDataServiceTitles>();
+            //_service = new IDataServiceTitles(new ModelStateWrapper(_modelState), _mockRepository.Object);
+        }
 
         private const string TitlesApi = "http://localhost:5001/api/titles";
         private const string NamesApi = "http://localhost:5001/api/names";
@@ -36,6 +55,38 @@ namespace TestProject
 
 
         }
+
+        /*
+
+        public TitleController(IDataServiceTitles dataService, LinkGenerator generator, IMapper mapper)
+        {
+            _dataService = dataService;
+            _generator = generator;
+            _mapper = mapper;
+        }
+
+        [Fact]
+        public void GetReturnsProductWithSameId()
+        {
+            // Arrange
+            var mockRepository = new Mock<IDataServiceTitles>();
+            mockRepository.Setup(x => x.GetTitle("tt12511606"))
+                .Returns(new TitleBasics { Tconst = "tt12511606" });
+
+            var controller = new TitleController(mockRepository.Object, new LinkGenerator());
+
+            // Act
+            IHttpActionResult actionResult = controller.GetTitle("tt12511606");
+            var contentResult = actionResult as OkNegotiatedContentResult<Product>;
+
+            // Assert
+            Assert.IsNotNull(contentResult);
+            Assert.IsNotNull(contentResult.Content);
+            Assert.AreEqual(42, contentResult.Content.Id);
+        }
+
+         * */
+
 
         //["Crime", "Drama", "Mystery"]
 
