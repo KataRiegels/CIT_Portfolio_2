@@ -8,6 +8,8 @@ using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
+using System.Text.RegularExpressions;
 using WebServer.Authentication;
 using WebServer.Models.NameModels;
 using WebServer.Models.TitleModels;
@@ -102,9 +104,27 @@ namespace WebServer.Controllers
         }
 
 
-        [HttpGet("{username}/namebookmarks")]
-        public IActionResult GetBookmarksNameByUser(string username)
+        //[HttpGet("{username}/namebookmarks")]
+        //public IActionResult GetBookmarksNameByUser(string username)
+        //{
+        //    var bookmark = _dataService.GetBookmarkNamesByUser(username)
+        //        .Select(x => MapNameList(x));
+
+        //    if (bookmark == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(bookmark);
+        //}
+
+        [HttpGet("user/namebookmarks", Name = nameof(GetBookmarksNameByUser))]
+        [BasicAuthentication]
+        public IActionResult GetBookmarksNameByUser()
         {
+
+            var username = GetUserFromAuthorization();
+
             var bookmark = _dataService.GetBookmarkNamesByUser(username)
                 .Select(x => MapNameList(x));
 
@@ -116,7 +136,24 @@ namespace WebServer.Controllers
             return Ok(bookmark);
         }
 
-        [HttpPost("{username}/namebookmarks")]
+        private string GetUserFromAuthorization()
+        {
+            var authHeaderRegex = new Regex("Basic (.*)");
+            string user = HttpContext.Request.Headers["Authorization"];
+            Console.WriteLine(user);
+            var authBase64 = Encoding.UTF8.GetString(Convert.FromBase64String(authHeaderRegex.Replace(user, "$1")));
+            var authSplit = authBase64.Split(Convert.ToChar(":"), 2);
+            var authUsername = authSplit[0];
+            var authPassword = authSplit.Length > 1 ? authSplit[1] : throw new Exception("Unable to get password");
+
+            Console.WriteLine("stuff" + authBase64);
+
+            return authUsername;
+        }
+
+
+
+        [HttpPost("user/namebookmarks")]
         [BasicAuthentication]
         public IActionResult CreateNameBookmark(string username, CreateBookmarkName bookmark)
         {
@@ -314,8 +351,7 @@ namespace WebServer.Controllers
             return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
         }
 
-
-
+        
 
         /*
          
