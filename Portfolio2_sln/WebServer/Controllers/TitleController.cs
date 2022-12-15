@@ -33,7 +33,7 @@ namespace WebServer.Controllers
         }
 
         [HttpGet(Name = nameof(GetTitles))]
-        [BasicAuthentication]
+        //[BasicAuthentication]
         public IActionResult GetTitles()
         {
             IEnumerable<TitleModel> titles =
@@ -44,7 +44,8 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("{tconst}", Name = nameof(GetTitle))]
-        [BasicAuthentication]
+        //[BasicAuthentication]
+        //[AdminAuthentiction]
         public IActionResult GetTitle(string tconst)
         {
             
@@ -94,7 +95,7 @@ namespace WebServer.Controllers
 
 
         [HttpGet("detailed")]
-        [BasicAuthentication]
+        //[BasicAuthentication]
         public IActionResult GetDetailedTitles(int page = 0, int pageSize = 2)
         {
 
@@ -112,15 +113,16 @@ namespace WebServer.Controllers
 
 
         [HttpGet("detailed/{tconst}", Name = nameof(GetDetailedTitle))]
-        [BasicAuthentication]
+        //[BasicAuthentication]
+        //[AdminAuthentiction]
         public IActionResult GetDetailedTitle(string tconst)
         {
-            string user = HttpContext.Request.Headers["Authorization"];
-            string encodedUsernamePassword = user.Remove(0,"Basic ".Length).Trim();
-            Encoding encoding = Encoding.GetEncoding("iso-8859-1");
-            string usernamePassword = encoding.GetString(Convert.FromBase64String(encodedUsernamePassword));
+            //string user = HttpContext.Request.Headers["Authorization"];
+            //string encodedUsernamePassword = user.Remove(0,"Basic ".Length).Trim();
+            //Encoding encoding = Encoding.GetEncoding("iso-8859-1");
+            //string usernamePassword = encoding.GetString(Convert.FromBase64String(encodedUsernamePassword));
 
-            Console.WriteLine(usernamePassword);
+            //Console.WriteLine(usernamePassword);
             var detailedTitle =
             CreateDetailedTitleModel(_dataService.GetDetailedTitle(tconst));
 

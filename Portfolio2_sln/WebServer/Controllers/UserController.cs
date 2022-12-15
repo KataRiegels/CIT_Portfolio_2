@@ -8,6 +8,7 @@ using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebServer.Authentication;
 using WebServer.Models.NameModels;
 using WebServer.Models.TitleModels;
 using WebServer.Models.UserModels;
@@ -116,6 +117,7 @@ namespace WebServer.Controllers
         }
 
         [HttpPost("{username}/namebookmarks")]
+        [BasicAuthentication]
         public IActionResult CreateNameBookmark(string username, CreateBookmarkName bookmark)
         {
             var result = _dataService.CreateBookmarkName(username, bookmark.Nconst, bookmark.Annotation);
@@ -124,6 +126,8 @@ namespace WebServer.Controllers
         }
 
         [HttpPost("{username}/titlebookmarks")]
+        //[BasicAuthentication]
+
         public IActionResult CreateTitleBookmark(string username, CreateBookmarkTitle bookmark)
         {
             var result = _dataService.CreateBookmarkTitle(username, bookmark.Tconst, bookmark.Annotation);

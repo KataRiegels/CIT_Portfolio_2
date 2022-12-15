@@ -16,9 +16,13 @@ builder.Services.AddSingleton<IDataServiceTitles, DataServiceTitles>();
 builder.Services.AddSingleton<IDataServiceUser, DataServiceUser>();
 builder.Services.AddSingleton<IDataServiceSearches, DataServiceSearches>();
 builder.Services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, BasicAuthenticatedHandler>("BasicAuthentication", options => { });
+builder.Services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, AdminAuthenticatedHandler>("AdminAuthentication", options => { });
 
-builder.Services.AddAuthorization(options => {
+builder.Services.AddAuthorization(options =>
+{
     options.AddPolicy("BasicAuthentication", new AuthorizationPolicyBuilder("BasicAuthentication").RequireAuthenticatedUser().Build());
+    options.AddPolicy("AdminAuthentication", new AuthorizationPolicyBuilder("AdminAuthentication").RequireAuthenticatedUser().Build());
+
 });
 
 var app = builder.Build();
