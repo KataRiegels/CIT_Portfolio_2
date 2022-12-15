@@ -36,7 +36,10 @@ namespace DataLayer.DataServices
             return _db.NameBasicss.Skip(page * pageSize).Take(pageSize).ToList();
         }
 
-
+        public int GetNumberOfPeople()
+        {
+            return _db.NameBasicss.Count();
+        }
 
 
         //----------------------------------------------------------------------------------------------
@@ -77,22 +80,35 @@ namespace DataLayer.DataServices
 
 
 
-        //public IList<NameForListDTO> GetListNames(int page = 0, int pageSize = 20)
-        //{
-        //    var names = GetDetailedNames()
-        //        .Select(x => new NameForListDTO()
-        //        {
-        //            Nconst = x.Nconst,
-        //            PrimaryName = x.PrimaryName,
-        //            //Profession = x.Profession,
-        //            KnownForTitle = x.KnownForTitle,
-        //            StartYear = x.StartYear,
-        //            TitleType = x.TitleType,
-        //            Tconst = x.Tconst
-        //        }).Skip(page * pageSize).Take(pageSize).ToList();
+        public IList<NameForListDTO> GetListNames(int page = 0, int pageSize = 20)
+        {
+            // Joins the filtered name_basics with known_for to get list form of matching names
+            
+            using var db = new ImdbContext();
 
-        //    return names;
-        //}
+            var names = db.NameBasicss.ToList()
+                .Skip(page * pageSize).Take(pageSize)
+                .GroupJoin(db.NameKnownFors,
+                       basics => basics.Nconst,
+                       knownFor => knownFor.Nconst,
+                       (basics, knownFor) => new NameForListDTO
+                       {
+                           BasicName =
+                           new BasicNameDTO
+                           {
+                               Nconst = basics.Nconst,
+                               PrimaryName = basics.PrimaryName,
+                           },
+                           KnownForTitleBasics = knownFor.Any() ?
+                                    new DataServiceTitles().
+                                    GetBasicTitle(knownFor.FirstOrDefault().Tconst) : null
+                       }
+                    )
+                .ToList();
+
+
+            return names;
+        }
 
 
         //----------------------------------------------------------------------------------------------
@@ -105,9 +121,6 @@ namespace DataLayer.DataServices
             using var db = new ImdbContext();
 
 
-            Console.WriteLine("before join");
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
 
             // Filters names so only contain those that matched the search
             var filtered = db.NameBasicss.ToList()
@@ -119,13 +132,7 @@ namespace DataLayer.DataServices
                     );
 
 
-            stopwatch.Stop();
-            var elapsed_time = stopwatch.ElapsedMilliseconds;
-            Console.WriteLine("joining name basics with searched list: ms: " + elapsed_time);
 
-            Console.WriteLine("after filtered");
-
-            stopwatch.Start();
 
             // Joins the filtered name_basics with known_for to get list form of matching names
             var searchedTitleResults =
@@ -145,12 +152,6 @@ namespace DataLayer.DataServices
                 .Skip(page * pageSize).Take(pageSize)
                 .ToList();
 
-            stopwatch.Stop();
-            elapsed_time = stopwatch.ElapsedMilliseconds;
-            Console.WriteLine(elapsed_time);
-
-            Console.WriteLine("after join");
-
             return searchedTitleResults;
         }
 
@@ -158,7 +159,6 @@ namespace DataLayer.DataServices
         public IList<NameTitleRelationDTO> GetNameTitleRelations(string nconst)
         {
             using var db = new ImdbContext();
-            Console.WriteLine(nconst);
             var jobsJoin = db.Jobs
                  .Where(n => n.Nconst.Trim().Contains(nconst.Trim()))
                  .Join(db.TitleBasicss,
@@ -179,10 +179,8 @@ namespace DataLayer.DataServices
                      )
                  .ToList();
 
-            Console.WriteLine(jobsJoin.Count());
 
             var characterJoin = db.Characters 
-              //.Where(t => t.)
                  .Where(n => n.Nconst.Trim() == nconst.Trim())
               .Join(db.TitleBasicss,
                   character => character.Tconst,
@@ -220,6 +218,7 @@ namespace DataLayer.DataServices
 
 
 
+        /*
 
 
         public IList<NameForListDTO> GetListNames(int page = 0, int pageSize = 20)
@@ -256,40 +255,11 @@ namespace DataLayer.DataServices
 
             return names2;
 
-
-
-
-            //    var names = _db.FullViewNames
-
-            //        .ToList()
-            //        //.GroupBy(t => t.Tconst,t => t.genre, (key, genre) => new DetailedTitleDTO
-            //        .GroupBy(t => t.Nconst, (key, model) => new NameForListDTO
-            //        {
-            //            Nconst = key,
-            //            PrimaryName = model.First().PrimaryName,
-            //            KnownForTitleBasics = model.First().KnwonForTconst != null ? GetBasicTitle(model.First().KnwonForTconst) : null
-            //            //KnownForTitle = model.First().KnwonForTconst,
-            //            //TitleType = model.First().KnwonForTconst != null ? GetTitle(model.First().KnwonForTconst).TitleType : null
-            //            //TitleType = model.First().KnwonForTconst != null ? model.First().KnwonForTconst : null
-            //            //StartYear = model.First().KnwonForTconst,
-
-            //            //DeathYear = model.First().DeathYear,
-            //            //Professions = model.Select(p => p.Profession).Distinct().ToList(),
-            //            //KnwonForTconst = model.Select(m => m.KnwonForTconst).Distinct().ToList(),
-            //            //Characters = model.Select(m => new Tuple<string, string>(m.Character, m.CharacterTconst)).Distinct().ToList(),
-            //            //Jobs = model.AsEnumerable().Select(m => new Tuple<string, string>(m.Job, m.JobTconst)).Distinct().ToList()
-            //            //plot = model.First().plot,
-            //            //poster = model.First().poster,
-            //            ////Tconst = obj.Tconst,
-            //            //genre = model.Select(m => m.genre).Distinct().ToList()
-            //        }
-            //        ).Take(21).ToList();
-            //return names;
-
-
-
-            //return null;
         }
+
+         
+         */
+
 
         public DetailedNameDTO GetDetailedName(string nconst)
         {

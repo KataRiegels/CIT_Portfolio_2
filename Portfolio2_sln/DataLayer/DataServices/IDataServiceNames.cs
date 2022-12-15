@@ -15,8 +15,6 @@ namespace DataLayer.DataServices
         NameBasics GetName(string nconst);
         IList<NameBasics> GetNames(int page = 0, int pageSize = 20);
         public DetailedNameDTO GetDetailedName(string nconst);
-
-
-
+        int GetNumberOfPeople();
     }
 }

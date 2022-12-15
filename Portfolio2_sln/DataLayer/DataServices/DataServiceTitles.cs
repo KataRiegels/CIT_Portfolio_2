@@ -29,6 +29,11 @@ namespace DataLayer.DataServices
             return result;
         }
 
+        public int GetNumberOfTitles()
+        {
+            return _db.TitleBasicss.Count();
+        }
+
         public TitleBasics GetTitle(string tconst)
         {
             var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst == tconst);
@@ -70,59 +75,52 @@ namespace DataLayer.DataServices
             return basicTitles;
         }
 
-
+     
         public IList<TitleForListDTO> GetListTitles(int page = 0, int pageSize = 1)
         {
-
-            var titles = _db.FullViewTitles
-
-                .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
-                {
-
-                    BasicTitle = new BasicTitleDTO
-                    {
-                        Tconst = model.First().Tconst,
-                        PrimaryTitle = model.First().PrimaryTitle,
-                        StartYear = model.First().StartYear,
-                        TitleType = model.First().TitleType
-                    },
-                }).Skip(page * pageSize).Take(pageSize).ToList();
-
-            return titles;
-        }
-
-
-
-
-        public IList<DetailedTitleDTO>? GetDetailedTitles(int page, int pageSize)
-        {
-
             using var db = new ImdbContext();
 
-            var titles = db.FullViewTitles
+        // Just here to only work with those within the given page
+            var result = db.TitleBasicss
+                .Skip(page * pageSize).Take(pageSize).ToList()
+                .Join(db.FullViewTitles,
+                    searchResults => searchResults.Tconst,
+                    fullView => fullView.Tconst,
+                    (searchResults, fullView)
+                                  => fullView
+                    );
 
-                .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleDTO
-                {
-                    PrimaryTitle = model.First().PrimaryTitle,
-                    StartYear = model.First().StartYear,
-                    TitleType = model.First().TitleType,
-                    Runtime = model.First().Runtime,
-                    Rating = model.First().Rating,
-                    Plot = model.First().Plot,
-                    Poster = model.First().Poster,
-                    Tconst = key,
-                    Genres = model.Select(m => m.Genre).Distinct()
-                    .Skip(page * pageSize).Take(pageSize).ToList()
-                }
-                ).Skip(page * pageSize).Take(pageSize).ToList();
+            ;
 
 
 
-            var temp = new List<DetailedTitleDTO>();
+            //var titles = _db.FullViewTitles
+            var titles = result
+
+           .ToList()
+           .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
+           {
+               BasicTitle = new BasicTitleDTO
+               {
+                   Tconst = model.First().Tconst,
+                   PrimaryTitle = model.First().PrimaryTitle,
+                   StartYear = model.First().StartYear,
+                   TitleType = model.First().TitleType,
+               },
+               Runtime = model.First().Runtime,
+               Rating = model.First().Rating,
+               Genres = model.Select(m => m.Genre).Distinct().ToList(),
+               ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst)
+                               ? null
+                               : GetBasicTitle(model.FirstOrDefault().ParentTconst)
+           })
+           //.Skip(page * pageSize).Take(pageSize)
+           .ToList();
+
             return titles;
         }
+
+
 
         public IList<TitleCastDTO> GetTitleCast(string tconst)
         {
@@ -268,28 +266,6 @@ namespace DataLayer.DataServices
                     );
 
 
-            /*
-             
-             
-            var seasons = filteredEpisodeTitles
-                .GroupBy(t => t.SeasonNumber, (key, model) =>
-                new DetailedTitleDTO
-                {
-
-                    PrimaryTitle = model.First().PrimaryTitle,
-                    StartYear = model.First().StartYear,
-                    TitleType = model.First().TitleType,
-                    Runtime = model.First().Runtime,
-                    Rating = model.First().Rating,
-                    Plot = model.First().Plot,
-                    Poster = model.First().Poster,
-                    Tconst = key,
-                    Genres = model.Select(m => m.Genre).Distinct()
-                        .ToList()
-                }
-                )
-                ;
-             */
 
             return null;
 
@@ -382,7 +358,42 @@ namespace DataLayer.DataServices
 
 
 
+        /*
+         * 
+         * DELETABLE
+         * 
+         * 
+         */
+         
 
+        public IList<DetailedTitleDTO>? GetDetailedTitles(int page, int pageSize)
+        {
+
+            using var db = new ImdbContext();
+
+            var titles = db.FullViewTitles
+
+                .ToList()
+                .GroupBy(t => t.Tconst, (key, model) => new DetailedTitleDTO
+                {
+                    PrimaryTitle = model.First().PrimaryTitle,
+                    StartYear = model.First().StartYear,
+                    TitleType = model.First().TitleType,
+                    Runtime = model.First().Runtime,
+                    Rating = model.First().Rating,
+                    Plot = model.First().Plot,
+                    Poster = model.First().Poster,
+                    Tconst = key,
+                    Genres = model.Select(m => m.Genre).Distinct().ToList()
+                    //.Skip(page * pageSize).Take(pageSize).ToList()
+                }
+                ).Skip(page * pageSize).Take(pageSize).ToList();
+
+
+
+            var temp = new List<DetailedTitleDTO>();
+            return titles;
+        }
 
 
 

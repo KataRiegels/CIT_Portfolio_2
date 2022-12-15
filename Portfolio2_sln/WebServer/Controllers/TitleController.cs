@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore.Query;
 using WebServer.Models.NameModels;
 using NpgsqlTypes;
 using DataLayer.DTOs.TitleObjects;
+using WebServer.Authentication;
+using System.Text;
 
 namespace WebServer.Controllers
 {
@@ -22,15 +24,16 @@ namespace WebServer.Controllers
         private IDataServiceTitles _dataService;
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
-
-        public TitleController(IDataServiceTitles dataService, LinkGenerator generator, IMapper mapper)
+        private const int MaxPageSize = 25;
+        public TitleController(IDataServiceTitles dataService, LinkGenerator generator)
         {
             _dataService = dataService;
             _generator = generator;
-            _mapper = mapper;
+            //_mapper = mapper;
         }
 
         [HttpGet(Name = nameof(GetTitles))]
+        //[BasicAuthentication]
         public IActionResult GetTitles()
         {
             IEnumerable<TitleModel> titles =
@@ -41,6 +44,8 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("{tconst}", Name = nameof(GetTitle))]
+        //[BasicAuthentication]
+        //[AdminAuthentiction]
         public IActionResult GetTitle(string tconst)
         {
             
@@ -63,20 +68,21 @@ namespace WebServer.Controllers
 
             IEnumerable<BasicTitleModel> titles =
                 _dataService.GetBasicTitles(page, pageSize).Select(x => CreateBasicTitleModel(x));
+            var total = _dataService.GetNumberOfTitles();
 
-
-            return Ok(titles);
+            return Ok(Paging(page, pageSize, total, titles, nameof(GetBasicTitles)));
         }
 
 
-        [HttpGet("list")]
+        [HttpGet("list", Name = nameof(GetListTitles))]
         public IActionResult GetListTitles(int page = 0, int pageSize = 20)
         {
             Console.WriteLine(page);
             //IEnumerable<TitleForListModel> titles =
-            IEnumerable<TitleForListModel> titles =
+            var titles =
                 _dataService.GetListTitles(page, pageSize)
                 .Select(x => CreateListTitleModel(x));
+            var total = _dataService.GetNumberOfTitles();
 
 
             if (titles == null)
@@ -84,11 +90,12 @@ namespace WebServer.Controllers
                 return NotFound();
             }
 
-            return Ok(titles);
+            return Ok(Paging(page, pageSize, total, titles, nameof(GetListTitles)));
         }
 
 
         [HttpGet("detailed")]
+        //[BasicAuthentication]
         public IActionResult GetDetailedTitles(int page = 0, int pageSize = 2)
         {
 
@@ -106,9 +113,16 @@ namespace WebServer.Controllers
 
 
         [HttpGet("detailed/{tconst}", Name = nameof(GetDetailedTitle))]
+        //[BasicAuthentication]
+        //[AdminAuthentiction]
         public IActionResult GetDetailedTitle(string tconst)
         {
+            //string user = HttpContext.Request.Headers["Authorization"];
+            //string encodedUsernamePassword = user.Remove(0,"Basic ".Length).Trim();
+            //Encoding encoding = Encoding.GetEncoding("iso-8859-1");
+            //string usernamePassword = encoding.GetString(Convert.FromBase64String(encodedUsernamePassword));
 
+            //Console.WriteLine(usernamePassword);
             var detailedTitle =
             CreateDetailedTitleModel(_dataService.GetDetailedTitle(tconst));
 
@@ -285,9 +299,56 @@ namespace WebServer.Controllers
         //}
 
 
+        private string? CreateLinkList(int page, int pageSize, string method)
+        {
+            var uri = _generator.GetUriByName(
+                HttpContext,
+                method,
+                new {  page, pageSize });
+            return uri;
+        }
 
 
 
+
+        private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method)
+        {
+            pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
+
+            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize) - 1
+                ;
+
+            var firstPageUrl = totalItems > 0
+                ? CreateLinkList(0, pageSize, method)
+                : null;
+
+            var prevPageUrl = page > 0 && totalItems > 0
+                ? CreateLinkList(page - 1, pageSize, method)
+                : null;
+
+            var lastPageUrl = totalItems > 0
+                ? CreateLinkList(totalPages, pageSize, method)
+                : null;
+
+            var currentPageUrl = CreateLinkList(page, pageSize, method);
+
+            var nextPageUrl = page < totalPages - 1 && totalItems > 0
+                ? CreateLinkList(page + 1, pageSize, method)
+                : null;
+
+            var result = new
+            {
+                firstPageUrl,
+                prevPageUrl,
+                nextPageUrl,
+                lastPageUrl,
+                currentPageUrl,
+                totalItems,
+                totalPages,
+                items
+            };
+            return result;
+        }
 
 
 

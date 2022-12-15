@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using DataLayer.DataServices;
 using WebServer.Models.NameModels;
 
 namespace TestProject
@@ -9,7 +10,7 @@ namespace TestProject
         [Fact]
         public void Check_Paging()
         {
-            var ds = new DataService();
+            var ds = new DataServiceNames();
             int page = 0;
             int pagesize = 20;
             var names =

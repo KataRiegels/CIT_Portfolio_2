@@ -10,6 +10,7 @@ namespace DataLayer.DTOs.SearchObjects
     {
         public string Tconst { get; set; }
         public string PrimaryTitle { get; set; }
+        public int Rank { get; set; }
 
     }
 }

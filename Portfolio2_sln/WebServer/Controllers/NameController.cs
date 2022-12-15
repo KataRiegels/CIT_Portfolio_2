@@ -30,6 +30,7 @@ using DataLayer.Models.TitleModels;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Security.Cryptography.X509Certificates;
 using DataLayer.DTOs.NameObjects;
+using System.Xml.Schema;
 
 namespace WebServer.Controllers
 {
@@ -41,6 +42,7 @@ namespace WebServer.Controllers
         private IDataServiceNames _dataService;
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
+        private const int MaxPageSize = 25;
 
         public NameController(IDataServiceNames dataService, LinkGenerator generator, IMapper mapper)
         {
@@ -102,23 +104,23 @@ namespace WebServer.Controllers
         }
 
 
-        [HttpGet("list")]
-        public IActionResult GetListNames(int page = 0, int pagesize = 20)
+        [HttpGet("list", Name = nameof(GetListNames))]
+        public IActionResult GetListNames(int page = 0, int pageSize = 20)
         {
-            Console.WriteLine("dfkldfk");
 
-            //IEnumerable<NameForListDTO> names =
-            IEnumerable<ListNameModel> names =
-              _dataService.GetListNames(page, pagesize)
+            var names =
+              _dataService.GetListNames(page, pageSize)
               .Select(x => CreateListNameModel(x));
-              //_dataService.GetListNames();
+            //_dataService.GetListNames();
+
+            var total = _dataService.GetNumberOfPeople();
 
             if(names == null)
             {
                 return NotFound();
             }
 
-            return Ok(names);
+            return Ok(Paging(page, pageSize, total, names, nameof(GetListNames)));
         }
 
         [HttpGet("detailed")]
@@ -202,5 +204,58 @@ namespace WebServer.Controllers
             if (string.IsNullOrEmpty(nconst)) return null;
             return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
         }
+
+        private string? CreateLinkList(int page, int pageSize, string method)
+        {
+            var uri = _generator.GetUriByName(
+                HttpContext,
+                method,
+                new { page, pageSize });
+            return uri;
+        }
+
+
+
+
+        private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method)
+        {
+            pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
+
+            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize) - 1
+                ;
+
+            var firstPageUrl = totalItems > 0
+                ? CreateLinkList(0, pageSize, method)
+                : null;
+
+            var prevPageUrl = page > 0 && totalItems > 0
+                ? CreateLinkList(page - 1, pageSize, method)
+                : null;
+
+            var lastPageUrl = totalItems > 0
+                ? CreateLinkList(totalPages, pageSize, method)
+                : null;
+
+            var currentPageUrl = CreateLinkList(page, pageSize, method);
+
+            var nextPageUrl = page < totalPages - 1 && totalItems > 0
+                ? CreateLinkList(page + 1, pageSize, method)
+                : null;
+
+            var result = new
+            {
+                firstPageUrl,
+                prevPageUrl,
+                nextPageUrl,
+                lastPageUrl,
+                currentPageUrl,
+                totalItems,
+                totalPages,
+                items
+            };
+            return result;
+        }
+
+
     }
 }

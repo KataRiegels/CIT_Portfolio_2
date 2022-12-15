@@ -219,7 +219,7 @@ namespace DataLayer.DataServices
         {
             //using var db = new ImdbContext();
 
-            //var product = GetBookmarkName(username, nconst);
+            //var rating = GetBookmarkName(username, nconst);
 
             //= 
             var product = _db.BookmarkNames.FirstOrDefault(x => x.Username == username && x.Nconst == nconst);
@@ -269,13 +269,15 @@ namespace DataLayer.DataServices
 
         public bool DeleteUserRating(string username, string tconst)
         {
-            var product = GetUserRatings(username);
-            if (product == null)
+            var rating = GetUserRatings(username);
+            if (rating == null)
             {
                 return false;
             }
             _db.Users.Remove(GetUser(username));
             _db.SaveChanges();
+            // check if rating is there
+
             return true;
         }
 
@@ -299,7 +301,6 @@ namespace DataLayer.DataServices
             return db.UserSearches.Where(u => u.Username.Equals(username)).ToList();
 
 
-            return null;
         }
 
         public int CreateUserSearch(string username, string searchContent, string searchCategory = null)
