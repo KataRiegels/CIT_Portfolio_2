@@ -27,7 +27,7 @@ namespace WebServer.Models.TitleModels
 
         public BasicTitleModel? ParentTitle { get; set; }
 
-        public TitleForListModel ConvertFromListTitleDTO(TitleForListDTO inputModel)
+        public TitleForListModel ConvertFromDTO(TitleForListDTO inputModel)
         {
 
             //var basic = new BasicTitleModel().ConvertBasicTitleModel(inputModel.BasicTitle);

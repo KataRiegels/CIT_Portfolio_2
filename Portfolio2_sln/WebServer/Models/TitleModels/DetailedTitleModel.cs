@@ -13,7 +13,7 @@ namespace WebServer.Models.TitleModels
         public IList<string>? Genres { get; set; }
         public string? Plot { get; set; }
         public string? Poster { get; set; }
-        public string? relatedName { get; set; }
+        //public string? relatedName { get; set; }
 
 
         public DetailedTitleModel ConvertFromDetailedTitleDTO(DetailedTitleDTO inputModel)

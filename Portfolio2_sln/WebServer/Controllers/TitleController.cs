@@ -79,8 +79,10 @@ namespace WebServer.Controllers
         {
             Console.WriteLine(page);
             //IEnumerable<TitleForListModel> titles =
-            var titles =
-                _dataService.GetListTitles(page, pageSize)
+            var titles1 =
+                _dataService.GetListTitles(page, pageSize);
+            Console.WriteLine(titles1.First().Runtime);
+            var titles = titles1
                 .Select(x => CreateListTitleModel(x));
             var total = _dataService.GetNumberOfTitles();
 
@@ -257,7 +259,8 @@ namespace WebServer.Controllers
         public BasicTitleModel CreateBasicTitleModel(BasicTitleDTO titleBasics)
         {
 
-            var model = _mapper.Map<BasicTitleModel>(titleBasics);
+            //var model = _mapper.Map<BasicTitleModel>(titleBasics);
+            var model = new BasicTitleModel().ConvertBasicTitleModel(titleBasics);
             model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
 
             return model;
@@ -267,9 +270,11 @@ namespace WebServer.Controllers
         {
 
             //var model1 = _mapper.Map<BasicTitleModel>(titleBasics.BasicTitle);
-            var model = _mapper.Map<TitleForListModel>(titleBasics);
-            model.BasicTitle = CreateBasicTitleModel(titleBasics.BasicTitle);
+            //var model = _mapper.Map<TitleForListModel>(titleBasics);
+            var model = new TitleForListModel().ConvertFromDTO(titleBasics);
             model.BasicTitle.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.BasicTitle.Tconst });
+            model.BasicTitle = CreateBasicTitleModel(titleBasics.BasicTitle);
+            Console.WriteLine(titleBasics.Rating);
             model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
 
             return model;

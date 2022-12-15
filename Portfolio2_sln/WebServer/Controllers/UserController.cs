@@ -273,7 +273,7 @@ namespace WebServer.Controllers
 
         public TitleForListModel MapTitleList(TitleForListDTO titleBasics)
         {
-            var model = new TitleForListModel().ConvertFromListTitleDTO(titleBasics);
+            var model = new TitleForListModel().ConvertFromDTO(titleBasics);
             model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
             if (titleBasics.ParentTitle != null)
             {
@@ -318,7 +318,7 @@ namespace WebServer.Controllers
         // Map tite list form DTO to WebServer model, including adding URL's
         public TitleForListModel MapTitleSearchResults(TitleForListDTO titleBasics)
         {
-            var model = new TitleForListModel().ConvertFromListTitleDTO(titleBasics);
+            var model = new TitleForListModel().ConvertFromDTO(titleBasics);
             model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
             if (titleBasics.ParentTitle != null)
             {

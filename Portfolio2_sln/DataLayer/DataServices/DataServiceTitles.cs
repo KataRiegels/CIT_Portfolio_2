@@ -93,7 +93,6 @@ namespace DataLayer.DataServices
             ;
 
 
-
             //var titles = _db.FullViewTitles
             var titles = result
 
@@ -117,6 +116,7 @@ namespace DataLayer.DataServices
            //.Skip(page * pageSize).Take(pageSize)
            .ToList();
 
+            Console.WriteLine(titles.First().Runtime);
             return titles;
         }
 
