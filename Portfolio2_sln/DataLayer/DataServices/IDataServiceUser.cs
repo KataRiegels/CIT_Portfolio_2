@@ -12,11 +12,10 @@ namespace DataLayer.DataServices
         public bool DeleteUserRating(string username, string tconst);
 
         public IList<UserRatingDTO> GetUserRatings(string username);
-        public bool DeleteBookmarkName(string username, string nconst);
+        public int DeleteBookmarkName(string username, string nconst);
 
         public BookmarkName GetBookmarkName(string username, string nconst);
 
-        public bool CreateBookmarkName(string username, string nconst, string annotation);
 
         public IList<NameForListDTO> GetBookmarkNamesByUser(string username);
         BookmarkTitle CreateBookmarkTitle(string username, string tconst);
@@ -33,6 +32,8 @@ namespace DataLayer.DataServices
         User GetUser(string username);
         IList<User> GetUsers();
         UserRating CreateUserRating(string username, string tconst, int rating);
+
+        public BookmarkName CreateBookmarkName(string username, string nconst);
 
         public UserSearch GetUserSearch(int searchId);
         int DeleteUserSearch(int searchId);

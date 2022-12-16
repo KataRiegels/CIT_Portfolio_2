@@ -183,6 +183,20 @@ namespace WebServer.Controllers
 
 
 
+        // Get domain object - Would be used for Uri (since it contains Tconst) 
+        [HttpGet("user/namebookmarks/domain/{nconst}")]
+        [BasicAuthentication]
+        public IActionResult GetNameBookmarkObject(string nconst)
+        {
+            var username = GetUsernameFromAuthorization();
+
+            var bookmark = _dataService.GetBookmarkName(username, nconst);
+
+            if (bookmark == null)
+                return NotFound();
+
+            return Ok(bookmark);
+        }
 
         // Get list of people bookmarked by current user
         [HttpGet("user/namebookmarks", Name = nameof(GetBookmarksNameByUser))]
@@ -201,7 +215,38 @@ namespace WebServer.Controllers
         }
 
 
+        // Create bookmark 
+        [HttpPost("user/namebookmarks")]
+        [BasicAuthentication]
+        public IActionResult CreateNameBookmark([FromBody] CreateBookmarkName bookmark)
+        {
+            var username = GetUsernameFromAuthorization();
 
+            var createdBookmark = _dataService.CreateBookmarkName(username, bookmark.Nconst );
+
+            // Client recieves create bookmark. If no bookmark was created, well receive null
+            return CreatedAtRoute(null, createdBookmark);
+        }
+
+        // Delete bookmark
+        [HttpDelete("user/namebookmarks/{nconst}")]
+        [BasicAuthentication]
+        public IActionResult DeleteNameBookmark(string nconst)
+        {
+            var username = GetUsernameFromAuthorization();
+
+            var result = _dataService.DeleteBookmarkName(username, nconst);
+
+            // If bookmark wasn't in the bookmark table
+            if (result == -1)
+                return NotFound();
+
+            // If bookmark was still there after deletion attempt
+            else if (result == 0)
+                return StatusCode(500);
+
+            return Ok(result);
+        }
 
 
         //[HttpPost("user/namebookmarks")]
@@ -244,19 +289,19 @@ namespace WebServer.Controllers
          */
 
 
-        
 
-        [HttpDelete("user/namebookmarks")]
-        [BasicAuthentication]
 
-        public IActionResult DeleteNameBookmark(string nconst)
-        {
-            var username = GetUsernameFromAuthorization();
+        //[HttpDelete("user/namebookmarks")]
+        //[BasicAuthentication]
 
-            var result = _dataService.DeleteBookmarkName(username, nconst);
+        //public IActionResult DeleteNameBookmark(string nconst)
+        //{
+        //    var username = GetUsernameFromAuthorization();
 
-            return Ok(result);
-        }
+        //    var result = _dataService.DeleteBookmarkName(username, nconst);
+
+        //    return Ok(result);
+        //}
 
         [HttpPost("user/ratings")]
         [BasicAuthentication]

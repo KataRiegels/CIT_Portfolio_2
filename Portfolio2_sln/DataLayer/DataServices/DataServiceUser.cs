@@ -78,7 +78,7 @@ namespace DataLayer.DataServices
         //}
 
 
-        public BookmarkName GetBookmarkNameDM(string username, string nconst)
+        public BookmarkName GetBookmarkName(string username, string nconst)
         {
             using var db = new ImdbContext();
 
@@ -94,37 +94,6 @@ namespace DataLayer.DataServices
         }
 
 
-        public bool CreateBookmarkName(string username, string nconst, string annotation)
-        {
-            using var db = new ImdbContext();
-
-            var newBootkmark = new BookmarkName()
-            {
-                Username = username,
-                Nconst = nconst
-            };
-
-            db.BookmarkNames.Add(newBootkmark);
-            db.SaveChanges();
-
-            return true;
-        }
-
-        public IList<NameForListDTO> GetBookmarkNamesByUser(string username)
-        {
-            using var db = new ImdbContext();
-
-            var bookmarksFilter = db.BookmarkNames
-                .Where(x => x.Username == username)
-                .ToList();
-
-            //var result = GetFilteredTitles(bookmarksFilter);
-            var result = new DataServiceNames()
-                .GetFilteredNames(bookmarksFilter
-                    .Select(x => new NconstObject { Nconst = x.Nconst }).ToList());
-
-            return result;
-        }
 
 
         
@@ -242,7 +211,6 @@ namespace DataLayer.DataServices
 
             // Bookmark was there + was removed
             return 1;
-
         }
 
 
@@ -268,25 +236,74 @@ namespace DataLayer.DataServices
         }
 
 
-        public bool DeleteBookmarkName(string username, string nconst)
+        /*
+         
+         ------------- Bookmark names --------------
+         
+         */
+
+        //public BookmarkName GetBookmarkNameDM(string username, string nconst)
+        //{
+        //    using var db = new ImdbContext();
+
+        //    return db.BookmarkNames.FirstOrDefault(bt => bt.Username.Equals(username) && bt.Nconst.Equals(nconst));
+
+        //}
+
+
+        public BookmarkName CreateBookmarkName(string username, string nconst)
         {
-            //using var db = new ImdbContext();
+            using var db = new ImdbContext();
 
-            //var rating = GetBookmarkName(username, nconst);
-
-            //= 
-            var product = _db.BookmarkNames.FirstOrDefault(x => x.Username == username && x.Nconst == nconst);
-            Console.WriteLine("-" + product.Nconst + "-");
-            
-            if (product == null)
+            var newBookmark = new BookmarkName()
             {
-                return false;
-            }
+                Username = username,
+                Nconst = nconst
+            };
 
+            db.BookmarkNames.Add(newBookmark);
+            db.SaveChanges();
 
-            _db.BookmarkNames.Remove(product);
-            _db.SaveChanges();
-            return true;
+            var createdBookmark = GetBookmarkName(username, nconst);
+
+            return createdBookmark;
+        }
+
+        public IList<NameForListDTO> GetBookmarkNamesByUser(string username)
+        {
+            using var db = new ImdbContext();
+
+            var bookmarksFilter = db.BookmarkNames
+                .Where(x => x.Username == username)
+                .ToList();
+
+            var result = new DataServiceNames()
+                .GetFilteredNames(bookmarksFilter
+                    .Select(x => new NconstObject { Nconst = x.Nconst }).ToList());
+
+            return result;
+        }
+
+        public int DeleteBookmarkName(string username, string nconst)
+        {
+            using var db = new ImdbContext();
+
+            var bookmarkToDelete = GetBookmarkName(username, nconst);
+
+            // If the bookmark is not in the database
+            if (bookmarkToDelete == null)
+                return -1;
+
+            // If the bookmark is still in the database
+
+            db.BookmarkNames.Remove(bookmarkToDelete);
+            db.SaveChanges();
+
+            if (GetBookmarkName(username, nconst) != null)
+                Console.WriteLine("still there");
+                return 0;
+
+            return 1;
         }
 
 
@@ -415,10 +432,6 @@ namespace DataLayer.DataServices
             return 1;
         }
 
-        BookmarkName IDataServiceUser.GetBookmarkName(string username, string nconst)
-        {
-            throw new NotImplementedException();
-        }
 
     }
 }
