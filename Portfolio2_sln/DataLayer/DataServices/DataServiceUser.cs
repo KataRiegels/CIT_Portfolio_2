@@ -73,20 +73,24 @@ namespace DataLayer.DataServices
          
          */
 
-        public BookmarkTitle GetBookmarkTitle(string username, string tconst)
-        {
-            return _db.BookmarkTitles.FirstOrDefault(x => x.Username == username && x.Tconst.Trim() == tconst.Trim());
-        }
+        //public BookmarkTitle GetBookmarkTitle(string username, string tconst)
+        //{
+        //    return _db.BookmarkTitles.FirstOrDefault(x => x.Username == username && x.Tconst.Trim() == tconst.Trim());
+        //}
 
         public BookmarkName GetBookmarkName(string username, string nconst)
         {
-            return _db.BookmarkNames.FirstOrDefault(x => x.Username == username && x.Nconst.Trim() == nconst.Trim());
+            using var db = new ImdbContext();
+
+            return db.BookmarkNames.FirstOrDefault(x => x.Username == username && x.Nconst.Trim() == nconst.Trim());
         }
 
 
         public IList<BookmarkTitle> GetBookmarkTitles()
         {
-            return _db.BookmarkTitles.ToList();
+            using var db = new ImdbContext();
+
+            return db.BookmarkTitles.ToList();
         }
 
 
@@ -121,6 +125,15 @@ namespace DataLayer.DataServices
                     .Select(x => new NconstObject { Nconst = x.Nconst }).ToList());
 
             return result;
+        }
+
+
+        public BookmarkTitle GetBookmarkTitle(string username, string tconst)
+        {
+            using var db = new ImdbContext();
+
+            return db.BookmarkTitles.FirstOrDefault(bt => bt.Username.Equals(username) && bt.Tconst.Equals(tconst));
+
         }
 
         public IList<TitleForListDTO> GetBookmarkTitlesByUser(string username)
@@ -236,6 +249,10 @@ namespace DataLayer.DataServices
             return true;
         }
 
+
+        
+
+
         public IList<UserRatingDTO> GetUserRatings(string username)
         {
             using var db = new ImdbContext();
@@ -282,13 +299,24 @@ namespace DataLayer.DataServices
         }
 
 
-        public bool CreateUserRating(string username, string tconst, int rating)
+        public UserRating CreateUserRating(string username, string tconst, int rating)
         {
             using var db = new ImdbContext();
 
-            var result = db.Database.ExecuteSqlInterpolated($"select * from user_rate({username}, {tconst}, {rating})");
+            db.Database.ExecuteSqlInterpolated($"select * from create_user_rating({username}, {tconst}, {rating})");
 
-            return true; // shouldn't return this - fix
+            var newUserRating = db.UserRatings.FirstOrDefault(u => u.Username == username && u.Tconst == tconst);
+
+          
+            return newUserRating; // shouldn't return this - fix
+        }
+
+
+        public UserSearch GetUserSearch(int searchId)
+        {
+            using var db = new ImdbContext();
+
+            return db.UserSearches.FirstOrDefault(u =>  u.SearchId == searchId);
 
         }
 
@@ -303,16 +331,18 @@ namespace DataLayer.DataServices
 
         }
 
-        public int CreateUserSearch(string username, string searchContent, string searchCategory = null)
+        public UserSearch CreateUserSearch(string username, string searchContent, string searchCategory = null)
         {
 
             using var db = new ImdbContext();
-            var searchResults = db.UserSearches.FromSqlInterpolated($"SELECT * FROM save_string_search({username}, {searchContent}, {searchCategory})");
-            var searchId = searchResults.FirstOrDefault().SearchId;
+            
+            var returnedCreatedUserSearch = db.UserSearches.FromSqlInterpolated($"SELECT * FROM save_string_search({username}, {searchContent}, {searchCategory})");
+            
+            var createdSearchId = returnedCreatedUserSearch.FirstOrDefault().SearchId;
 
+            var createdUserSearch = db.UserSearches.FirstOrDefault(u => u.SearchId == createdSearchId);
 
-
-            return searchId;
+            return createdUserSearch;
 
         }
 

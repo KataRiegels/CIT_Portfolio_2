@@ -153,55 +153,107 @@ namespace WebServer.Controllers
 
 
 
-        [HttpPost("user/namebookmarks")]
+        //[HttpPost("user/namebookmarks")]
+        //[BasicAuthentication]
+        //public IActionResult CreateNameBookmark(string username, CreateBookmarkName bookmark)
+        //{
+        //    var result = _dataService.CreateBookmarkName(username, bookmark.Nconst, bookmark.Annotation);
+
+        //    return CreatedAtRoute(null, result);
+        //}
+
+        /*
+         
+        [HttpGet("user/namebookmarks/{nconst}", Name = nameof(GetNameBookmark))]
         [BasicAuthentication]
-        public IActionResult CreateNameBookmark(string username, CreateBookmarkName bookmark)
+
+        public IActionResult GetNameBookmark(string nconst)
         {
-            var result = _dataService.CreateBookmarkName(username, bookmark.Nconst, bookmark.Annotation);
+            var username = GetUserFromAuthorization();
+
+            var result = _dataService.GetBookmarkName(username, nconst);
+
 
             return CreatedAtRoute(null, result);
         }
 
-        [HttpPost("{username}/titlebookmarks")]
-        //[BasicAuthentication]
+        [HttpGet("user/titlebookmarks", Name = nameof(GetTitleBookmark))]
+        [BasicAuthentication]
 
-        public IActionResult CreateTitleBookmark(string username, CreateBookmarkTitle bookmark)
+        public IActionResult GetTitleBookmark(string tconst)
         {
+            var username = GetUserFromAuthorization();
+
+            var result = _dataService.GetBookmarkTitle(username, tconst);
+
+
+
+            return CreatedAtRoute(null, result);
+        }
+         */
+
+
+        [HttpPost("user/titlebookmarks")]
+        [BasicAuthentication]
+
+        public IActionResult CreateTitleBookmark(CreateBookmarkTitle bookmark)
+        {
+            var username = GetUserFromAuthorization();
+
             var result = _dataService.CreateBookmarkTitle(username, bookmark.Tconst, bookmark.Annotation);
 
             
             return CreatedAtRoute(null, result);
         }
 
-        [HttpDelete("{username}/titlebookmarks")]
-        public IActionResult DeleteTitleBookmark(string username, string tconst)
+        [HttpDelete("user/titlebookmarks")]
+        [BasicAuthentication]
+
+        public IActionResult DeleteTitleBookmark( string tconst)
         {
+            var username = GetUserFromAuthorization();
+
+
             var result = _dataService.DeleteBookmarkTitle(username, tconst);
 
 
             return Ok(result);
         }
 
-        [HttpDelete("{username}/namebookmarks")]
-        public IActionResult DeleteNameBookmark(string username, string nconst)
+        [HttpDelete("user/namebookmarks")]
+        [BasicAuthentication]
+
+        public IActionResult DeleteNameBookmark(string nconst)
         {
+            var username = GetUserFromAuthorization();
+
             var result = _dataService.DeleteBookmarkName(username, nconst);
 
             return Ok(result);
         }
 
-        [HttpPost("{username}/ratings")]
-        public IActionResult CreateRating(string username, UserRatingCreateModel rating)
+        [HttpPost("user/ratings")]
+        [BasicAuthentication]
+
+        public IActionResult CreateRating(UserRatingCreateModel rating)
         {
-            var rate = _mapper.Map<UserRating>(rating);
-            //Console.WriteLine(rate.Rating);
-            _dataService.CreateUserRating(username, rating.Tconst, rating.Rating);
-            return CreatedAtRoute(null, CreateUserRatingModel(rate));
+            var username = GetUserFromAuthorization();
+
+            var createdUserRating = _dataService.CreateUserRating(username, rating.Tconst, rating.Rating);
+
+            // should have a status code in case createdUserRating is null (which would mean rating was not created)
+
+            return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
         }
 
-        [HttpGet("{username}/ratings")]
-        public IActionResult GetUserRatings(string username)
+        [HttpGet("user/ratings")]
+        [BasicAuthentication]
+
+        public IActionResult GetUserRatings()
         {
+
+            var username = GetUserFromAuthorization();
+
             var rating = _dataService.GetUserRatings(username)
                .Select(x => MapUserRating(x))
                 ;
@@ -217,6 +269,7 @@ namespace WebServer.Controllers
 
 
         private UserRatingModel MapUserRating(UserRatingDTO rating)
+
         {
             var model = new UserRatingModel().ConvertFromDTO(rating);
             model.TitleModel.Url = CreateTitleUrl(rating.TitleModel.Tconst);
@@ -224,9 +277,13 @@ namespace WebServer.Controllers
             return model;
         }
 
-        [HttpPost("{username}/searches")]
-        public IActionResult CreateUserSearch(string username, string searchContent, string? searchCategory = null)
+        [HttpPost("user/searches")]
+        [BasicAuthentication]
+
+        public IActionResult CreateUserSearch(string searchContent, string? searchCategory = null)
         {
+            var username = GetUserFromAuthorization();
+
             var results = _dataService.CreateUserSearch(username, searchContent, searchCategory);
             return CreatedAtRoute(null, results);
         }
