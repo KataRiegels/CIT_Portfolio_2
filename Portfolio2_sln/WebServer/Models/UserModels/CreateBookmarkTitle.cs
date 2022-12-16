@@ -3,6 +3,5 @@
     public class CreateBookmarkTitle
     {
         public string Tconst { get; set; }
-        public string? Annotation { get; set; }
     }
 }

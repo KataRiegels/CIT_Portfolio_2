@@ -132,15 +132,15 @@ namespace WebServer.Controllers
         public IActionResult CreateTitleBookmark([FromBody] CreateBookmarkTitle bookmark)
         {
             var username = GetUsernameFromAuthorization();
-            
+
             var createdBookmark = _dataService.CreateBookmarkTitle(username, bookmark.Tconst);
-            
+
             // Client recieves create bookmark. If no bookmark was created, well receive null
             return CreatedAtRoute(null, createdBookmark);
         }
 
         // Delete bookmark
-        [HttpDelete("user/titlebookmarks")]
+        [HttpDelete("user/titlebookmarks/{tconst}")]
         [BasicAuthentication]
         public IActionResult DeleteTitleBookmark(string tconst)
         {
@@ -148,6 +148,7 @@ namespace WebServer.Controllers
 
             var result = _dataService.DeleteBookmarkTitle(username, tconst);
             
+
             // If bookmark wasn't in the bookmark table
             if (result == -1)
                 return NotFound();
@@ -239,11 +240,15 @@ namespace WebServer.Controllers
 
             // If bookmark wasn't in the bookmark table
             if (result == -1)
+            {
                 return NotFound();
+            }
 
             // If bookmark was still there after deletion attempt
             else if (result == 0)
-                return StatusCode(500);
+            {
+                return StatusCode(501);
+            }
 
             return Ok(result);
         }

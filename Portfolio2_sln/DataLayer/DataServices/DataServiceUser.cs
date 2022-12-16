@@ -82,7 +82,7 @@ namespace DataLayer.DataServices
         {
             using var db = new ImdbContext();
 
-            return db.BookmarkNames.FirstOrDefault(x => x.Username == username && x.Nconst.Trim() == nconst.Trim());
+            return db.BookmarkNames.FirstOrDefault(x => x.Username == username && x.Nconst.Equals(nconst));
         }
 
 
@@ -95,7 +95,7 @@ namespace DataLayer.DataServices
 
 
 
-
+        
         
 
         public IList<TitleForListDTO> GetFilteredTitles(List<BookmarkTitle> searchedTitles, int page = 1, int pageSize = 5)
@@ -300,8 +300,9 @@ namespace DataLayer.DataServices
             db.SaveChanges();
 
             if (GetBookmarkName(username, nconst) != null)
-                Console.WriteLine("still there");
+            {
                 return 0;
+            }
 
             return 1;
         }
