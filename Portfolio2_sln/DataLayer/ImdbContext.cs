@@ -158,7 +158,6 @@ namespace DataLayer
             userBookmarkNameTable.HasKey(x =>  new { x.Username, x.Nconst });
             userBookmarkNameTable.Property(x => x.Username).HasColumnName("username");
             userBookmarkNameTable.Property(x => x.Nconst).HasColumnName("nconst");
-            userBookmarkNameTable.Property(x => x.Annotation).HasColumnName("annotation");
             //.Property(x => x.BirthYear).HasColumnName("birthyear");
             //.Property(x => x.Email).HasColumnName("email");
 
@@ -167,7 +166,6 @@ namespace DataLayer
             userBookmarkTitleTable.HasKey(x => new { x.Username, x.Tconst });
             userBookmarkTitleTable.Property(x => x.Username).HasColumnName("username");
             userBookmarkTitleTable.Property(x => x.Tconst).HasColumnName("tconst");
-            userBookmarkTitleTable.Property(x => x.Annotation).HasColumnName("annotation");
 
             var userRatingTable = modelBuilder.Entity<UserRating>();
             userRatingTable.ToTable("user_rating");

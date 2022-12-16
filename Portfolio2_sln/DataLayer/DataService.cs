@@ -419,7 +419,6 @@ namespace DataLayer
             {
                 Username = username,
                 Tconst = tconst,
-                Annotation = annotation
             };
 
             _db.BookmarkTitles.Add(newBookmark);

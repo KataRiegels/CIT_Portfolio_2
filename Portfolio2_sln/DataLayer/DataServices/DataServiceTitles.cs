@@ -318,11 +318,11 @@ namespace DataLayer.DataServices
             using var db = new ImdbContext();
 
             // Filters the FullViewTitles to only have those returned from the string search
-            var filteredTitles = db.FullViewTitles.ToList()
-                .Join(searchedTitles,
-                    fullView => fullView.Tconst,
+            var filteredTitles = searchedTitles
+                .Join( db.FullViewTitles,
                     searchResults => searchResults.Tconst,
-                    (fullView, searchResults)
+                    fullView => fullView.Tconst,
+                    (searchResults, fullView)
                                   => fullView
                     );
 

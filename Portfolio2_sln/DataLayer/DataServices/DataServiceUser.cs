@@ -101,7 +101,6 @@ namespace DataLayer.DataServices
             var newBootkmark = new BookmarkName()
             {
                 Username = username,
-                Annotation = annotation,
                 Nconst = nconst
             };
 
@@ -128,29 +127,7 @@ namespace DataLayer.DataServices
         }
 
 
-        public BookmarkTitle GetBookmarkTitle(string username, string tconst)
-        {
-            using var db = new ImdbContext();
-
-            return db.BookmarkTitles.FirstOrDefault(bt => bt.Username.Equals(username) && bt.Tconst.Equals(tconst));
-
-        }
-
-        public IList<TitleForListDTO> GetBookmarkTitlesByUser(string username)
-        {
-            using var db = new ImdbContext();
-
-            var bookmarksFilter = db.BookmarkTitles
-                .Where(x => x.Username == username)
-                .ToList();
-
-            //var result = GetFilteredTitles(bookmarksFilter);
-            var result = new DataServiceTitles()
-                .GetFilteredTitles(bookmarksFilter
-                    .Select(x => new TconstObject { Tconst = x.Tconst }).ToList());
-
-            return result;
-        }
+        
 
         public IList<TitleForListDTO> GetFilteredTitles(List<BookmarkTitle> searchedTitles, int page = 1, int pageSize = 5)
         {
@@ -193,40 +170,105 @@ namespace DataLayer.DataServices
             return groupedTitles;
         }
 
+        /*
+         
+         ------------- TITLE BOOKMARKS ---------------
+         
+         */
 
-
-
-
-
-        public int CreateBookmarkTitle(string username, string tconst, string annotation)
-        {
-            var newBookmark = new BookmarkTitle()
-            {
-                Username = username,
-                Tconst = tconst,
-                Annotation = annotation
-            };
-
-            _db.BookmarkTitles.Add(newBookmark);
-            var result = _db.SaveChanges();
-
-            return result;
-
-        }
-
-        public bool DeleteBookmarkTitle(string username, string tconst)
+        public BookmarkTitle GetBookmarkTitle(string username, string tconst)
         {
             using var db = new ImdbContext();
 
-            var product = GetBookmarkTitle(username, tconst);
-            if (product == null)
-            {
-                return false;
-            }
-            db.BookmarkTitles.Remove(GetBookmarkTitle(username, tconst));
-            db.SaveChanges();
-            return true;
+            return db.BookmarkTitles.FirstOrDefault(bt => bt.Username.Equals(username) && bt.Tconst.Equals(tconst));
+
         }
+
+        public IList<TitleForListDTO> GetBookmarkTitlesByUser(string username)
+        {
+            using var db = new ImdbContext();
+
+            var bookmarksFilter = db.BookmarkTitles
+                .Where(x => x.Username == username)
+                .ToList();
+
+            Console.WriteLine(bookmarksFilter.First().Tconst);
+
+            //var result = GetFilteredTitles(bookmarksFilter);
+            var result = new DataServiceTitles()
+                .GetFilteredTitles(bookmarksFilter
+                    .Select(x => new TconstObject { Tconst = x.Tconst }).ToList());
+
+            return result;
+        }
+
+
+
+        public BookmarkTitle CreateBookmarkTitle(string username, string tconst)
+        {
+            using var db = new ImdbContext();
+
+
+            var newBookmark = new BookmarkTitle
+            {
+                Username = username,
+                Tconst = tconst,
+            };
+
+            db.BookmarkTitles.Add(newBookmark);
+            db.SaveChanges();
+
+            // Ensures that it is only returned if it was actually created
+            var createdBookmark = GetBookmarkTitle(username, tconst);
+
+            return createdBookmark;
+
+        }
+
+        public int DeleteBookmarkTitle(string username, string tconst)
+        {
+            using var db = new ImdbContext();
+
+            var bookmarkToDelete = GetBookmarkTitle(username, tconst);
+
+            // If the bookmark is not in the database
+            if (bookmarkToDelete == null)
+                return -1;
+
+            db.BookmarkTitles.Remove(bookmarkToDelete);
+            db.SaveChanges();
+
+            // If the bookmark is still in the database
+            if (GetBookmarkTitle(username, tconst) != null)
+                return 0;
+
+            // Bookmark was there + was removed
+            return 1;
+
+        }
+
+
+        public BookmarkTitle UpdateBookmarkTitle(string username, string oldTconst, string newTconst)
+        {
+            using var db = new ImdbContext();
+
+            var bookmarkToUpdate = GetBookmarkTitle(username, oldTconst);
+
+            if (bookmarkToUpdate == null)
+                return null;
+
+            //bookmarkToUpdate.Username = username;
+            bookmarkToUpdate.Tconst = newTconst;
+
+            db.SaveChanges();
+
+            // Ensures that it is only returned if it was actually created
+            var updatedBookmark = GetBookmarkTitle(username, newTconst);
+
+            return updatedBookmark;
+
+        }
+
 
         public bool DeleteBookmarkName(string username, string nconst)
         {

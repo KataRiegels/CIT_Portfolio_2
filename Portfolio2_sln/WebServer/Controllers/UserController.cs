@@ -89,11 +89,16 @@ namespace WebServer.Controllers
         }
 
 
-        [HttpGet("{username}/titlebookmarks")]
-        public IActionResult GetBookmarksTitleByUser(string username)
+        [HttpGet("user/titlebookmarks/domain/{tconst}")]
+        [BasicAuthentication]
+
+        public IActionResult GetTitleBookmarkObject(string tconst)
         {
-            var bookmark = _dataService.GetBookmarkTitlesByUser(username)
-                .Select(x => MapTitleList(x));
+
+            var username = GetUserFromAuthorization();
+
+            var bookmark = _dataService.GetBookmarkTitle(username, tconst)
+                ;
 
             if (bookmark == null)
             {
@@ -102,6 +107,74 @@ namespace WebServer.Controllers
 
             return Ok(bookmark);
         }
+
+        [HttpGet("user/titlebookmarks")]
+        [BasicAuthentication]
+
+        public IActionResult GetBookmarksTitleByUser()
+        {
+            var username = GetUserFromAuthorization();
+
+            var bookmarks = _dataService.GetBookmarkTitlesByUser(username)
+                .Select(x => MapTitleList(x));
+            Console.WriteLine(bookmarks.First());
+
+            if (bookmarks == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(bookmarks);
+        }
+
+        [HttpPost("user/titlebookmarks")]
+        [BasicAuthentication]
+        public IActionResult CreateTitleBookmark([FromBody] CreateBookmarkTitle bookmark)
+        {
+            var username = GetUserFromAuthorization();
+            
+            var createdBookmark = _dataService.CreateBookmarkTitle(username, bookmark.Tconst);
+            
+            return CreatedAtRoute(null, createdBookmark);
+        }
+
+        [HttpDelete("user/titlebookmarks")]
+        [BasicAuthentication]
+
+        public IActionResult DeleteTitleBookmark(string tconst)
+        {
+            var username = GetUserFromAuthorization();
+
+            var result = _dataService.DeleteBookmarkTitle(username, tconst);
+            
+            if (result == -1)
+                return NotFound();
+            else if (result == 0)
+                return StatusCode(500);
+
+            return Ok(result);
+        }
+
+        // Unnecessary for our application - But all CRUD operations much be implemented (Portfolio 2 requirement)
+        [HttpPut("user/titlebookmarks/{tconst}")]
+        [BasicAuthentication]
+        public IActionResult UpdateTitleBookmark(string tconst, [FromBody] string newTconst)
+        {
+
+
+            var username = GetUserFromAuthorization();
+
+            var updatedBookmark = _dataService.UpdateBookmarkTitle(username, tconst, newTconst);
+
+            if (updatedBookmark == null)
+                return NotFound();
+            //else if (result == 0)
+            //    return StatusCode(500);
+
+            return Ok(updatedBookmark);
+        }
+
+
 
 
         //[HttpGet("{username}/namebookmarks")]
@@ -193,32 +266,7 @@ namespace WebServer.Controllers
          */
 
 
-        [HttpPost("user/titlebookmarks")]
-        [BasicAuthentication]
-
-        public IActionResult CreateTitleBookmark(CreateBookmarkTitle bookmark)
-        {
-            var username = GetUserFromAuthorization();
-
-            var result = _dataService.CreateBookmarkTitle(username, bookmark.Tconst, bookmark.Annotation);
-
-            
-            return CreatedAtRoute(null, result);
-        }
-
-        [HttpDelete("user/titlebookmarks")]
-        [BasicAuthentication]
-
-        public IActionResult DeleteTitleBookmark( string tconst)
-        {
-            var username = GetUserFromAuthorization();
-
-
-            var result = _dataService.DeleteBookmarkTitle(username, tconst);
-
-
-            return Ok(result);
-        }
+        
 
         [HttpDelete("user/namebookmarks")]
         [BasicAuthentication]
@@ -277,13 +325,18 @@ namespace WebServer.Controllers
             return model;
         }
 
+
+        /*
+         * --------- USER SEARCH ------------- 
+          
+         */
+
+
         [HttpGet("user/searches/domain/{searchId}", Name = nameof(GetUserSearchObject))]
         public IActionResult GetUserSearchObject(int searchId)
         {
 
-            //var title = _dataService.GetTitle(tconst);
             var userSearch = _dataService.GetUserSearch(searchId);
-            //UserModel title = CreateUserModel(_dataService.GetUser(username));
 
             if (userSearch == null)
             {
@@ -325,12 +378,9 @@ namespace WebServer.Controllers
 
         public IActionResult CreateUserSearch([FromBody] UserSearchCreateModel userSearch)
         {
-            Console.WriteLine("----------------------1");
             var username = GetUserFromAuthorization();
-            Console.WriteLine("----------------------2");
 
             var results = _dataService.CreateUserSearch(username, userSearch.SearchContent, userSearch.SearchCategory);
-            Console.WriteLine("----------------------3");
             
             return CreatedAtRoute(null, results);
         }

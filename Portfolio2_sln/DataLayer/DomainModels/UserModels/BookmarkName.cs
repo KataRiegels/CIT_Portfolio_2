@@ -10,6 +10,5 @@ namespace DataLayer.Models.UserModels
     {
         public string Username { get; set; }
         public string Nconst { get; set; }
-        public string? Annotation { get; set; }
     }
 }
