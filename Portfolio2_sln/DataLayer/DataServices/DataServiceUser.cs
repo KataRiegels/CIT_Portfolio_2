@@ -39,13 +39,12 @@ namespace DataLayer.DataServices
             return _db.Users.ToList();
         }
 
-        public void CreateUser(string username, string password, string birthYear, string email)
+        public void CreateUser(string username, string password, string email)
         {
             User newUser = new User()
             {
                 Username = username,
                 Password = password,
-                BirthYear = birthYear,
                 Email = email
             };
 
@@ -78,7 +77,8 @@ namespace DataLayer.DataServices
         //    return _db.BookmarkTitles.FirstOrDefault(x => x.Username == username && x.Tconst.Trim() == tconst.Trim());
         //}
 
-        public BookmarkName GetBookmarkName(string username, string nconst)
+
+        public BookmarkName GetBookmarkNameDM(string username, string nconst)
         {
             using var db = new ImdbContext();
 
@@ -312,6 +312,13 @@ namespace DataLayer.DataServices
         }
 
 
+        /*
+         *
+         *  --------- USER SEARCHES ------------
+         *
+         */ 
+
+
         public UserSearch GetUserSearch(int searchId)
         {
             using var db = new ImdbContext();
@@ -333,34 +340,45 @@ namespace DataLayer.DataServices
 
         public UserSearch CreateUserSearch(string username, string searchContent, string searchCategory = null)
         {
+            Console.WriteLine("----------------------DL1");
 
             using var db = new ImdbContext();
             
             var returnedCreatedUserSearch = db.UserSearches.FromSqlInterpolated($"SELECT * FROM save_string_search({username}, {searchContent}, {searchCategory})");
+            Console.WriteLine("----------------------DL2");
             
             var createdSearchId = returnedCreatedUserSearch.FirstOrDefault().SearchId;
+            Console.WriteLine("----------------------DL3");
 
             var createdUserSearch = db.UserSearches.FirstOrDefault(u => u.SearchId == createdSearchId);
+            Console.WriteLine("----------------------DL4");
 
             return createdUserSearch;
 
         }
 
+        public int DeleteUserSearch(int searchId)
+        {
+            var userSearchToDelete = GetUserSearch(searchId);
+            if (userSearchToDelete == null)
+            {
+                return -1;
+            }
+            _db.UserSearches.Remove(userSearchToDelete);
+            _db.SaveChanges();
 
+            if (GetUserSearch(searchId) != null)
+                return 0;
 
+            // check if rating is there
 
+            return 1;
+        }
 
-
-
-
-
-
-
-
-
-
-
-
+        BookmarkName IDataServiceUser.GetBookmarkName(string username, string nconst)
+        {
+            throw new NotImplementedException();
+        }
 
     }
 }

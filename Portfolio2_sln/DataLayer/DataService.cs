@@ -363,13 +363,12 @@ namespace DataLayer
             return _db.Users.ToList();
         }
 
-        public void CreateUser(string username, string password, string birthYear, string email)
+        public void CreateUser(string username, string password, string email)
         {
             User newUser = new User()
             {
                 Username = username,
                 Password = password,
-                BirthYear = birthYear,
                 Email = email
             };
 

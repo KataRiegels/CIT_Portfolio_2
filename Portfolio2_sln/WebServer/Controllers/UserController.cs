@@ -73,7 +73,7 @@ namespace WebServer.Controllers
         {
             //var dsUser = new DataServiceUser();
             var user = _mapper.Map<User>(newUser);
-            _dataService.CreateUser(user.Username, user.Password, user.BirthYear, user.Email);
+            _dataService.CreateUser(user.Username, user.Password, user.Email);
             return CreatedAtRoute(null, CreateUserModel(user));
         }
 
@@ -277,20 +277,71 @@ namespace WebServer.Controllers
             return model;
         }
 
-        [HttpPost("user/searches")]
+        [HttpGet("user/searches/domain/{searchId}", Name = nameof(GetUserSearchObject))]
+        public IActionResult GetUserSearchObject(int searchId)
+        {
+
+            //var title = _dataService.GetTitle(tconst);
+            var userSearch = _dataService.GetUserSearch(searchId);
+            //UserModel title = CreateUserModel(_dataService.GetUser(username));
+
+            if (userSearch == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userSearch);
+        }
+
+        [HttpGet("user/searches/{searchId}", Name = nameof(GetUserSearch))]
         [BasicAuthentication]
 
-        public IActionResult CreateUserSearch(string searchContent, string? searchCategory = null)
+        public IActionResult GetUserSearch(int searchId)
         {
             var username = GetUserFromAuthorization();
 
-            var results = _dataService.CreateUserSearch(username, searchContent, searchCategory);
+            //var title = _dataService.GetTitle(tconst);
+            var userSearch = _dataService.GetUserSearch(searchId);
+
+            if (userSearch.Username != username)
+            {
+                return StatusCode(401);
+
+            }
+
+            var result = MapUserSearch(userSearch); 
+             
+            if (userSearch == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
+
+        [HttpPost("user/searches")]
+        [BasicAuthentication]
+
+        public IActionResult CreateUserSearch([FromBody] UserSearchCreateModel userSearch)
+        {
+            Console.WriteLine("----------------------1");
+            var username = GetUserFromAuthorization();
+            Console.WriteLine("----------------------2");
+
+            var results = _dataService.CreateUserSearch(username, userSearch.SearchContent, userSearch.SearchCategory);
+            Console.WriteLine("----------------------3");
+            
             return CreatedAtRoute(null, results);
         }
 
-        [HttpGet("{username}/searches")]
-        public IActionResult GetUserSearches(string username)
+        [HttpGet("user/searches")]
+        [BasicAuthentication]
+
+        public IActionResult GetUserSearches()
         {
+            var username = GetUserFromAuthorization();
+
             var searches = _dataService.GetUserSearches(username)
                .Select(x => MapUserSearch(x))
                 ;
@@ -304,12 +355,32 @@ namespace WebServer.Controllers
 
         }
 
+        [HttpDelete("user/searches/{searchId}")]
+        [BasicAuthentication]
+
+        public IActionResult DeleteUserSearch(int searchId)
+        {
+            var username = GetUserFromAuthorization();
+
+            //var title = _dataService.GetTitle(tconst);
+            var userSearch = _dataService.GetUserSearch(searchId);
+
+            // Trying to delete a search that is somehow not the logged in user
+            if (userSearch.Username != username)
+            {
+                return StatusCode(401);
+            }
 
 
+            var result = _dataService.DeleteUserSearch(searchId);
 
+            if (result == -1)
+                return NotFound();
+            else if (result == 0)
+                return StatusCode(500);
 
-
-
+            return Ok(result);
+        }
 
 
 
@@ -430,16 +501,26 @@ namespace WebServer.Controllers
 
 
         //public UserSearchModel CreateUserSearchModel(UserSearch search)
-        public UserSearchModel MapUserSearch(UserSearch search)
+        public object MapUserSearch(UserSearch userSearch)
         {
-            var model = new UserSearchModel().ConvertFromDTO(search);
-            //var model = _mapper.Map<UserSearchModel>(search);
-            model.Url = _generator.GetUriByName(HttpContext, nameof(SearchController.GetSearchResult), new { model.SearchContent, model.SearchCategory });
+
+            var searchUrl = _generator.GetUriByName(HttpContext, nameof(GetUserSearchObject), new { userSearch.SearchId });
+
+            var result = new
+            {
+                Url = searchUrl,
+                SearchContent = userSearch.SearchContent,
+                SearchCategory = userSearch.SearchCategory,
+            };
+
+            //var model = new UserSearchModel().ConvertFromDTO(search);
+            ////var model = _mapper.Map<UserSearchModel>(search);
+            //model.Url = _generator.GetUriByName(HttpContext, nameof(SearchController.GetSearchResult), new { model.SearchContent, model.SearchCategory });
 
             //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
             //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
 
-            return model;
+            return result;
         }
 
 

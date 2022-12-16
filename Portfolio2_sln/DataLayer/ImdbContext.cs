@@ -146,11 +146,10 @@ namespace DataLayer
             // Usser
 
             var userTable = modelBuilder.Entity<User>();
-            userTable.ToTable("users");
+            userTable.ToTable("user");
             userTable.HasKey(x => x.Username);
             userTable.Property(x => x.Username).HasColumnName("username");
             userTable.Property(x => x.Password).HasColumnName("password");
-            userTable.Property(x => x.BirthYear).HasColumnName("birthyear");
             userTable.Property(x => x.Email).HasColumnName("email");
             //userTable.Property(x => x.).HasColumnName("");
 

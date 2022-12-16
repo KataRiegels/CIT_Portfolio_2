@@ -20,8 +20,8 @@ namespace DataLayer.DataServices
 
         public IList<NameForListDTO> GetBookmarkNamesByUser(string username);
         int CreateBookmarkTitle(string username, string tconst, string annotation);
-        void CreateUser(string username, string password, string birthYear, string email);
-        int CreateUserSearch(string username, string searchContent, string searchCategory = null);
+        void CreateUser(string username, string password, string email);
+        UserSearch CreateUserSearch(string username, string searchContent, string searchCategory = null);
         bool DeleteBookmarkTitle(string username, string tconst);
         bool DeleteUser(string username);
         BookmarkTitle GetBookmarkTitle(string username, string tconst);
@@ -31,5 +31,8 @@ namespace DataLayer.DataServices
         User GetUser(string username);
         IList<User> GetUsers();
         UserRating CreateUserRating(string username, string tconst, int rating);
+
+        public UserSearch GetUserSearch(int searchId);
+        int DeleteUserSearch(int searchId);
     }
 }
