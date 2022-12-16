@@ -265,15 +265,7 @@ namespace DataLayer.DataServices
                             }
                     );
 
-
-
             return null;
-
-
-
-            //var seasons = 
-
-
         }
 
 
@@ -313,7 +305,7 @@ namespace DataLayer.DataServices
 
 
 
-        public IList<TitleForListDTO> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5)
+        public IList<TitleForListDTO> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 0, int pageSize = 5)
         {
             using var db = new ImdbContext();
 

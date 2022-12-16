@@ -192,9 +192,7 @@ namespace DataLayer.DataServices
                 .Where(x => x.Username == username)
                 .ToList();
 
-            Console.WriteLine(bookmarksFilter.First().Tconst);
 
-            //var result = GetFilteredTitles(bookmarksFilter);
             var result = new DataServiceTitles()
                 .GetFilteredTitles(bookmarksFilter
                     .Select(x => new TconstObject { Tconst = x.Tconst }).ToList());

@@ -28,7 +28,6 @@ namespace WebServer.Controllers
         //private IDataServiceUser _dataServiceUser;
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
-        private TitleController _titleController;
 
         public UserController(IDataServiceUser dataService, LinkGenerator generator, IMapper mapper)
         {
@@ -88,67 +87,72 @@ namespace WebServer.Controllers
             return Ok();
         }
 
+        /*
+         
+        ---- TITLE BOOKMARKS -----------
+         
+         */
 
+        // Get domain object - Would be used for Uri (since it contains Tconst) 
         [HttpGet("user/titlebookmarks/domain/{tconst}")]
         [BasicAuthentication]
-
         public IActionResult GetTitleBookmarkObject(string tconst)
         {
+            var username = GetUsernameFromAuthorization();
 
-            var username = GetUserFromAuthorization();
-
-            var bookmark = _dataService.GetBookmarkTitle(username, tconst)
-                ;
+            var bookmark = _dataService.GetBookmarkTitle(username, tconst);
 
             if (bookmark == null)
-            {
                 return NotFound();
-            }
 
             return Ok(bookmark);
         }
 
+
+        // Get list of titles that active user has bookmarked
         [HttpGet("user/titlebookmarks")]
         [BasicAuthentication]
-
         public IActionResult GetBookmarksTitleByUser()
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var bookmarks = _dataService.GetBookmarkTitlesByUser(username)
                 .Select(x => MapTitleList(x));
             Console.WriteLine(bookmarks.First());
 
             if (bookmarks == null)
-            {
                 return NotFound();
-            }
 
             return Ok(bookmarks);
         }
 
+        // Create bookmark 
         [HttpPost("user/titlebookmarks")]
         [BasicAuthentication]
         public IActionResult CreateTitleBookmark([FromBody] CreateBookmarkTitle bookmark)
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
             
             var createdBookmark = _dataService.CreateBookmarkTitle(username, bookmark.Tconst);
             
+            // Client recieves create bookmark. If no bookmark was created, well receive null
             return CreatedAtRoute(null, createdBookmark);
         }
 
+        // Delete bookmark
         [HttpDelete("user/titlebookmarks")]
         [BasicAuthentication]
-
         public IActionResult DeleteTitleBookmark(string tconst)
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var result = _dataService.DeleteBookmarkTitle(username, tconst);
             
+            // If bookmark wasn't in the bookmark table
             if (result == -1)
                 return NotFound();
+
+            // If bookmark was still there after deletion attempt
             else if (result == 0)
                 return StatusCode(500);
 
@@ -160,69 +164,43 @@ namespace WebServer.Controllers
         [BasicAuthentication]
         public IActionResult UpdateTitleBookmark(string tconst, [FromBody] string newTconst)
         {
-
-
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var updatedBookmark = _dataService.UpdateBookmarkTitle(username, tconst, newTconst);
 
             if (updatedBookmark == null)
                 return NotFound();
-            //else if (result == 0)
-            //    return StatusCode(500);
 
             return Ok(updatedBookmark);
         }
 
+        /*
+         
+         ---------- BOOKMARK NAMES ------------
+         
+         */
 
 
 
-        //[HttpGet("{username}/namebookmarks")]
-        //public IActionResult GetBookmarksNameByUser(string username)
-        //{
-        //    var bookmark = _dataService.GetBookmarkNamesByUser(username)
-        //        .Select(x => MapNameList(x));
 
-        //    if (bookmark == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    return Ok(bookmark);
-        //}
-
+        // Get list of people bookmarked by current user
         [HttpGet("user/namebookmarks", Name = nameof(GetBookmarksNameByUser))]
         [BasicAuthentication]
         public IActionResult GetBookmarksNameByUser()
         {
-
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var bookmark = _dataService.GetBookmarkNamesByUser(username)
                 .Select(x => MapNameList(x));
 
             if (bookmark == null)
-            {
                 return NotFound();
-            }
 
             return Ok(bookmark);
         }
 
-        private string GetUserFromAuthorization()
-        {
-            var authHeaderRegex = new Regex("Basic (.*)");
-            string user = HttpContext.Request.Headers["Authorization"];
-            Console.WriteLine(user);
-            var authBase64 = Encoding.UTF8.GetString(Convert.FromBase64String(authHeaderRegex.Replace(user, "$1")));
-            var authSplit = authBase64.Split(Convert.ToChar(":"), 2);
-            var authUsername = authSplit[0];
-            var authPassword = authSplit.Length > 1 ? authSplit[1] : throw new Exception("Unable to get password");
 
-            Console.WriteLine("stuff" + authBase64);
-
-            return authUsername;
-        }
 
 
 
@@ -242,7 +220,7 @@ namespace WebServer.Controllers
 
         public IActionResult GetNameBookmark(string nconst)
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var result = _dataService.GetBookmarkName(username, nconst);
 
@@ -255,7 +233,7 @@ namespace WebServer.Controllers
 
         public IActionResult GetTitleBookmark(string tconst)
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var result = _dataService.GetBookmarkTitle(username, tconst);
 
@@ -273,7 +251,7 @@ namespace WebServer.Controllers
 
         public IActionResult DeleteNameBookmark(string nconst)
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var result = _dataService.DeleteBookmarkName(username, nconst);
 
@@ -285,7 +263,7 @@ namespace WebServer.Controllers
 
         public IActionResult CreateRating(UserRatingCreateModel rating)
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var createdUserRating = _dataService.CreateUserRating(username, rating.Tconst, rating.Rating);
 
@@ -300,7 +278,7 @@ namespace WebServer.Controllers
         public IActionResult GetUserRatings()
         {
 
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var rating = _dataService.GetUserRatings(username)
                .Select(x => MapUserRating(x))
@@ -351,7 +329,7 @@ namespace WebServer.Controllers
 
         public IActionResult GetUserSearch(int searchId)
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             //var title = _dataService.GetTitle(tconst);
             var userSearch = _dataService.GetUserSearch(searchId);
@@ -378,7 +356,7 @@ namespace WebServer.Controllers
 
         public IActionResult CreateUserSearch([FromBody] UserSearchCreateModel userSearch)
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var results = _dataService.CreateUserSearch(username, userSearch.SearchContent, userSearch.SearchCategory);
             
@@ -390,7 +368,7 @@ namespace WebServer.Controllers
 
         public IActionResult GetUserSearches()
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             var searches = _dataService.GetUserSearches(username)
                .Select(x => MapUserSearch(x))
@@ -410,7 +388,7 @@ namespace WebServer.Controllers
 
         public IActionResult DeleteUserSearch(int searchId)
         {
-            var username = GetUserFromAuthorization();
+            var username = GetUsernameFromAuthorization();
 
             //var title = _dataService.GetTitle(tconst);
             var userSearch = _dataService.GetUserSearch(searchId);
@@ -529,7 +507,18 @@ namespace WebServer.Controllers
             return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
         }
 
-        
+        // Gets the username based on the current user that is logged in
+        private string GetUsernameFromAuthorization()
+        {
+            var authHeaderRegex = new Regex("Basic (.*)");
+            string user = HttpContext.Request.Headers["Authorization"];
+            var authBase64 = Encoding.UTF8.GetString(Convert.FromBase64String(authHeaderRegex.Replace(user, "$1")));
+            var authSplit = authBase64.Split(Convert.ToChar(":"), 2);
+            var authUsername = authSplit[0];
+            var authPassword = authSplit.Length > 1 ? authSplit[1] : throw new Exception("Unable to get password");
+
+            return authUsername;
+        }
 
         /*
          
