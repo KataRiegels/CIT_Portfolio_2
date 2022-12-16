@@ -79,8 +79,12 @@ namespace WebServer.Controllers
         {
             Console.WriteLine(page);
             //IEnumerable<TitleForListModel> titles =
-            var titles =
-                _dataService.GetListTitles(page, pageSize)
+            var titles2 =
+                _dataService.GetListTitles(page, pageSize);
+            Console.WriteLine(titles2.First().BasicTitle.PrimaryTitle);
+            foreach (var title in titles2)
+                Console.WriteLine(title.BasicTitle.PrimaryTitle);
+            var titles = titles2
                 .Select(x => CreateListTitleModel(x));
             var total = _dataService.GetNumberOfTitles();
 
@@ -266,13 +270,27 @@ namespace WebServer.Controllers
         public TitleForListModel CreateListTitleModel(TitleForListDTO titleBasics)
         {
 
+            var model = new TitleForListModel().ConvertFromListTitleDTO(titleBasics);
+            model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
+            if (titleBasics.ParentTitle != null)
+            {
+                model.ParentTitle.Url = CreateTitleUrl(titleBasics.ParentTitle.Tconst);
+            }
+
+            return model;
+            /*
+             
             //var model1 = _mapper.Map<BasicTitleModel>(titleBasics.BasicTitle);
-            var model = _mapper.Map<TitleForListModel>(titleBasics);
+            //var model = _mapper.Map<TitleForListModel>(titleBasics);
+            Console.WriteLine(titleBasics.BasicTitle.PrimaryTitle);
+            Console.WriteLine("RAN FUNC");
+            var model = new TitleForListModel().ConvertFromListTitleDTO(titleBasics);
             model.BasicTitle = CreateBasicTitleModel(titleBasics.BasicTitle);
             model.BasicTitle.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.BasicTitle.Tconst });
             model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
 
             return model;
+             */
         }
 
         private string CreateTitleUrl(string tconst)
