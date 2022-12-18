@@ -12,6 +12,9 @@ using System.Web.Http;
 using AutoMapper;
 using Microsoft.AspNetCore.Routing;
 using System.Reflection.Emit;
+using System.Web.Http.Results;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TestProject
 
@@ -62,36 +65,57 @@ namespace TestProject
             Assert.Equal("https://m.media-amazon.com/images/M/MV5BOTVmODFhZGUtZTgxYS00MWE5LTlkYTItYzJkNjQ1MWQ3ZTJjXkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_SX300.jpg", title["poster"]);
         }
 
-        /*
 
-        public TitleController(IDataServiceTitles dataService, LinkGenerator generator, IMapper mapper)
-        {
-            _dataService = dataService;
-            _generator = generator;
-            _mapper = mapper;
-        }
+
+        //public TitleController(IDataServiceTitles dataService, LinkGenerator generator)
+        //{
+        //    var _dataService = dataService;
+        //    var _generator = generator;
+        //}
+
+
+        //(JObject, HttpStatusCode) GetObject(string url)
+        //{
+        //    var client = new HttpClient();
+        //    var response = client.GetAsync(url).Result;
+        //    var data = response.Content.ReadAsStringAsync().Result;
+        //    return ((JObject)JsonConvert.DeserializeObject(data), response.StatusCode);
+        //}
 
         [Fact]
         public void GetReturnsProductWithSameId()
         {
             // Arrange
             var mockRepository = new Mock<IDataServiceTitles>();
-            mockRepository.Setup(x => x.GetTitle("tt12511606"))
-                .Returns(new TitleBasics { Tconst = "tt12511606" });
+            var mockLinkGenerator = new Mock<LinkGenerator>();
+            var mockMapper = new Mock<IMapper>();
 
-            var controller = new TitleController(mockRepository.Object, new LinkGenerator());
+            mockRepository.Setup(x => x.GetTitle("tt10458336"))
+                .Returns(new TitleBasics { Tconst = "tt10458336" });
 
+
+            var controller = new TitleController(mockRepository.Object, mockLinkGenerator.Object, mockMapper.Object);
+            controller.ControllerContext.HttpContext = new DefaultHttpContext();
             // Act
-            IHttpActionResult actionResult = controller.GetTitle("tt12511606");
-            var contentResult = actionResult as OkNegotiatedContentResult<Product>;
+            var actionResult = controller.GetTitle("tt10458336");
+
+            var contentResult = actionResult as ObjectResult;
+
+
+
+            var test = contentResult.StatusCode;
+            var temp = controller.StatusCode((int)contentResult.StatusCode).StatusCode;
+            var tempt2 = HttpStatusCode.OK;
+            Assert.Equal(StatusCodes.Status200OK, (int)contentResult.StatusCode);
+
 
             // Assert
-            Assert.IsNotNull(contentResult);
-            Assert.IsNotNull(contentResult.Content);
-            Assert.AreEqual(42, contentResult.Content.Id);
+            //Assert.NotNull(contentResult);
+            //Assert.NotNull(contentResult.Content);
+            //Assert.Equal(42, contentResult.Content.Tconst);
         }
 
-         * */
+
 
 
         //["Crime", "Drama", "Mystery"]

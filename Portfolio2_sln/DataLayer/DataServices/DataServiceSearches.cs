@@ -107,6 +107,7 @@ namespace DataLayer.DataServices
             Console.WriteLine(searchedTitles.First().PrimaryTitle);
 
             var filteredTitles = searchedTitles
+                .Skip(page * pageSize).Take(pageSize)
                 .Join(db.FullViewTitles,
                     searchResults => searchResults.Tconst,
                     fullView => fullView.Tconst,
@@ -138,7 +139,6 @@ namespace DataLayer.DataServices
                                     ? null
                                     : new DataService().GetBasicTitle(model.FirstOrDefault().ParentTconst)
                 })
-                .Skip(page * pageSize).Take(pageSize)
                 .ToList();
 
 

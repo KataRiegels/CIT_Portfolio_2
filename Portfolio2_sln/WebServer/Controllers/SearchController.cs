@@ -10,6 +10,8 @@ using DataLayer.Models.TitleModels;
 using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.TitleObjects;
 using DataLayer.DTOs.SearchObjects;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Runtime.CompilerServices;
 
 namespace WebServer.Controllers
 {
@@ -49,30 +51,43 @@ namespace WebServer.Controllers
             return Ok(result);
         }
 
-        [HttpGet( Name = nameof(GetSearchResult))]
-        public IActionResult GetSearchResult(string searchContent, string? searchCategory = null)
+        [HttpGet( Name = nameof(GetSearchResultNoCategory))]
+        public IActionResult GetSearchResultNoCategory(string searchContent)
         {
 
+            (var nameResultsDTO,  var totalNameResults)  = _dataService.GeneratePersonSearchResult(searchContent, 0, 5);
+            (var titleResultsDTO, var totalTitleResults) = _dataService.GenerateTitleSearchResult(searchContent, 0, 5);
 
+            var nameResultsUrl  = _generator.GetUriByName(HttpContext, nameof(GetSearchResultNames),  new { searchContent = searchContent });
+            var titleResultsUrl = _generator.GetUriByName(HttpContext, nameof(GetSearchResultTitles), new { searchContent = searchContent });
+
+            var nameResults  = nameResultsDTO.Select(x => MapNameSearchResults(x)).ToList();
+            var titleResults = titleResultsDTO.Select(x => MapTitleSearchResults(x)).ToList();
+
+
+            var results = new 
+                { TitleResults = new { Url = titleResultsUrl, titleResultItems = titleResults }, 
+                  NameResults = new { Url = nameResultsUrl, nameResultItems = nameResults }
+        };
 
             //var title = _dataService.GetTitle(tconst);
-            var generatedResult = _dataService.GenerateSearchResults(searchContent, searchCategory);
-            SearchResultModel results = CreateSearchModel(generatedResult);
+            //var generatedResult = _dataService.GenerateSearchResults(searchContent);
+            //SearchResultModel results = CreateSearchModel(generatedResult);
             //var results = _dataService.CreateUserSearch(username, searchContent, searchCategory);
-            var titleResults = results.TitleResults;
-            results.Url = _generator.GetUriByName(HttpContext, nameof(GetSearchResult), new { searchContent, searchCategory });
+            //var titleResults = results.TitleResults;
+            //results.Url = _generator.GetUriByName(HttpContext, nameof(GetSearchResultNoCategory), new { searchContent, searchCategory });
             //var test = CreateUserSearchResultsModel(results);
 
-            if (results == null)
-            {
-                return NotFound();
-            }
+            //if (results == null)
+            //{
+            //    return NotFound();
+            //}
 
             return Ok(results);
         }
 
         [HttpGet("names",Name = nameof(GetSearchResultNames))]
-        public IActionResult GetSearchResultNames(string searchContent, int page = 1, int pageSize = 2)
+        public IActionResult GetSearchResultNames(string searchContent, int page = 0, int pageSize = 10)
         {
 
 
@@ -91,7 +106,6 @@ namespace WebServer.Controllers
         [HttpGet("titles", Name = nameof(GetSearchResultTitles))]
         public IActionResult GetSearchResultTitles(string searchContent, int page = 1, int pageSize = 2)
         {
-
 
             (var titleResults, var totalItems) = _dataService.GenerateTitleSearchResult(searchContent, page, pageSize);
             var model = titleResults.Select(x => MapTitleSearchResults(x))
@@ -153,12 +167,12 @@ namespace WebServer.Controllers
             return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
         }
 
-        private string? CreateLink(int page, int pageSize, string method, string searchContent)
+        private string? CreateLink(int page, int pageSize, string method, string searchContent = "")
         {
             return _generator.GetUriByName(
                 HttpContext,
                 method, 
-                new { page, pageSize, searchContent });
+                new { page, pageSize, searchContent});
         }
 
 

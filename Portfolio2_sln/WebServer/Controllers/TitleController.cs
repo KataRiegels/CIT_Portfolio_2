@@ -25,12 +25,13 @@ namespace WebServer.Controllers
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
         private const int MaxPageSize = 25;
-        public TitleController(IDataServiceTitles dataService, LinkGenerator generator)
+        public TitleController(IDataServiceTitles dataService, LinkGenerator generator, IMapper mapper)
         {
             _dataService = dataService;
             _generator = generator;
-            //_mapper = mapper;
+            _mapper = mapper;
         }
+
 
         [HttpGet(Name = nameof(GetTitles))]
         //[BasicAuthentication]
@@ -240,7 +241,15 @@ namespace WebServer.Controllers
 
         public TitleModel CreateTitleModel(TitleBasics titleBasics)
         {
-            var model = _mapper.Map<TitleModel>(titleBasics);
+            var model = new TitleModel
+            {
+                Tconst = titleBasics.Tconst,
+            };
+
+            //var model = _mapper.Map<TitleModel>(titleBasics);
+
+            var test = nameof(GetTitle);
+            var test2 = HttpContext;
             model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
             //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
             
@@ -304,12 +313,13 @@ namespace WebServer.Controllers
         //}
 
 
-        private string? CreateLinkList(int page, int pageSize, string method)
+        private string? CreateLinkList(int page, int pageSize, string method, string searchContent = "")
         {
+            
             var uri = _generator.GetUriByName(
                 HttpContext,
                 method,
-                new {  page, pageSize });
+                new {  page, pageSize, searchContent });
             return uri;
         }
 
@@ -331,7 +341,7 @@ namespace WebServer.Controllers
                 ? CreateLinkList(page - 1, pageSize, method)
                 : null;
 
-            var lastPageUrl = totalItems > 0
+                var lastPageUrl = totalItems > 0
                 ? CreateLinkList(totalPages, pageSize, method)
                 : null;
 

@@ -36,7 +36,7 @@ namespace DataLayer.DataServices
 
         public TitleBasics GetTitle(string tconst)
         {
-            var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst == tconst);
+            var temp = _db.TitleBasicss.FirstOrDefault(x => x.Tconst.Equals(tconst));
 
             return temp;
         }

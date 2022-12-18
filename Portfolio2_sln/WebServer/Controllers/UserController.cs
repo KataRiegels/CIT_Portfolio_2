@@ -254,59 +254,12 @@ namespace WebServer.Controllers
         }
 
 
-        //[HttpPost("user/namebookmarks")]
-        //[BasicAuthentication]
-        //public IActionResult CreateNameBookmark(string username, CreateBookmarkName bookmark)
-        //{
-        //    var result = _dataService.CreateBookmarkName(username, bookmark.Nconst, bookmark.Annotation);
-
-        //    return CreatedAtRoute(null, result);
-        //}
-
         /*
          
-        [HttpGet("user/namebookmarks/{nconst}", Name = nameof(GetNameBookmark))]
-        [BasicAuthentication]
-
-        public IActionResult GetNameBookmark(string nconst)
-        {
-            var username = GetUsernameFromAuthorization();
-
-            var result = _dataService.GetBookmarkName(username, nconst);
-
-
-            return CreatedAtRoute(null, result);
-        }
-
-        [HttpGet("user/titlebookmarks", Name = nameof(GetTitleBookmark))]
-        [BasicAuthentication]
-
-        public IActionResult GetTitleBookmark(string tconst)
-        {
-            var username = GetUsernameFromAuthorization();
-
-            var result = _dataService.GetBookmarkTitle(username, tconst);
-
-
-
-            return CreatedAtRoute(null, result);
-        }
+         -------- USER RATING --------------------
+         
          */
 
-
-
-
-        //[HttpDelete("user/namebookmarks")]
-        //[BasicAuthentication]
-
-        //public IActionResult DeleteNameBookmark(string nconst)
-        //{
-        //    var username = GetUsernameFromAuthorization();
-
-        //    var result = _dataService.DeleteBookmarkName(username, nconst);
-
-        //    return Ok(result);
-        //}
 
         [HttpPost("user/ratings")]
         [BasicAuthentication]
