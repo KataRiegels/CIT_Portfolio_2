@@ -6,6 +6,8 @@ namespace DataLayer.DataServices
 {
     public interface IDataServiceNames
     {
+        public NameForListDTO GetListName(string nconst);
+
         public IList<NameForListDTO> GetFilteredNames(List<NconstObject> searchedNames, int page = 0, int pageSize = 20);
         public IList<NameTitleRelationDTO> GetNameTitleRelations(string nconst);
         BasicNameDTO GetBasicName(string nconst);

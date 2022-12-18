@@ -123,6 +123,22 @@ namespace WebServer.Controllers
             return Ok(Paging(page, pageSize, total, names, nameof(GetListNames)));
         }
 
+        [HttpGet("list/{nconst}", Name = nameof(GetListName))]
+        public IActionResult GetListName(string nconst)
+        {
+            var title =
+                CreateListNameModel(_dataService.GetListName(nconst));
+
+
+            if (title == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(title);
+        }
+
+
         [HttpGet("detailed")]
         public IActionResult GetDetailedNames()
         {
@@ -168,18 +184,30 @@ namespace WebServer.Controllers
         }
 
 
-        private ListNameModel CreateListNameModel(NameForListDTO listModel)
+        private NameForListModel CreateListNameModel(NameForListDTO listModel)
         {
-            var model1 = _mapper.Map<BasicTitleModel>(listModel.KnownForTitleBasics);
-            var model = _mapper.Map<ListNameModel>(listModel);
-            //Console.WriteLine(listModel.KnownForTitleBasics);
-            if (listModel.KnownForTitleBasics != null)
+            var model = new NameForListModel().ConvertFromDTO(listModel);
+            model.BasicName.Url = _generator.GetUriByName(
+                HttpContext, 
+                nameof(GetName), 
+                new { listModel.BasicName.Nconst });
+            //CreateTitleUrl(listModel.BasicName.Nconst);
+            model.Url = _generator.GetUriByName(
+                HttpContext, 
+                nameof(GetListName), 
+                new { listModel.BasicName.Nconst });
+            //model.BasicTitle.Url = CreateTitleUrl(title.BasicTitle.Tconst);
+
+            if (model.KnownForTitleBasics!= null)
             {
-                Console.WriteLine(listModel.KnownForTitleBasics.Tconst);
-                model.KnownForTitleBasics.Url = _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { listModel.KnownForTitleBasics.Tconst });
-                //model.KnownForTitleBasics.Url = "this is a URL";
-                //model.KnownForTitleBasics.StartYear = "kjgjg";
+                model.KnownForTitleBasics.Url =
+                    _generator.GetUriByName(
+                    HttpContext,
+                    nameof(TitleController.GetTitle),
+                    new { listModel.KnownForTitleBasics.Tconst }); 
+                //model.ParentTitle.Url = CreateTitleUrl(title.ParentTitle.Tconst);
             }
+
             return model;
         }
 

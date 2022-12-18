@@ -112,6 +112,25 @@ namespace WebServer.Controllers
         }
 
 
+        /*
+         
+        // Get domain object - Would be used for Uri (since it contains Tconst) 
+        [HttpGet("user/titlebookmarks/{tconst}")]
+        [BasicAuthentication]
+        public IActionResult GetTitleBookmark(string tconst)
+        {
+            var username = GetUsernameFromAuthorization();
+
+            //var bookmark = MapTitleList(_dataService.GetBookmarkTitle(username, tconst));
+
+            if (bookmark == null)
+                return NotFound();
+
+            return Ok(bookmark);
+        }
+         */
+
+
         // Get list of titles that active user has bookmarked
         [HttpGet("user/titlebookmarks")]
         [BasicAuthentication]
@@ -122,7 +141,6 @@ namespace WebServer.Controllers
 
             var bookmarks = _dataService.GetBookmarkTitlesByUser(username)
                 .Select(x => MapTitleList(x));
-            Console.WriteLine(bookmarks.First());
 
             if (bookmarks == null)
                 return NotFound();
@@ -202,6 +220,8 @@ namespace WebServer.Controllers
 
             return Ok(bookmark);
         }
+
+
 
         // Get list of people bookmarked by current user
         [HttpGet("user/namebookmarks", Name = nameof(GetBookmarksNameByUser))]
@@ -419,16 +439,16 @@ namespace WebServer.Controllers
 
 
 
-        public ListNameModel MapNameList(NameForListDTO nameResults)
+        public NameForListModel MapNameList(NameForListDTO nameResults)
         {
 
-            var model = new ListNameModel().ConvertFromListTitleDTO(nameResults);
+            var model = new NameForListModel().ConvertFromDTO(nameResults);
             model.BasicName.Url = CreateTitleUrl(nameResults.BasicName.Nconst);
             if (nameResults.KnownForTitleBasics != null)
             {
                 model.KnownForTitleBasics.Url = CreateTitleUrl(nameResults.KnownForTitleBasics.Tconst);
             }
-            //var model = _mapper.Map<ListNameModel>(nameResults);
+            //var model = _mapper.Map<NameForListModel>(nameResults);
             //model.BasicName = _mapper.Map<BasicNameModel>(model.BasicName);
             //model.BasicName.Url = _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nameResults.BasicName.Nconst });
             return model;
@@ -438,6 +458,9 @@ namespace WebServer.Controllers
         {
             var model = new TitleForListModel().ConvertFromDTO(titleBasics);
             model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
+            model.Url =  _generator.GetUriByName(HttpContext, nameof(TitleController.GetListTitle), new { model.BasicTitle });
+
+
             if (titleBasics.ParentTitle != null)
             {
                 model.ParentTitle.Url = CreateTitleUrl(titleBasics.ParentTitle.Tconst);
@@ -491,9 +514,9 @@ namespace WebServer.Controllers
             return model;
         }
 
-        public ListNameModel MapNameSearchResults(NameForListDTO nameResults)
+        public NameForListModel MapNameSearchResults(NameForListDTO nameResults)
         {
-            var model = _mapper.Map<ListNameModel>(nameResults);
+            var model = _mapper.Map<NameForListModel>(nameResults);
             model.BasicName = _mapper.Map<BasicNameModel>(model.BasicName);
             model.BasicName.Url = _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nameResults.BasicName.Nconst });
             return model;

@@ -78,7 +78,36 @@ namespace DataLayer.DataServices
             return basicname;
         }
 
+        public NameForListDTO GetListName(string nconst)
+        {
+            // Joins the filtered name_basics with known_for to get list form of matching names
 
+            using var db = new ImdbContext();
+
+            var names = db.NameBasicss.ToList()
+                .Where(n => n.Nconst.Equals(nconst))
+                .GroupJoin(db.NameKnownFors,
+                       basics => basics.Nconst,
+                       knownFor => knownFor.Nconst,
+                       (basics, knownFor) => new NameForListDTO
+                       {
+                           BasicName =
+                           new BasicNameDTO
+                           {
+                               Nconst = basics.Nconst,
+                               PrimaryName = basics.PrimaryName,
+                           },
+                           KnownForTitleBasics = knownFor.Any() ?
+                                    new DataServiceTitles().
+                                    GetBasicTitle(knownFor.FirstOrDefault().Tconst) 
+                                    : null
+                       }
+                    )
+                .FirstOrDefault();
+
+
+            return names;
+        }
 
         public IList<NameForListDTO> GetListNames(int page = 0, int pageSize = 20)
         {

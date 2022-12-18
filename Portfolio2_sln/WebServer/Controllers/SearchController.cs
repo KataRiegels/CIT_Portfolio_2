@@ -134,16 +134,17 @@ namespace WebServer.Controllers
             return model;
         }
 
-        public ListNameModel MapNameSearchResults(NameForListDTO nameResults)
+        public NameForListModel MapNameSearchResults(NameForListDTO nameResults)
         {
 
-            var model = new ListNameModel().ConvertFromListTitleDTO(nameResults);
+            var model = new NameForListModel().ConvertFromDTO(nameResults);
             model.BasicName.Url = CreateTitleUrl(nameResults.BasicName.Nconst);
+            
             if (nameResults.KnownForTitleBasics != null)
             {
                 model.KnownForTitleBasics.Url = CreateTitleUrl(nameResults.KnownForTitleBasics.Tconst);
             }
-            //var model = _mapper.Map<ListNameModel>(nameResults);
+            //var model = _mapper.Map<NameForListModel>(nameResults);
             //model.BasicName = _mapper.Map<BasicNameModel>(model.BasicName);
             //model.BasicName.Url = _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nameResults.BasicName.Nconst });
             return model;

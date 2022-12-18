@@ -43,6 +43,7 @@ namespace DataLayer.DataServices
 
         public BasicTitleDTO GetBasicTitle(string tconst)
         {
+
             using var db = new ImdbContext();
             //var basicTitle = _db.TitleBasicss
             var basicTitle = db.TitleBasicss
@@ -54,6 +55,7 @@ namespace DataLayer.DataServices
                 PrimaryTitle = basicTitle.PrimaryTitle,
                 StartYear = basicTitle.StartYear,
             };
+            Console.WriteLine(basic.PrimaryTitle);   
 
             return basic;
         }

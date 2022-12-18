@@ -279,7 +279,7 @@ namespace WebServer.Controllers
 
             var model = new TitleForListModel().ConvertFromDTO(title);
             model.BasicTitle.Url = CreateTitleUrl(title.BasicTitle.Tconst);
-            model.Url = _generator.GetUriByName(HttpContext, nameof(TitleController.GetListTitle), new { title.BasicTitle.Tconst });
+            model.Url = _generator.GetUriByName(HttpContext, nameof(GetListTitle), new { title.BasicTitle.Tconst });
             //model.BasicTitle.Url = CreateTitleUrl(title.BasicTitle.Tconst);
 
             if (title.ParentTitle != null)
@@ -324,42 +324,42 @@ namespace WebServer.Controllers
         //}
 
 
-        private string? CreateLinkList(int page, int pageSize, string method, string searchContent = "")
+        private string? CreateLinkList(int page, int pageSize, string method, string seasonNumber = "")
         {
             
             var uri = _generator.GetUriByName(
                 HttpContext,
                 method,
-                new {  page, pageSize, searchContent });
+                new {  page, pageSize , seasonNumber});
             return uri;
         }
 
 
 
 
-        private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method)
+        private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method, string seasonNumber = "")
         {
             pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
 
             var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize) - 1
                 ;
-
+            
             var firstPageUrl = totalItems > 0
-                ? CreateLinkList(0, pageSize, method)
+                ? CreateLinkList(0, pageSize, method, seasonNumber = "")
                 : null;
 
             var prevPageUrl = page > 0 && totalItems > 0
-                ? CreateLinkList(page - 1, pageSize, method)
+                ? CreateLinkList(page - 1, pageSize, method, seasonNumber = "")
                 : null;
 
                 var lastPageUrl = totalItems > 0
-                ? CreateLinkList(totalPages, pageSize, method)
+                ? CreateLinkList(totalPages, pageSize, method, seasonNumber = "")
                 : null;
 
-            var currentPageUrl = CreateLinkList(page, pageSize, method);
+            var currentPageUrl = CreateLinkList(page, pageSize, method, seasonNumber = "");
 
             var nextPageUrl = page < totalPages - 1 && totalItems > 0
-                ? CreateLinkList(page + 1, pageSize, method)
+                ? CreateLinkList(page + 1, pageSize, method, seasonNumber = "")
                 : null;
 
             var result = new

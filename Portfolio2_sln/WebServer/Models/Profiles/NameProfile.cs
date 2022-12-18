@@ -21,7 +21,7 @@ namespace WebServer.Models.Profiles
 
 
             CreateMap<BasicNameDTO, BasicNameModel>();
-            CreateMap<NameForListDTO, ListNameModel>();
+            CreateMap<NameForListDTO, NameForListModel>();
 
             CreateMap<DetailedNameDTO, DetailedNameModel>();
         }
