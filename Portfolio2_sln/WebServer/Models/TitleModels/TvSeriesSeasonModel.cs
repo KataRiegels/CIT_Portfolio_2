@@ -30,6 +30,7 @@ namespace WebServer.Models.TitleModels
             {
                 ParentTconst = inputModel.ParentTconst,
                 SeasonNumber = inputModel.SeasonNumber,
+                //Episodes = inputModel.Episodes
                 //Episodes = (new TvSeriesEpisodeModel().ConvertFromDtoObject(inputModel.Episodes))
                 //PrimaryTitle = inputModel.PrimaryTitle,
                 //EpisodeNumber = inputModel.EpisodeNumber,

@@ -14,6 +14,7 @@ using NpgsqlTypes;
 using DataLayer.DTOs.TitleObjects;
 using WebServer.Authentication;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebServer.Controllers
 {
@@ -32,16 +33,18 @@ namespace WebServer.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet( Name = nameof(GetTitles))]
 
-        [HttpGet(Name = nameof(GetTitles))]
+        //[HttpGet(Name = nameof(GetTitles))]
         //[BasicAuthentication]
-        public IActionResult GetTitles()
+        public IActionResult GetTitles(int page = 0, int pageSize = 20)
         {
-            IEnumerable<TitleModel> titles =
-                _dataService.GetTitles().Select(x => CreateTitleModel(x));
+            IEnumerable<BasicTitleModel> titles =
+                _dataService.GetBasicTitles(page, pageSize).Select(x => CreateBasicTitleModel(x));
+            var total = _dataService.GetNumberOfTitles();
 
+            return Ok(Paging(page, pageSize, total, titles, nameof(GetTitles)));
 
-            return Ok(titles);
         }
 
         [HttpGet("{tconst}", Name = nameof(GetTitle))]
@@ -51,7 +54,7 @@ namespace WebServer.Controllers
         {
             
             //var title = _dataService.GetTitle(tconst);
-            TitleModel title = CreateTitleModel(_dataService.GetTitle(tconst));
+            var title = CreateBasicTitleModel(_dataService.GetBasicTitle(tconst));
 
             if (title == null)
             {
@@ -63,23 +66,11 @@ namespace WebServer.Controllers
 
 
 
-        [HttpGet("basics", Name = nameof(GetBasicTitles))]
-        public IActionResult GetBasicTitles(int page = 0, int pageSize = 20)
-        {
-
-            IEnumerable<BasicTitleModel> titles =
-                _dataService.GetBasicTitles(page, pageSize).Select(x => CreateBasicTitleModel(x));
-            var total = _dataService.GetNumberOfTitles();
-
-            return Ok(Paging(page, pageSize, total, titles, nameof(GetBasicTitles)));
-        }
 
 
         [HttpGet("list", Name = nameof(GetListTitles))]
         public IActionResult GetListTitles(int page = 0, int pageSize = 20)
         {
-            Console.WriteLine(page);
-            //IEnumerable<TitleForListModel> titles =
             var titles =
                 _dataService.GetListTitles(page, pageSize)
                 .Select(x => CreateListTitleModel(x));
@@ -94,9 +85,23 @@ namespace WebServer.Controllers
             return Ok(Paging(page, pageSize, total, titles, nameof(GetListTitles)));
         }
 
+        [HttpGet("list/{tconst}", Name = nameof(GetListTitle))]
+        public IActionResult GetListTitle(string tconst)
+        {
+            var title =
+                CreateListTitleModel(_dataService.GetListTitle(tconst));
+
+
+            if (title == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(title);
+        }
+
 
         [HttpGet("detailed")]
-        //[BasicAuthentication]
         public IActionResult GetDetailedTitles(int page = 0, int pageSize = 2)
         {
 
@@ -152,6 +157,7 @@ namespace WebServer.Controllers
             return Ok(cast);
         }
 
+        // Technically missing the self-reference
         [HttpGet("{tconst}/crew", Name = nameof(GetTitleCrew))]
         public IActionResult GetTitleCrew(string tconst)
         {
@@ -169,50 +175,50 @@ namespace WebServer.Controllers
             return Ok(crew);
         }
 
-
-        [HttpGet("{tconst}/seasons/{seasonNumber}", Name = nameof(GetTitleSeason))]
-        public IActionResult GetTitleSeason(string tconst, int seasonNumber)
+        [HttpGet("{tconst}/episodes/{episodeNumber}", Name = nameof(GetTitleSeasonEpisode))]
+        public IActionResult GetTitleSeasonEpisode(string tconst,  int episodeNumber, int seasonNumber)
         {
 
-            var season =
-            CreateTvSeasonModel(_dataService.GetTvSeriesSeason(tconst, seasonNumber))
-            ;
+            var episodeDTO = _dataService.GetTvSeriesEpisode(tconst, seasonNumber, episodeNumber);
+            var episode = MapTvEpisodeModel(episodeDTO);
 
-            if (season == null)
+            if (episode == null)
+                return NotFound();
+
+            return Ok(episode);
+        }
+
+        [HttpGet("{tconst}/episodes", Name = nameof(GetTitleSeasonEpisodes))]
+        public IActionResult GetTitleSeasonEpisodes(string tconst, int seasonNumber)
+        {
+
+            var episodesDTO =
+                _dataService.GetTvSeriesEpisodes(tconst, seasonNumber);
+
+            var episodes = episodesDTO
+                .Select(e => MapTvEpisodeModel(e));
+
+            if (episodes == null)
             {
+                Console.WriteLine("episodes were null");
                 return NotFound();
             }
 
-            return Ok(season);
+            return Ok(episodes);
         }
 
 
-
-
-
-        private TvSeriesSeasonModel CreateTvSeasonModel(TvSeriesSeasonDTO tvSeason)
-        {
-            var convertedSeason = new TvSeriesSeasonModel().ConvertFromDTO(tvSeason);
-
-            if (tvSeason.Episodes != null)
-            {
-                var titleResults = tvSeason.Episodes
-                    .Select(x => MapTvEpisodeModel(x))
-                    .ToList();
-                convertedSeason.Episodes = titleResults;
-            }
-            return convertedSeason;
-
-        }
 
         private TvSeriesEpisodeModel MapTvEpisodeModel(TvSeriesEpisodeDTO episode)
         {
             var model = new TvSeriesEpisodeModel().ConvertFromDTO(episode);
-            model.Url = CreateTitleUrl(episode.Tconst);
-            if (episode.Tconst != null)
+            Console.WriteLine(episode);
+            if (episode != null)
             {
-                model.Url = CreateTitleUrl(episode.Tconst);
+                Console.WriteLine(episode);
+                model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitleSeasonEpisode), new { Tconst = episode.ParentTconst, SeasonNumber = episode.SeasonNumber, EpisodeNumber = episode.EpisodeNumber });
             }
+            Console.WriteLine(model.Url);
 
             return model;
         }
@@ -244,12 +250,7 @@ namespace WebServer.Controllers
                 Tconst = titleBasics.Tconst,
             };
 
-            //var model = _mapper.Map<TitleModel>(titleBasics);
-
-            var test = nameof(GetTitle);
-            var test2 = HttpContext;
             model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.Tconst });
-            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
             
             return model;
         }
@@ -258,7 +259,7 @@ namespace WebServer.Controllers
         {
             //var model = _mapper.Map<DetailedTitleModel>(detailedTitle);
             var model = new DetailedTitleModel().ConvertFromDetailedTitleDTO(detailedTitle);
-            model.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { detailedTitle.Tconst });
+            model.Url = _generator.GetUriByName(HttpContext, nameof(GetDetailedTitle), new { detailedTitle.Tconst });
 
             return model;
         }
@@ -273,14 +274,17 @@ namespace WebServer.Controllers
             return model;
         }
 
-        public TitleForListModel CreateListTitleModel(TitleForListDTO titleBasics)
+        public TitleForListModel CreateListTitleModel(TitleForListDTO title)
         {
 
-            var model = new TitleForListModel().ConvertFromListTitleDTO(titleBasics);
-            model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
-            if (titleBasics.ParentTitle != null)
+            var model = new TitleForListModel().ConvertFromDTO(title);
+            model.BasicTitle.Url = CreateTitleUrl(title.BasicTitle.Tconst);
+            model.Url = _generator.GetUriByName(HttpContext, nameof(TitleController.GetListTitle), new { title.BasicTitle.Tconst });
+            //model.BasicTitle.Url = CreateTitleUrl(title.BasicTitle.Tconst);
+
+            if (title.ParentTitle != null)
             {
-                model.ParentTitle.Url = CreateTitleUrl(titleBasics.ParentTitle.Tconst);
+                model.ParentTitle.Url = CreateTitleUrl(title.ParentTitle.Tconst);
             }
 
             return model;
@@ -374,11 +378,80 @@ namespace WebServer.Controllers
 
 
 
+        /*
+         
+        DELETABLE
+         
+         
+         */
 
 
+        [HttpGet("basics", Name = nameof(GetBasicTitles))]
+        public IActionResult GetBasicTitles(int page = 0, int pageSize = 20)
+        {
+
+            IEnumerable<BasicTitleModel> titles =
+                _dataService.GetBasicTitles(page, pageSize).Select(x => CreateBasicTitleModel(x));
+            var total = _dataService.GetNumberOfTitles();
+
+            return Ok(Paging(page, pageSize, total, titles, nameof(GetBasicTitles)));
+        }
 
 
+        [HttpGet("{tconst}/seasons/{seasonNumber}/episodes", Name = nameof(GetTitleSeasonEpisodesSeason))]
+        public IActionResult GetTitleSeasonEpisodesSeason(string tconst, int seasonNumber, int episodeNumber)
+        {
 
+            var episodesDTO =
+                _dataService.GetTvSeriesSeason(tconst, seasonNumber);
+            Console.WriteLine("before mapping: " + episodesDTO.Episodes.First().SeasonNumber);
+
+            var episodes = CreateTvSeasonModel(episodesDTO)
+                .Episodes;
+
+            if (episodes == null)
+            {
+                Console.WriteLine("episodes were null");
+                return NotFound();
+            }
+
+            return Ok(episodes);
+        }
+
+
+        [HttpGet("{tconst}/seasons/{seasonNumber}", Name = nameof(GetTitleSeason))]
+        public IActionResult GetTitleSeason(string tconst, int seasonNumber)
+        {
+
+            var season =
+            CreateTvSeasonModel(_dataService.GetTvSeriesSeason(tconst, seasonNumber))
+            ;
+
+            if (season == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(season);
+        }
+
+
+        private TvSeriesSeasonModel CreateTvSeasonModel(TvSeriesSeasonDTO tvSeason)
+        {
+            var convertedSeason = new TvSeriesSeasonModel().ConvertFromDTO(tvSeason);
+
+            if (tvSeason.Episodes == null)
+            {
+                return convertedSeason;
+            }
+
+
+            var titleResults = tvSeason.Episodes
+                .Select(x => MapTvEpisodeModel(x))
+                .ToList();
+            convertedSeason.Episodes = titleResults;
+            return convertedSeason;
+        }
 
 
     }

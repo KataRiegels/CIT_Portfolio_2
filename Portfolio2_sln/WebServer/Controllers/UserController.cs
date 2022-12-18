@@ -93,6 +93,9 @@ namespace WebServer.Controllers
          
          */
 
+
+
+
         // Get domain object - Would be used for Uri (since it contains Tconst) 
         [HttpGet("user/titlebookmarks/domain/{tconst}")]
         [BasicAuthentication]
@@ -114,6 +117,7 @@ namespace WebServer.Controllers
         [BasicAuthentication]
         public IActionResult GetBookmarksTitleByUser()
         {
+
             var username = GetUsernameFromAuthorization();
 
             var bookmarks = _dataService.GetBookmarkTitlesByUser(username)

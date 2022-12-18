@@ -15,6 +15,7 @@ namespace WebServer.Models.TitleModels
     public class TitleForListModel
     {
 
+        public string Url { get; set; }
         public BasicTitleModel? BasicTitle { get; set; }
 
 

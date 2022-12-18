@@ -75,7 +75,46 @@ namespace DataLayer.DataServices
             return basicTitles;
         }
 
-     
+        public TitleForListDTO GetListTitle(string tconst)
+        {
+            using var db = new ImdbContext();
+
+            // Just here to only work with those within the given page
+            var title = db.FullViewTitles
+                .Where(t => t.Tconst.Equals(tconst))
+                .ToList();
+            //var result = db.TitleBasicss
+            //    .Join(db.FullViewTitles,
+            //        searchResults => searchResults.Tconst,
+            //        fullView => fullView.Tconst,
+            //        (searchResults, fullView)
+            //                      => fullView
+            //        );
+
+
+            //var titles = _db.FullViewTitles
+            var titles = title
+               .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
+               {
+                   BasicTitle = new BasicTitleDTO
+                   {
+                       Tconst = model.First().Tconst,
+                       PrimaryTitle = model.First().PrimaryTitle,
+                       StartYear = model.First().StartYear,
+                       TitleType = model.First().TitleType,
+                   },
+                   Runtime = model.First().Runtime,
+                   Rating = model.First().Rating,
+                   Genres = model.Select(m => m.Genre).Distinct().ToList(),
+                   ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst)
+                                   ? null
+                                   : GetBasicTitle(model.FirstOrDefault().ParentTconst)
+               })
+           //.Skip(page * pageSize).Take(pageSize)
+           .FirstOrDefault();
+            return titles;
+        }
+
         public IList<TitleForListDTO> GetListTitles(int page = 0, int pageSize = 1)
         {
             using var db = new ImdbContext();
@@ -116,7 +155,6 @@ namespace DataLayer.DataServices
            //.Skip(page * pageSize).Take(pageSize)
            .ToList();
 
-            Console.WriteLine(titles.First().Runtime);
             return titles;
         }
 
@@ -209,6 +247,38 @@ namespace DataLayer.DataServices
             return cast;
         }
 
+        public TvSeriesEpisodeDTO GetTvSeriesEpisode(string parentTconst, int seasonNumber, int episodeNumber)
+        {
+            using var db = new ImdbContext();
+
+            var episode = db.TitleEpisodes
+                .Where(p => p.ParentTconst.Equals(parentTconst) 
+                        && p.SeasonNumber == seasonNumber
+                        && p.EpisodeNumber == episodeNumber
+                )
+                .ToList();
+
+
+            var episodeResult = episode
+            //.First(p => p.ParentTconst.Equals(tconst))
+            .Join(db.TitleBasicss,
+                episodeTable => episodeTable.Tconst,
+                titleBasicsTable => titleBasicsTable.Tconst,
+                (episodeTable, titleBasicsTable)
+                        => new TvSeriesEpisodeDTO
+                        {
+                            Tconst = episodeTable.Tconst,
+                            PrimaryTitle = titleBasicsTable.PrimaryTitle,
+                            ParentTconst = parentTconst,
+                            EpisodeNumber = episodeTable.EpisodeNumber,
+                            SeasonNumber = seasonNumber,
+                        }
+                ).FirstOrDefault()
+                ;
+
+
+            return episodeResult;
+        }
 
         public TvSeriesSeasonDTO GetTvSeriesSeason(string tconst, int seasonNumber)
         {
@@ -227,9 +297,11 @@ namespace DataLayer.DataServices
                 (episodeTable, titleBasicsTable)
                         => new TvSeriesEpisodeDTO
                         {
+                            SeasonNumber = seasonNumber,
                             Tconst = episodeTable.Tconst,
                             PrimaryTitle = titleBasicsTable.PrimaryTitle,
                             EpisodeNumber = episodeTable.EpisodeNumber,
+                            ParentTconst = episodeTable.ParentTconst
                         }
                 ).OrderBy(e => e.EpisodeNumber)
                 .ToList();
@@ -244,12 +316,49 @@ namespace DataLayer.DataServices
             return result;
         }
 
+
+        public IList<TvSeriesEpisodeDTO> GetTvSeriesEpisodes(string tconst, int seasonNumber)
+        {
+            using var db = new ImdbContext();
+
+            var filteredParentTitle = db.TitleEpisodes
+                .Where(p => p.ParentTconst.Trim() == tconst.Trim())
+                .Where(s => s.SeasonNumber == seasonNumber)
+                .ToList();
+
+
+            var filteredEpisodeTitles = filteredParentTitle
+            .Join(db.TitleBasicss,
+                episodeTable => episodeTable.Tconst,
+                titleBasicsTable => titleBasicsTable.Tconst,
+                (episodeTable, titleBasicsTable)
+                        => new TvSeriesEpisodeDTO
+                        {
+                            SeasonNumber = seasonNumber,
+                            Tconst = episodeTable.Tconst,
+                            PrimaryTitle = titleBasicsTable.PrimaryTitle,
+                            EpisodeNumber = episodeTable.EpisodeNumber,
+                            ParentTconst = episodeTable.ParentTconst
+                        }
+                ).OrderBy(e => e.EpisodeNumber)
+                .ToList();
+
+            //var result = new TvSeriesSeasonDTO
+            //{
+            //    ParentTconst = tconst,
+            //    SeasonNumber = seasonNumber,
+            //    Episodes = filteredEpisodeTitles
+            //};
+
+            return filteredEpisodeTitles;
+        }
+
             public List<TvSeriesSeasonDTO> GetTvSeriesSeasons(string tconst)
         {
             using var db = new ImdbContext();
 
             var filteredParentTitle = db.TitleEpisodes
-                .Where(t => t.ParentTconst.Trim() == tconst.Trim())
+                .Where(t => t.ParentTconst.Equals(tconst))
                 .ToList();
 
             var filteredEpisodeTitles = filteredParentTitle
@@ -271,10 +380,7 @@ namespace DataLayer.DataServices
 
 
 
-        public TitleForListDTO GetListTitle(string tconst)
-        {
-            return null;
-        }
+        
 
         public DetailedTitleDTO GetDetailedTitle(string tconst)
         {
