@@ -80,10 +80,8 @@ namespace WebServer.Controllers
         {
             Console.WriteLine(page);
             //IEnumerable<TitleForListModel> titles =
-            var titles1 =
-                _dataService.GetListTitles(page, pageSize);
-            Console.WriteLine(titles1.First().Runtime);
-            var titles = titles1
+            var titles =
+                _dataService.GetListTitles(page, pageSize)
                 .Select(x => CreateListTitleModel(x));
             var total = _dataService.GetNumberOfTitles();
 
@@ -278,15 +276,24 @@ namespace WebServer.Controllers
         public TitleForListModel CreateListTitleModel(TitleForListDTO titleBasics)
         {
 
+            var model = new TitleForListModel().ConvertFromListTitleDTO(titleBasics);
+            model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
+            if (titleBasics.ParentTitle != null)
+            {
+                model.ParentTitle.Url = CreateTitleUrl(titleBasics.ParentTitle.Tconst);
+            }
+
+            return model;
+            /*
+             
             //var model1 = _mapper.Map<BasicTitleModel>(titleBasics.BasicTitle);
-            //var model = _mapper.Map<TitleForListModel>(titleBasics);
-            var model = new TitleForListModel().ConvertFromDTO(titleBasics);
-            model.BasicTitle.Url = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { titleBasics.BasicTitle.Tconst });
+            var model = _mapper.Map<TitleForListModel>(titleBasics);
             model.BasicTitle = CreateBasicTitleModel(titleBasics.BasicTitle);
             Console.WriteLine(titleBasics.Rating);
             model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
 
             return model;
+             */
         }
 
         private string CreateTitleUrl(string tconst)
