@@ -189,14 +189,16 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("{tconst}/episodes", Name = nameof(GetTitleSeasonEpisodes))]
-        public IActionResult GetTitleSeasonEpisodes(string tconst, int seasonNumber)
+        public IActionResult GetTitleSeasonEpisodes(string tconst, int seasonNumber, int page = 0, int pageSize = 100)
         {
 
-            var episodesDTO =
-                _dataService.GetTvSeriesEpisodes(tconst, seasonNumber);
+            var (total, episodesDTO) =
+                _dataService.GetTvSeriesEpisodes(tconst, seasonNumber, page, pageSize);
 
             var episodes = episodesDTO
                 .Select(e => MapTvEpisodeModel(e));
+
+
 
             if (episodes == null)
             {
@@ -204,7 +206,12 @@ namespace WebServer.Controllers
                 return NotFound();
             }
 
-            return Ok(episodes);
+            var paging = PagingEpisodes(page, pageSize, total, episodes, nameof(GetTitleSeasonEpisodes), tconst, seasonNumber.ToString());
+            Console.WriteLine("seasonNumber " + seasonNumber);
+
+
+
+            return Ok(paging);
         }
 
 
@@ -302,14 +309,12 @@ namespace WebServer.Controllers
 
         private string CreateTitleUrl(string tconst)
         {
-            tconst = tconst.Trim();
             if (string.IsNullOrEmpty(tconst)) return null;
             return _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { tconst });
         }
 
         private string CreateNameUrl(string nconst)
         {
-            nconst = nconst.Trim();
             if (string.IsNullOrEmpty(nconst)) return null;
             return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
         }
@@ -326,11 +331,13 @@ namespace WebServer.Controllers
 
         private string? CreateLinkList(int page, int pageSize, string method, string seasonNumber = "")
         {
-            
+            Console.WriteLine("values " + (new { page, pageSize, seasonNumber }).ToString());
+
             var uri = _generator.GetUriByName(
                 HttpContext,
                 method,
-                new {  page, pageSize , seasonNumber});
+                new {  page, pageSize, seasonNumber});
+                //new {  page, pageSize });
             return uri;
         }
 
@@ -341,25 +348,30 @@ namespace WebServer.Controllers
         {
             pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
 
-            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize) - 1
+            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize) 
                 ;
             
+
             var firstPageUrl = totalItems > 0
-                ? CreateLinkList(0, pageSize, method, seasonNumber = "")
+                ? CreateLinkList(0, pageSize, method, seasonNumber)
                 : null;
 
+            Console.WriteLine("first page " + firstPageUrl);
+            Console.WriteLine("null? " + (totalItems > 0).ToString());
+
+
             var prevPageUrl = page > 0 && totalItems > 0
-                ? CreateLinkList(page - 1, pageSize, method, seasonNumber = "")
+                ? CreateLinkList(page - 1, pageSize, method, seasonNumber)
                 : null;
 
                 var lastPageUrl = totalItems > 0
-                ? CreateLinkList(totalPages, pageSize, method, seasonNumber = "")
+                ? CreateLinkList(totalPages - 1, pageSize, method, seasonNumber )
                 : null;
 
-            var currentPageUrl = CreateLinkList(page, pageSize, method, seasonNumber = "");
+            var currentPageUrl = CreateLinkList(page, pageSize, method, seasonNumber );
 
             var nextPageUrl = page < totalPages - 1 && totalItems > 0
-                ? CreateLinkList(page + 1, pageSize, method, seasonNumber = "")
+                ? CreateLinkList(page + 1, pageSize, method, seasonNumber)
                 : null;
 
             var result = new
@@ -376,6 +388,62 @@ namespace WebServer.Controllers
             return result;
         }
 
+
+        private string? CreateLinkEpisodes(string tconst, int page, int pageSize, string method,  string seasonNumber = "")
+        {
+
+            var uri = _generator.GetUriByName(
+                HttpContext,
+                method,
+                new { page, pageSize, tconst, seasonNumber });
+            //new {  page, pageSize });
+            return uri;
+        }
+
+
+        private object PagingEpisodes<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method, string parentTconst, string seasonNumber = "")
+        {
+            pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
+
+            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize)
+                ;
+
+
+            var firstPageUrl = totalItems > 0
+                ? CreateLinkEpisodes(parentTconst, 0, pageSize, method, seasonNumber)
+                : null;
+
+            Console.WriteLine("first page " + firstPageUrl);
+            Console.WriteLine("null? " + (totalItems > 0).ToString());
+
+
+            var prevPageUrl = page > 0 && totalItems > 0
+                ? CreateLinkEpisodes(parentTconst, page - 1, pageSize, method, seasonNumber)
+                : null;
+
+            var lastPageUrl = totalItems > 0
+            ? CreateLinkEpisodes(parentTconst, totalPages - 1, pageSize, method, seasonNumber)
+            : null;
+
+            var currentPageUrl = CreateLinkEpisodes(parentTconst, page, pageSize, method, seasonNumber);
+
+            var nextPageUrl = page < totalPages - 1 && totalItems > 0
+                ? CreateLinkEpisodes(parentTconst, page + 1, pageSize, method, seasonNumber)
+                : null;
+
+            var result = new
+            {
+                firstPageUrl,
+                prevPageUrl,
+                nextPageUrl,
+                lastPageUrl,
+                currentPageUrl,
+                totalItems,
+                totalPages,
+                items
+            };
+            return result;
+        }
 
 
         /*

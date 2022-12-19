@@ -6,7 +6,6 @@ namespace DataLayer.DataServices
 {
     public interface IDataServiceTitles
     {
-        public IList<TvSeriesEpisodeDTO> GetTvSeriesEpisodes(string tconst, int seasonNumber);
 
         public TvSeriesEpisodeDTO GetTvSeriesEpisode(string parentTconst, int seasonNumber, int episodeNumber);
         public int GetNumberOfTitles();
@@ -23,5 +22,6 @@ namespace DataLayer.DataServices
         IList<TitleBasics> GetTitles(int page = 0, int pageSize = 20);
 
         public TvSeriesSeasonDTO GetTvSeriesSeason(string tconst, int seasonNumber);
+        (int, IList<TvSeriesEpisodeDTO>) GetTvSeriesEpisodes(string tconst, int seasonNumber, int page, int pageSize);
     }
 }

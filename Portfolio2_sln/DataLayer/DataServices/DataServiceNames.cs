@@ -63,9 +63,7 @@ namespace DataLayer.DataServices
         public BasicNameDTO GetBasicName(string nconst)
         {
             if (string.IsNullOrEmpty(nconst))
-            {
                 return new BasicNameDTO();
-            }
 
             var namebasic = _db.NameBasicss.FirstOrDefault(x => x.Nconst.Trim() == nconst.Trim());
             Console.WriteLine(namebasic.Nconst);

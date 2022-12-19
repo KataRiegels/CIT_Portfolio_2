@@ -144,9 +144,6 @@ namespace WebServer.Controllers
             {
                 model.KnownForTitleBasics.Url = CreateTitleUrl(nameResults.KnownForTitleBasics.Tconst);
             }
-            //var model = _mapper.Map<NameForListModel>(nameResults);
-            //model.BasicName = _mapper.Map<BasicNameModel>(model.BasicName);
-            //model.BasicName.Url = _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nameResults.BasicName.Nconst });
             return model;
         }
 
@@ -155,7 +152,6 @@ namespace WebServer.Controllers
 
         private string CreateTitleUrl(string tconst)
         {
-            tconst = tconst.Trim();
             if (string.IsNullOrEmpty(tconst)) return null;
             return _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { tconst });
         }
@@ -163,7 +159,6 @@ namespace WebServer.Controllers
 
         private string CreateNameUrl(string nconst)
         {
-            nconst = nconst.Trim();
             if (string.IsNullOrEmpty(nconst)) return null;
             return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
         }

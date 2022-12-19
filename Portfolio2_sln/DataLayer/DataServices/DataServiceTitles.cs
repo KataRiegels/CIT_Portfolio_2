@@ -276,6 +276,7 @@ namespace DataLayer.DataServices
                             SeasonNumber = seasonNumber,
                         }
                 ).FirstOrDefault()
+                
                 ;
 
 
@@ -319,7 +320,7 @@ namespace DataLayer.DataServices
         }
 
 
-        public IList<TvSeriesEpisodeDTO> GetTvSeriesEpisodes(string tconst, int seasonNumber)
+        public (int, IList<TvSeriesEpisodeDTO>) GetTvSeriesEpisodes(string tconst, int seasonNumber, int page, int pageSize)
         {
             using var db = new ImdbContext();
 
@@ -327,6 +328,7 @@ namespace DataLayer.DataServices
                 .Where(p => p.ParentTconst.Trim() == tconst.Trim())
                 .Where(s => s.SeasonNumber == seasonNumber)
                 .ToList();
+
 
 
             var filteredEpisodeTitles = filteredParentTitle
@@ -343,16 +345,21 @@ namespace DataLayer.DataServices
                             ParentTconst = episodeTable.ParentTconst
                         }
                 ).OrderBy(e => e.EpisodeNumber)
+                .Skip(page * pageSize).Take(pageSize)
+                
                 .ToList();
 
-            //var result = new TvSeriesSeasonDTO
+            int totalEpisodes = filteredParentTitle.Count();
+
+            //var result =
+            //new TvSeriesSeasonDTO
             //{
             //    ParentTconst = tconst,
             //    SeasonNumber = seasonNumber,
             //    Episodes = filteredEpisodeTitles
             //};
 
-            return filteredEpisodeTitles;
+            return (totalEpisodes,filteredEpisodeTitles);
         }
 
             public List<TvSeriesSeasonDTO> GetTvSeriesSeasons(string tconst)
