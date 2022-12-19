@@ -24,8 +24,8 @@ namespace DataLayer.DataServices
           ------------*/
         public IList<TitleBasics> GetTitles(int page = 0, int pageSize = 20)
         {
-            var result = _db.TitleBasicss.Skip(page * pageSize).Take(pageSize).ToList();
-            result = _db.TitleBasicss.Skip(page * pageSize).Take(pageSize).ToList();
+            var result = _db.TitleBasicss.Skip((page - 1 ) * pageSize).Take(pageSize).ToList();
+            result = _db.TitleBasicss.Skip((page - 1 ) * pageSize).Take(pageSize).ToList();
 
             return result;
         }
@@ -73,7 +73,7 @@ namespace DataLayer.DataServices
                     PrimaryTitle = t.PrimaryTitle,
                     StartYear = t.StartYear
                 })
-                .Skip(page * pageSize).Take(pageSize).ToList();
+                .Skip((page - 1 ) * pageSize).Take(pageSize).ToList();
 
             return basicTitles;
         }
@@ -113,7 +113,7 @@ namespace DataLayer.DataServices
                                    ? null
                                    : GetBasicTitle(model.FirstOrDefault().ParentTconst)
                })
-           //.Skip(page * pageSize).Take(pageSize)
+           //.Skip((page - 1 ) * pageSize).Take(pageSize)
            .FirstOrDefault();
             return titles;
         }
@@ -124,7 +124,7 @@ namespace DataLayer.DataServices
 
         // Just here to only work with those within the given page
             var result = db.TitleBasicss
-                .Skip(page * pageSize).Take(pageSize).ToList()
+                .Skip((page - 1 ) * pageSize).Take(pageSize).ToList()
                 .Join(db.FullViewTitles,
                     searchResults => searchResults.Tconst,
                     fullView => fullView.Tconst,
@@ -155,7 +155,7 @@ namespace DataLayer.DataServices
                                ? null
                                : GetBasicTitle(model.FirstOrDefault().ParentTconst)
            })
-           //.Skip(page * pageSize).Take(pageSize)
+           //.Skip((page - 1 ) * pageSize).Take(pageSize)
            .ToList();
 
             return titles;
@@ -247,7 +247,7 @@ namespace DataLayer.DataServices
             ;
             var totalItems = cast.Count();
             var result = cast
-                .Skip(page * pageSize).Take(pageSize).ToList();
+                .Skip((page - 1 ) * pageSize).Take(pageSize).ToList();
 
             return (cast.Count(), result);
         }
@@ -348,7 +348,7 @@ namespace DataLayer.DataServices
                             ParentTconst = episodeTable.ParentTconst
                         }
                 ).OrderBy(e => e.EpisodeNumber)
-                .Skip(page * pageSize).Take(pageSize)
+                .Skip((page - 1 ) * pageSize).Take(pageSize)
                 
                 .ToList();
 
@@ -457,7 +457,7 @@ namespace DataLayer.DataServices
                                     ? null
                                     : new DataService().GetBasicTitle(model.FirstOrDefault().ParentTconst)
                 })
-                .Skip(page * pageSize).Take(pageSize)
+                .Skip((page - 1 ) * pageSize).Take(pageSize)
                 .ToList();
 
 
@@ -495,9 +495,9 @@ namespace DataLayer.DataServices
                     Poster = model.First().Poster,
                     Tconst = key,
                     Genres = model.Select(m => m.Genre).Distinct().ToList()
-                    //.Skip(page * pageSize).Take(pageSize).ToList()
+                    //.Skip((page - 1 ) * pageSize).Take(pageSize).ToList()
                 }
-                ).Skip(page * pageSize).Take(pageSize).ToList();
+                ).Skip((page - 1 ) * pageSize).Take(pageSize).ToList();
 
 
 
