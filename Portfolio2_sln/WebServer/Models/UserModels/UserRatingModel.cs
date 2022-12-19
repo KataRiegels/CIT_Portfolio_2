@@ -1,5 +1,5 @@
 ﻿using DataLayer.DTOs.UserObjects;
-using DataLayer.Models.UserModels;
+using DataLayer.DomainModels.UserModels;
 using WebServer.Models.TitleModels;
 
 namespace WebServer.Models.UserModels

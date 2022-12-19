@@ -1,8 +1,8 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using DataLayer.Models.TitleModels;
-using DataLayer.Models.NameModels;
-using DataLayer.Models.UserModels;
+using DataLayer.DomainModels.TitleModels;
+using DataLayer.DomainModels.NameModels;
+using DataLayer.DomainModels.UserModels;
 using System.ComponentModel.DataAnnotations;
 using DataLayer.DTOs.TitleObjects;
 using DataLayer.DTOs.SearchObjects;

@@ -1,4 +1,4 @@
-﻿namespace DataLayer.Models.TitleModels
+﻿namespace DataLayer.DomainModels.TitleModels
 {
     public class TitleGenre
     {

@@ -6,7 +6,7 @@ using WebServer.Models.TitleModels;
 using WebServer.Models.NameModels;
 using WebServer.Models.SearchModels;
 using WebServer.Models.UserModels;
-using DataLayer.Models.TitleModels;
+using DataLayer.DomainModels.TitleModels;
 using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.TitleObjects;
 using DataLayer.DTOs.SearchObjects;

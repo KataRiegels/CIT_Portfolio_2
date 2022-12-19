@@ -1,9 +1,9 @@
 ﻿using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.SearchObjects;
 using DataLayer.DTOs.TitleObjects;
-using DataLayer.Models.NameModels;
-using DataLayer.Models.TitleModels;
-using DataLayer.Models.UserModels;
+using DataLayer.DomainModels.NameModels;
+using DataLayer.DomainModels.TitleModels;
+using DataLayer.DomainModels.UserModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;

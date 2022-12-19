@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using DataLayer;
 using DataLayer.DTOs.NameObjects;
-using DataLayer.Models.NameModels;
-using DataLayer.Models.TitleModels;
+using DataLayer.DomainModels.NameModels;
+using DataLayer.DomainModels.TitleModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

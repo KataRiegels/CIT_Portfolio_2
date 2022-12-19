@@ -4,8 +4,8 @@ using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.SearchObjects;
 using DataLayer.DTOs.TitleObjects;
 using DataLayer.DTOs.UserObjects;
-using DataLayer.Models.TitleModels;
-using DataLayer.Models.UserModels;
+using DataLayer.DomainModels.TitleModels;
+using DataLayer.DomainModels.UserModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -326,12 +326,18 @@ namespace WebServer.Controllers
 
             var createdUserRating = _dataService.CreateUserRating(username, rating.Tconst, rating.Rating);
 
+
+
             // should have a status code in case createdUserRating is null (which would mean rating was not created)
 
             return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
+            //return CreatedAtRoute(null, createdUserRating);
         }
 
-        [HttpPost("user/ratings/{tconst}")]
+
+        /*
+         
+        [HttpPost("user/ratings")]
         [BasicAuthentication]
         public IActionResult UpdateRating(UserRatingCreateModel rating)
         {
@@ -342,10 +348,32 @@ namespace WebServer.Controllers
             // should have a status code in case createdUserRating is null (which would mean rating was not created)
 
             return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
+            //return CreatedAtRoute(null, createdUserRating);
         }
+         */
 
 
+        [HttpDelete("user/ratings/{tconst}")]
+        [BasicAuthentication]
+        public IActionResult DeleteUserRating(string tconst)
+        {
+            var username = GetUsernameFromAuthorization();
 
+            var result = _dataService.DeleteUserRating(username, tconst);
+
+            if (result == false)
+                return NotFound();
+
+            // If bookmark wasn't in the bookmark table
+            //if (result == -1)
+            //    return NotFound();
+
+            // If bookmark was still there after deletion attempt
+            //else if (result == 0)
+            //    return StatusCode(500);
+
+            return Ok(result);
+        }
 
         [HttpGet("user/ratings", Name = nameof(GetUserRatings))]
         [BasicAuthentication]
@@ -370,6 +398,19 @@ namespace WebServer.Controllers
 
             return Ok(paging);
 
+        }
+
+
+        public UserRatingModel CreateUserRatingModel(UserRatingDTO rating)
+        {
+
+            var model = new UserRatingModel().ConvertFromDTO(rating);
+            //var model = _mapper.Map<UserRatingModel>(rating);
+
+            model.TitleModel.Url = _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { rating.TitleModel.Tconst });
+            model.TitleModel.Url = _generator.GetUriByName(HttpContext, nameof(GetUserRating), new { rating.TitleModel.Tconst });
+
+            return model;
         }
 
 
@@ -702,15 +743,7 @@ namespace WebServer.Controllers
 
 
 
-        public UserRatingModel CreateUserRatingModel(UserRating rating)
-        {
-            var model = _mapper.Map<UserRatingModel>(rating);
-            //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
-            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
-
-            return model;
-        }
-
+   
 
 
         //public UserSearchModel CreateUserSearchModel(UserSearch search)

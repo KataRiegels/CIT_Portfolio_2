@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using DataLayer;
-using DataLayer.Models.TitleModels;
+using DataLayer.DomainModels.TitleModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

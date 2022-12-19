@@ -1,7 +1,7 @@
 ﻿using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.TitleObjects;
 using DataLayer.DTOs.UserObjects;
-using DataLayer.Models.UserModels;
+using DataLayer.DomainModels.UserModels;
 using System.Text;
 
 namespace DataLayer.DataServices
@@ -19,9 +19,9 @@ namespace DataLayer.DataServices
 
         public (int, IList<UserRatingDTO>) GetUserRatings(string username, int page, int pageSize);
         public bool DeleteUserRating(string username, string tconst);
-        UserRating CreateUserRating(string username, string tconst, int rating);
+        UserRatingDTO CreateUserRating(string username, string tconst, int rating);
         public UserRatingDTO GetUserRating(string username, string tconst);
-        public UserRating UpdateUserRating(string username, string tconst, int rating);
+        public UserRatingDTO UpdateUserRating(string username, string tconst, int rating);
 
 
 

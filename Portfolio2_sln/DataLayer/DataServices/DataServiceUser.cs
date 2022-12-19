@@ -2,9 +2,9 @@
 using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.TitleObjects;
 using DataLayer.DTOs.UserObjects;
-using DataLayer.Models.NameModels;
-using DataLayer.Models.TitleModels;
-using DataLayer.Models.UserModels;
+using DataLayer.DomainModels.NameModels;
+using DataLayer.DomainModels.TitleModels;
+using DataLayer.DomainModels.UserModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -400,13 +400,15 @@ namespace DataLayer.DataServices
 
             db.UserRatings.Remove(rating);
             db.SaveChanges();
+
+
             // check if rating is there
 
             return true;
         }
 
         // Currently just deletes and creates due to making sure SQL also updates rating rate
-        public UserRating UpdateUserRating(string username, string tconst, int rating)
+        public UserRatingDTO UpdateUserRating(string username, string tconst, int rating)
         {
             using var db = new ImdbContext();
 
@@ -421,20 +423,21 @@ namespace DataLayer.DataServices
             CreateUserRating(username, tconst, rating);
             db.SaveChanges();
 
-            var newUserRating = db.UserRatings.FirstOrDefault(u => u.Username == username && u.Tconst == tconst);
+            var newUserRating = GetUserRating(username , tconst);
 
             return newUserRating; // shouldn't return this - fix
         }
 
-        public UserRating CreateUserRating(string username, string tconst, int rating)
+        public UserRatingDTO CreateUserRating(string username, string tconst, int rating)
         {
             using var db = new ImdbContext();
 
             db.Database.ExecuteSqlInterpolated($"select * from create_user_rating({username}, {tconst}, {rating})");
 
-            var newUserRating = db.UserRatings.FirstOrDefault(u => u.Username == username && u.Tconst == tconst);
+            //var newUserRating = db.UserRatings.FirstOrDefault(u => u.Username == username && u.Tconst == tconst);
+            var newUserRating = GetUserRating(username, tconst);
 
-          
+
             return newUserRating; // shouldn't return this - fix
         }
 

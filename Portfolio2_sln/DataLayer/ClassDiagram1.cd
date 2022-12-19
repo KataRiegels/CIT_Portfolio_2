@@ -15,154 +15,154 @@
       <FileName>ImdbContext.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.NameModels.Character" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.NameModels.Character" Collapsed="true">
     <Position X="3.25" Y="1.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAABAAAAAgAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Models\NameModels\Character.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.NameModels.Job" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.NameModels.Job" Collapsed="true">
     <Position X="10.25" Y="1.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>IAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Models\NameModels\Job.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.NameModels.NameBasics" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.NameModels.NameBasics" Collapsed="true">
     <Position X="3.25" Y="2.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAACABAAIAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\NameModels\NameBasics.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.NameModels.NameKnownFor" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.NameModels.NameKnownFor" Collapsed="true">
     <Position X="5" Y="2.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Models\NameModels\NameKnownFor.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.NameModels.NameProfession" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.NameModels.NameProfession" Collapsed="true">
     <Position X="6.75" Y="2.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>Models\NameModels\NameProfession.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.OmdbData" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.TitleModels.OmdbData" Collapsed="true">
     <Position X="8.5" Y="2.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAEAQAAAAA=</HashCode>
       <FileName>Models\TitleModels\OmdbData.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.TitleAka" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.TitleModels.TitleAka" Collapsed="true">
     <Position X="10.25" Y="2.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>EAgAAAAAgAAAAEAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Models\TitleModels\TitleAka.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.TitleAkaAttribute" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.TitleModels.TitleAkaAttribute" Collapsed="true">
     <Position X="3.25" Y="3.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAgAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Models\TitleModels\TitleAkaAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.TitleAkaLanguage" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.TitleModels.TitleAkaLanguage" Collapsed="true">
     <Position X="5" Y="3.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAgAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Models\TitleModels\TitleAkaLanguage.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.TitleAkaType" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.TitleModels.TitleAkaType" Collapsed="true">
     <Position X="6.75" Y="3.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAQAAAAA=</HashCode>
       <FileName>Models\TitleModels\TitleAkaType.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.TitleAvgRating" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.TitleModels.TitleAvgRating" Collapsed="true">
     <Position X="8.5" Y="3.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAQAAAAA=</HashCode>
       <FileName>Models\TitleModels\TitleAvgRating.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.TitleBasics" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.TitleModels.TitleBasics" Collapsed="true">
     <Position X="10.25" Y="3.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAgAgAAAAAIAAAAAAAACAAAAAAAAAAAAIAAAAQAAAEA=</HashCode>
       <FileName>Models\TitleModels\TitleBasics.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.TitleEpisode">
+  <Class Name="DataLayer.DomainModels.TitleModels.TitleEpisode">
     <Position X="3.25" Y="4.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAABAAAAAAAAAAAQAAgAA=</HashCode>
       <FileName>Models\TitleModels\TitleEpisode.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.TitleGenre">
+  <Class Name="DataLayer.DomainModels.TitleModels.TitleGenre">
     <Position X="5" Y="4.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAI=</HashCode>
       <FileName>Models\TitleModels\TitleGenre.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.TitlePrincipal" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.TitleModels.TitlePrincipal" Collapsed="true">
     <Position X="6.75" Y="4.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAACAA=</HashCode>
       <FileName>Models\TitleModels\TitlePrincipal.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.TitleModels.Wi">
+  <Class Name="DataLayer.DomainModels.TitleModels.Wi">
     <Position X="5" Y="6.25" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAQAAgAA=</HashCode>
       <FileName>Models\TitleModels\Wi.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.UserModels.User" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.UserModels.User" Collapsed="true">
     <Position X="8.5" Y="4.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAACAACAAAAAAAQAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Models\UserModels\User.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.UserModels.UserRating" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.UserModels.UserRating" Collapsed="true">
     <Position X="10.25" Y="4.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAEBAAAAAQAAAAA=</HashCode>
       <FileName>Models\UserModels\UserRating.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.UserModels.UserSearch">
+  <Class Name="DataLayer.DomainModels.UserModels.UserSearch">
     <Position X="3.25" Y="6.25" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAQAAAAARAAAAAAAAAAAAEBAAAAAAAAAAA=</HashCode>
       <FileName>Models\UserModels\UserSearch.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.UserModels.BookmarkName" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.UserModels.BookmarkName" Collapsed="true">
     <Position X="7" Y="1.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAABAAAAAAAAQAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\UserModels\BookmarkName.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.UserModels.BookmarkTitle" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.UserModels.BookmarkTitle" Collapsed="true">
     <Position X="8.75" Y="1.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAQAAgAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Models\UserModels\BookmarkTitle.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataLayer.Models.UserModels.BookmarkTitleTest" Collapsed="true">
+  <Class Name="DataLayer.DomainModels.UserModels.BookmarkTitleTest" Collapsed="true">
     <Position X="3.5" Y="2.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAgAAAAgAAAAAAAAAAAAAAAAQAAAAA=</HashCode>

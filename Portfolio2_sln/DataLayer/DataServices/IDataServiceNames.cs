@@ -1,5 +1,5 @@
 ﻿using DataLayer.DataTransferObjects;
-using DataLayer.Models.NameModels;
+using DataLayer.DomainModels.NameModels;
 using DataLayer.DTOs.NameObjects;
 
 namespace DataLayer.DataServices

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.Models.TitleModels
+namespace DataLayer.DomainModels.TitleModels
 {
     public class TitleAkaType
     {

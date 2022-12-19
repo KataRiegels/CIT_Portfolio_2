@@ -1,6 +1,6 @@
 ﻿using DataLayer.DataTransferObjects;
 using DataLayer.DTOs.TitleObjects;
-using DataLayer.Models.TitleModels;
+using DataLayer.DomainModels.TitleModels;
 
 namespace DataLayer.DataServices
 {

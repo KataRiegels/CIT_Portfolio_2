@@ -6,7 +6,7 @@ using System.Text;
 using WebServer.Models.NameModels;
 using DataLayer.DataServices;
 using Moq;
-using DataLayer.Models.TitleModels;
+using DataLayer.DomainModels.TitleModels;
 using WebServer.Controllers;
 using System.Web.Http;
 using AutoMapper;

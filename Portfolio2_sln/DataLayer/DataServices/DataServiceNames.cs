@@ -1,7 +1,7 @@
 ﻿using DataLayer.DataTransferObjects;
-using DataLayer.Models.NameModels;
-using DataLayer.Models.TitleModels;
-using DataLayer.Models.UserModels;
+using DataLayer.DomainModels.NameModels;
+using DataLayer.DomainModels.TitleModels;
+using DataLayer.DomainModels.UserModels;
 using DataLayer.DataServices;
 using Microsoft.EntityFrameworkCore;
 using System;

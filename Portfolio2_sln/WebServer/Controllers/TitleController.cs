@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using DataLayer;
-using DataLayer.Models;
+using DataLayer.DomainModels;
 using DataLayer.DataServices;
-using DataLayer.Models.TitleModels;
+using DataLayer.DomainModels.TitleModels;
 using WebServer.Models.TitleModels;
 using Microsoft.AspNetCore.Mvc;
 //using WebServer.Models;
 
-using DataLayer.Models.TitleModels;
+using DataLayer.DomainModels.TitleModels;
 using Microsoft.EntityFrameworkCore.Query;
 using WebServer.Models.NameModels;
 using NpgsqlTypes;

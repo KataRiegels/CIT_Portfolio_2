@@ -1,4 +1,4 @@
-﻿using DataLayer.Models.UserModels;
+﻿using DataLayer.DomainModels.UserModels;
 
 namespace WebServer.Models.UserModels
 {

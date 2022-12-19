@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataLayer.Models.TitleModels;
+using DataLayer.DomainModels.TitleModels;
 using WebServer.Models.TitleModels;
 
 namespace WebServer.Models.Profiles
