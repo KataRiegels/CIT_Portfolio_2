@@ -55,7 +55,7 @@ namespace DataLayer.DataServices
                     Nconst = n.Nconst,
                     PrimaryName = n.PrimaryName
                 })
-                .Skip(page * pageSize).Take(pageSize).ToList();
+                .Skip((page - 1 ) * pageSize).Take(pageSize).ToList();
 
             return basicnames;
         }
@@ -114,7 +114,7 @@ namespace DataLayer.DataServices
             using var db = new ImdbContext();
 
             var names = db.NameBasicss.ToList()
-                .Skip(page * pageSize).Take(pageSize)
+                .Skip((page -1 ) * pageSize).Take(pageSize)
                 .GroupJoin(db.NameKnownFors,
                        basics => basics.Nconst,
                        knownFor => knownFor.Nconst,
@@ -176,13 +176,88 @@ namespace DataLayer.DataServices
                                     GetBasicTitle(knownFor.FirstOrDefault().Tconst) : null
                        }
                     )
-                .Skip(page * pageSize).Take(pageSize)
+                .Skip((page - 1) * pageSize).Take(pageSize)
                 .ToList();
 
             return searchedTitleResults;
         }
 
 
+        public (int, IList<TitleCrewDTO>) GetRelatedTitles(string nconst, int page, int pageSize)
+        {
+            using var db = new ImdbContext();
+
+            var cast1 = db.TitlePrincipals
+                .Where(c => c.Nconst.Equals(nconst))
+                .Join(db.NameBasicss,
+                     crew => crew.Nconst,
+                     nameBasics => nameBasics.Nconst,
+                     (crew, nameBasics)
+                     => new
+                     {
+                         Tconst = crew.Tconst,
+                         Nconst = nameBasics.Nconst,
+                         PrimaryName = nameBasics.PrimaryName,
+                         Category = crew.Category
+                     }
+             );
+
+
+            var cast = cast1
+                .GroupJoin(db.Jobs,
+                     crew => new { crew.Nconst, crew.Tconst },
+                     job => new { job.Nconst, job.Tconst },
+                     (crew, job)
+                     => new { Outer = crew, Inner = job })
+                .SelectMany(
+                x => x.Inner.DefaultIfEmpty(),
+                (crew, job)
+                             => new
+                             {
+                                 Tconst = crew.Outer.Tconst,
+                                 PrimaryName = crew.Outer.PrimaryName,
+                                 Category = crew.Outer.Category,
+                                 JobName = job.JobName,
+                                 Nconst = nconst,
+                             }
+             ).ToList();
+
+            var cast2 = cast
+                .GroupJoin(db.Characters,
+                     crew => new { crew.Nconst, crew.Tconst },
+                     chars => new { chars.Nconst, chars.Tconst },
+                     (crew, chars)
+                     => new { Outer = crew, Inner = chars })
+                .SelectMany(
+                x => x.Inner.DefaultIfEmpty(),
+                (crew, chars)
+                             => new
+                             TitleCrewDTO
+                             {
+                                 Tconst = crew.Outer.Tconst,
+                                 Nconst = nconst,
+                                 PrimaryName = crew.Outer.PrimaryName,
+                                 Category = crew.Outer.Category,
+                                 JobName = crew.Outer.JobName,
+                                 CharacterName = chars.CharacterName
+                             }
+
+             ).ToList()
+            ;
+
+
+            var totalItems = cast.Count();
+            Console.WriteLine("data layer total " + cast2.Count());
+            var result = cast2
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            return (cast.Count(), result);
+            //return (cast.Count(), null);
+        }
+
+
+        /*
+         
         public IList<NameTitleRelationDTO> GetNameTitleRelations(string nconst)
         {
             using var db = new ImdbContext();
@@ -232,6 +307,7 @@ namespace DataLayer.DataServices
         }
 
 
+         */
 
 
 
@@ -332,7 +408,7 @@ namespace DataLayer.DataServices
                     ////Tconst = obj.Tconst,
                     //genre = model.Select(m => m.genre).Distinct().ToList()
                 }
-                ).Skip(page * pageSize).Take(pageSize).ToList();
+                ).Skip((page - 1) * pageSize).Take(pageSize).ToList();
             return names;
         }
 

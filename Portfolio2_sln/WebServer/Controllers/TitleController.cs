@@ -37,7 +37,7 @@ namespace WebServer.Controllers
 
         //[HttpGet(Name = nameof(GetTitles))]
         //[BasicAuthentication]
-        public IActionResult GetTitles(int page = 0, int pageSize = 20)
+        public IActionResult GetTitles(int page = 1, int pageSize = 20)
         {
             IEnumerable<BasicTitleModel> titles =
                 _dataService.GetBasicTitles(page, pageSize).Select(x => CreateBasicTitleModel(x));
@@ -69,7 +69,7 @@ namespace WebServer.Controllers
 
 
         [HttpGet("list", Name = nameof(GetListTitles))]
-        public IActionResult GetListTitles(int page = 0, int pageSize = 20)
+        public IActionResult GetListTitles(int page = 1, int pageSize = 20)
         {
             var titles =
                 _dataService.GetListTitles(page, pageSize)
@@ -102,7 +102,7 @@ namespace WebServer.Controllers
 
 
         [HttpGet("detailed")]
-        public IActionResult GetDetailedTitles(int page = 0, int pageSize = 2)
+        public IActionResult GetDetailedTitles(int page = 1, int pageSize = 2)
         {
 
             var titles =
@@ -159,7 +159,7 @@ namespace WebServer.Controllers
 
         // Technically missing the self-reference
         [HttpGet("{tconst}/crew", Name = nameof(GetTitleCrew))]
-        public IActionResult GetTitleCrew(string tconst, int page = 0, int pageSize = 50)
+        public IActionResult GetTitleCrew(string tconst, int page = 1, int pageSize = 50)
         {
 
             var (totalItems, crewDTO) = _dataService 
@@ -187,7 +187,7 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("{tconst}/episodes", Name = nameof(GetTitleSeasonEpisodes))]
-        public IActionResult GetTitleSeasonEpisodes(string tconst, int seasonNumber, int page = 0, int pageSize = 100)
+        public IActionResult GetTitleSeasonEpisodes(string tconst, int seasonNumber, int page = 1, int pageSize = 100)
         {
 
             var (total, episodesDTO) =
@@ -200,12 +200,10 @@ namespace WebServer.Controllers
 
             if (episodes == null)
             {
-                Console.WriteLine("episodes were null");
                 return NotFound();
             }
 
             var paging = PagingEpisodes(page, pageSize, total, episodes, nameof(GetTitleSeasonEpisodes), tconst, seasonNumber.ToString());
-            Console.WriteLine("seasonNumber " + seasonNumber);
 
 
 
@@ -349,21 +347,21 @@ namespace WebServer.Controllers
 
 
             var firstPageUrl = totalItems > 0
-                ? CreateLinkList(0, pageSize, method, seasonNumber)
+                ? CreateLinkList(1, pageSize, method, seasonNumber)
                 : null;
 
 
-            var prevPageUrl = page > 0 && totalItems > 0
+            var prevPageUrl = page > 1 && totalItems > 0
                 ? CreateLinkList(page - 1, pageSize, method, seasonNumber)
                 : null;
 
             var lastPageUrl = totalItems > 0
-            ? CreateLinkList(totalPages - 1, pageSize, method, seasonNumber)
+            ? CreateLinkList(totalPages , pageSize, method, seasonNumber)
             : null;
 
             var currentPageUrl = CreateLinkList(page, pageSize, method, seasonNumber);
 
-            var nextPageUrl = page < totalPages - 1 && totalItems > 0
+            var nextPageUrl = page < totalPages  && totalItems > 0
                 ? CreateLinkList(page + 1, pageSize, method, seasonNumber)
                 : null;
 
@@ -403,21 +401,21 @@ namespace WebServer.Controllers
 
 
             var firstPageUrl = totalItems > 0
-                ? CreateLinkEpisodes(parentTconst, 0, pageSize, method, seasonNumber)
+                ? CreateLinkEpisodes(parentTconst, 1, pageSize, method, seasonNumber)
                 : null;
 
 
-            var prevPageUrl = page > 0 && totalItems > 0
+            var prevPageUrl = page > 1 && totalItems > 0
                 ? CreateLinkEpisodes(parentTconst, page - 1, pageSize, method, seasonNumber)
                 : null;
 
             var lastPageUrl = totalItems > 0
-            ? CreateLinkEpisodes(parentTconst, totalPages - 1, pageSize, method, seasonNumber)
+            ? CreateLinkEpisodes(parentTconst, totalPages , pageSize, method, seasonNumber)
             : null;
 
             var currentPageUrl = CreateLinkEpisodes(parentTconst, page, pageSize, method, seasonNumber);
 
-            var nextPageUrl = page < totalPages - 1 && totalItems > 0
+            var nextPageUrl = page < totalPages && totalItems > 0
                 ? CreateLinkEpisodes(parentTconst, page + 1, pageSize, method, seasonNumber)
                 : null;
 
@@ -445,7 +443,7 @@ namespace WebServer.Controllers
 
 
         [HttpGet("basics", Name = nameof(GetBasicTitles))]
-        public IActionResult GetBasicTitles(int page = 0, int pageSize = 20)
+        public IActionResult GetBasicTitles(int page = 1, int pageSize = 20)
         {
 
             IEnumerable<BasicTitleModel> titles =

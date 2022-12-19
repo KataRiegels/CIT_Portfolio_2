@@ -21,15 +21,13 @@ namespace WebServer.Controllers
         {
             private IDataServiceSearches _dataService;
             private readonly LinkGenerator _generator;
-            private readonly IMapper _mapper;
             private const int MaxPageSize = 25;
 
 
-        public SearchController(IDataServiceSearches dataService, LinkGenerator generator, IMapper mapper)
+        public SearchController(IDataServiceSearches dataService, LinkGenerator generator)
             {
                 _dataService = dataService;
                 _generator = generator;
-                _mapper = mapper;
 
 
             }
@@ -87,7 +85,7 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("names",Name = nameof(GetSearchResultNames))]
-        public IActionResult GetSearchResultNames(string searchContent, int page = 0, int pageSize = 10)
+        public IActionResult GetSearchResultNames(string searchContent, int page = 1, int pageSize = 10)
         {
 
 
@@ -182,10 +180,10 @@ namespace WebServer.Controllers
                 ;
 
             var firstPageUrl = totalItems > 0
-                ? CreateLink(0, pageSize, method, searchContent)
+                ? CreateLink(1, pageSize, method, searchContent)
                 : null;
 
-            var prevPageUrl = page > 0 && totalItems > 0
+            var prevPageUrl = page > 1 && totalItems > 0
                 ? CreateLink(page - 1, pageSize, method, searchContent)
                 : null;
 
@@ -195,7 +193,7 @@ namespace WebServer.Controllers
 
             var currentPageUrl = CreateLink(page, pageSize, method, searchContent);
 
-            var nextPageUrl = page < totalPages - 1 && totalItems > 0
+            var nextPageUrl = page < totalPages && totalItems > 0
                 ? CreateLink(page + 1, pageSize, method, searchContent)
                 : null;
 

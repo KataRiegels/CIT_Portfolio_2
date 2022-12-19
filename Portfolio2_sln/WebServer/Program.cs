@@ -25,7 +25,12 @@ builder.Services.AddAuthorization(options =>
 
 });
 
+
+
 var app = builder.Build();
+app.UseCors(
+    options => options.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()
+);
 app.UseAuthorization();
 
 app.MapControllers();

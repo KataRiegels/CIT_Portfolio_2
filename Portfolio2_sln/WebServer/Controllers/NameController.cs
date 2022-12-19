@@ -31,6 +31,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using System.Security.Cryptography.X509Certificates;
 using DataLayer.DTOs.NameObjects;
 using System.Xml.Schema;
+using DataLayer.DTOs.TitleObjects;
 
 namespace WebServer.Controllers
 {
@@ -73,12 +74,17 @@ namespace WebServer.Controllers
         }
 
         [HttpGet("{nconst}/contributing", Name = nameof(GetTitleRelations))]
-        public IActionResult GetTitleRelations(string nconst)
+        public IActionResult GetTitleRelations(string nconst, int page = 1, int pageSize = 20)
         {
 
-            var relations = _dataService
-                .GetNameTitleRelations(nconst)
-                .Select(x => MapNameTitleRelation(x))
+            var (totalItems, relations) = _dataService
+                .GetRelatedTitles(nconst, page, pageSize);
+
+            //Console.WriteLine(relations.First().Nconst);
+            Console.WriteLine(relations.Count());
+
+            var result = relations
+                .Select(x => MapToCrewModel(x))
 
                 ;
 
@@ -87,10 +93,19 @@ namespace WebServer.Controllers
                 return NotFound();
             }
 
-            return Ok(relations);
+            var paging = Paging(page, pageSize, totalItems, result, nameof(GetTitleRelations), nconst);
+
+            return Ok(paging);
         }
 
-        
+        private CrewModel MapToCrewModel(TitleCrewDTO crewDTO)
+        {
+            var model = new CrewModel().ConvertFromDTO(crewDTO);
+            Console.WriteLine(crewDTO.Nconst);
+            model.BasicName.Url = CreateNameUrl(crewDTO.Nconst);
+            return model;
+        }
+
         private NameTitleRelationModel MapNameTitleRelation(NameTitleRelationDTO nameTitleDTO)
         {
             var model = new NameTitleRelationModel().ConvertFromDTO(nameTitleDTO);
@@ -105,7 +120,7 @@ namespace WebServer.Controllers
 
 
         [HttpGet("list", Name = nameof(GetListNames))]
-        public IActionResult GetListNames(int page = 0, int pageSize = 20)
+        public IActionResult GetListNames(int page = 1, int pageSize = 20)
         {
 
             var names =
@@ -233,19 +248,19 @@ namespace WebServer.Controllers
             return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
         }
 
-        private string? CreateLinkList(int page, int pageSize, string method)
+        private string? CreateLinkList(int page, int pageSize, string method, string nconst="")
         {
             var uri = _generator.GetUriByName(
                 HttpContext,
                 method,
-                new { page, pageSize });
+                new { nconst, page, pageSize });
             return uri;
         }
 
 
 
 
-        private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method)
+        private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method, string nconst="")
         {
             pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
 
@@ -253,21 +268,21 @@ namespace WebServer.Controllers
                 ;
 
             var firstPageUrl = totalItems > 0
-                ? CreateLinkList(0, pageSize, method)
+                ? CreateLinkList(1, pageSize, method, nconst)
                 : null;
 
-            var prevPageUrl = page > 0 && totalItems > 0
-                ? CreateLinkList(page - 1, pageSize, method)
+            var prevPageUrl = page > 1 && totalItems > 0
+                ? CreateLinkList(page - 1, pageSize, method, nconst)
                 : null;
 
             var lastPageUrl = totalItems > 0
-                ? CreateLinkList(totalPages, pageSize, method)
+                ? CreateLinkList(totalPages, pageSize, method, nconst)
                 : null;
 
-            var currentPageUrl = CreateLinkList(page, pageSize, method);
+            var currentPageUrl = CreateLinkList(page, pageSize, method, nconst);
 
-            var nextPageUrl = page < totalPages - 1 && totalItems > 0
-                ? CreateLinkList(page + 1, pageSize, method)
+            var nextPageUrl = page < totalPages  && totalItems > 0
+                ? CreateLinkList(page + 1, pageSize, method, nconst)
                 : null;
 
             var result = new
