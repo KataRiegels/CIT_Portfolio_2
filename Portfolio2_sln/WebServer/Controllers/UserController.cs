@@ -8,6 +8,8 @@ using DataLayer.Models.TitleModels;
 using DataLayer.Models.UserModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using WebServer.Authentication;
@@ -28,17 +30,12 @@ namespace WebServer.Controllers
         //private IDataServiceUser _dataServiceUser;
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
-
+        int MaxPageSize = 50;
         public UserController(IDataServiceUser dataService, LinkGenerator generator, IMapper mapper)
         {
             _dataService = dataService;
             _generator = generator;
             _mapper = mapper;
-
-
-            //_titleController = new TitleController(_dataService, _generator, _mapper);
-            //_titleController.ControllerContext = ControllerContext;
-            //_titleController.HttpContext = HttpContext;
         }
 
 
@@ -68,17 +65,20 @@ namespace WebServer.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateUser(UserCreateModel newUser)
+        public IActionResult CreateUser([FromBody] UserCreateModel newUser)
         {
             //var dsUser = new DataServiceUser();
-            var user = _mapper.Map<User>(newUser);
-            _dataService.CreateUser(user.Username, user.Password, user.Email);
+            //var user = _mapper.Map<User>(newUser);
+            var user = _dataService.CreateUser(newUser.Username, newUser.Password, newUser.Email);
             return CreatedAtRoute(null, CreateUserModel(user));
         }
 
         [HttpDelete("{username}")]
-        public IActionResult DeleteUser(string username)
+        [BasicAuthentication]
+        public IActionResult DeleteUser()
         {
+
+            var username = GetUsernameFromAuthorization();
             var deleted = _dataService.DeleteUser(username);
             if (!deleted)
             {
@@ -132,20 +132,24 @@ namespace WebServer.Controllers
 
 
         // Get list of titles that active user has bookmarked
-        [HttpGet("user/titlebookmarks")]
+        [HttpGet("user/titlebookmarks", Name = nameof(GetBookmarksTitleByUser))]
         [BasicAuthentication]
-        public IActionResult GetBookmarksTitleByUser()
+        public IActionResult GetBookmarksTitleByUser(int page = 1, int pageSize = 10)
         {
 
             var username = GetUsernameFromAuthorization();
 
-            var bookmarks = _dataService.GetBookmarkTitlesByUser(username)
+            var (totalItems, bookmarks) = _dataService.GetBookmarkTitlesByUser(username, page, pageSize);
+
+            var result = bookmarks
                 .Select(x => MapTitleList(x));
 
             if (bookmarks == null)
                 return NotFound();
 
-            return Ok(bookmarks);
+            var paging = Paging(page, pageSize, totalItems, result, nameof(GetBookmarksTitleByUser));
+
+            return Ok(paging);
         }
 
         // Create bookmark 
@@ -226,17 +230,26 @@ namespace WebServer.Controllers
         // Get list of people bookmarked by current user
         [HttpGet("user/namebookmarks", Name = nameof(GetBookmarksNameByUser))]
         [BasicAuthentication]
-        public IActionResult GetBookmarksNameByUser()
+        public IActionResult GetBookmarksNameByUser(int page = 1, int pageSize = 20)
         {
             var username = GetUsernameFromAuthorization();
 
-            var bookmark = _dataService.GetBookmarkNamesByUser(username)
+            var (totalItems, bookmark) = _dataService.GetBookmarkNamesByUser(username, page, pageSize);
+                
+            var result = bookmark    
                 .Select(x => MapNameList(x));
+
+
+
 
             if (bookmark == null)
                 return NotFound();
 
-            return Ok(bookmark);
+            var paging = Paging(page, pageSize, totalItems, result, nameof(GetBookmarksNameByUser));
+
+
+
+            return Ok(paging);
         }
 
 
@@ -252,6 +265,9 @@ namespace WebServer.Controllers
             // Client recieves create bookmark. If no bookmark was created, well receive null
             return CreatedAtRoute(null, createdBookmark);
         }
+
+       
+
 
         // Delete bookmark
         [HttpDelete("user/namebookmarks/{nconst}")]
@@ -279,10 +295,26 @@ namespace WebServer.Controllers
 
 
         /*
-         
+         ----------------------------------------
          -------- USER RATING --------------------
+         ----------------------------------------
          
          */
+
+        [HttpGet("user/ratings/{tconst}", Name = nameof(GetUserRating))]
+        [BasicAuthentication]
+        public IActionResult GetUserRating(string tconst)
+        {
+            var username = GetUsernameFromAuthorization();
+
+            var ratingDTO = _dataService.GetUserRating(username, tconst);
+            var rating = MapUserRating(ratingDTO);
+
+            if (rating == null)
+                return NotFound();
+
+            return Ok(rating);
+        }
 
 
         [HttpPost("user/ratings")]
@@ -299,16 +331,34 @@ namespace WebServer.Controllers
             return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
         }
 
-        [HttpGet("user/ratings")]
+        [HttpPost("user/ratings/{tconst}")]
+        [BasicAuthentication]
+        public IActionResult UpdateRating(UserRatingCreateModel rating)
+        {
+            var username = GetUsernameFromAuthorization();
+
+            var createdUserRating = _dataService.UpdateUserRating(username, rating.Tconst, rating.Rating);
+
+            // should have a status code in case createdUserRating is null (which would mean rating was not created)
+
+            return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
+        }
+
+
+
+
+        [HttpGet("user/ratings", Name = nameof(GetUserRatings))]
         [BasicAuthentication]
 
-        public IActionResult GetUserRatings()
+        public IActionResult GetUserRatings(int page = 1, int pageSize = 10)
         {
 
             var username = GetUsernameFromAuthorization();
 
-            var rating = _dataService.GetUserRatings(username)
-               .Select(x => MapUserRating(x))
+            var (totalItems, ratingDTO) = _dataService.GetUserRatings(username, page, pageSize);
+               
+            var rating = ratingDTO
+                .Select(x => MapUserRating(x))
                 ;
 
             if (rating == null)
@@ -316,16 +366,19 @@ namespace WebServer.Controllers
                 return NotFound();
             }
 
-            return Ok(rating);
+            var paging = Paging(page, pageSize, totalItems, rating, nameof(GetUserRatings));
+
+            return Ok(paging);
 
         }
 
 
-        private UserRatingModel MapUserRating(UserRatingDTO rating)
-
+        public UserRatingModel MapUserRating(UserRatingDTO rating)
         {
             var model = new UserRatingModel().ConvertFromDTO(rating);
             model.TitleModel.Url = CreateTitleUrl(rating.TitleModel.Tconst);
+            model.Url = _generator.GetUriByName(HttpContext, nameof(GetUserRating), new { rating.TitleModel.Tconst });
+            //CreateTitleUrl(rating.ParentTitle.Tconst);
 
             return model;
         }
@@ -358,21 +411,16 @@ namespace WebServer.Controllers
         {
             var username = GetUsernameFromAuthorization();
 
-            //var title = _dataService.GetTitle(tconst);
             var userSearch = _dataService.GetUserSearch(searchId);
 
             if (userSearch.Username != username)
-            {
                 return StatusCode(401);
 
-            }
 
             var result = MapUserSearch(userSearch); 
              
             if (userSearch == null)
-            {
                 return NotFound();
-            }
 
             return Ok(result);
         }
@@ -390,15 +438,17 @@ namespace WebServer.Controllers
             return CreatedAtRoute(null, results);
         }
 
-        [HttpGet("user/searches")]
+        [HttpGet("user/searches", Name = nameof(GetUserSearches))]
         [BasicAuthentication]
 
-        public IActionResult GetUserSearches()
+        public IActionResult GetUserSearches(int page = 1, int pageSize = 10)
         {
             var username = GetUsernameFromAuthorization();
 
-            var searches = _dataService.GetUserSearches(username)
-               .Select(x => MapUserSearch(x))
+            var (totalItems, searches) = _dataService.GetUserSearches(username, page, pageSize);
+               
+            var returnSearches     = 
+                searches.Select(x => MapUserSearch(x))
                 ;
 
             if (searches == null)
@@ -406,7 +456,9 @@ namespace WebServer.Controllers
                 return NotFound();
             }
 
-            return Ok(searches);
+            var paging = Paging(page, pageSize, totalItems, searches, nameof(GetUserSearches), "", "");
+
+            return Ok(paging);
 
         }
 
@@ -501,6 +553,9 @@ namespace WebServer.Controllers
             return model;
         }
 
+
+        
+
         // Map tite list form DTO to WebServer model, including adding URL's
         public TitleForListModel MapTitleSearchResults(TitleForListDTO titleBasics)
         {
@@ -549,6 +604,59 @@ namespace WebServer.Controllers
 
             return authUsername;
         }
+
+        private string? CreateLinkList(int page, int pageSize, string method, string tconst = "", string nconst = "",  string searchId = "")
+        {
+
+            var uri = _generator.GetUriByName(
+                HttpContext,
+                method,
+                new { page, pageSize, tconst, nconst, searchId });
+            return uri;
+        }
+
+
+
+
+        private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method, string tconst = "", string nconst = "", string searchId = "")
+        {
+            pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
+
+            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize)
+                ;
+            var firstPageUrl = totalItems > 0
+            ? CreateLinkList(1, pageSize, method, tconst, nconst, searchId)
+            : null;
+
+
+            var prevPageUrl = page > 1 && totalItems > 0
+                ? CreateLinkList(page - 1, pageSize, method, tconst, nconst, searchId)
+                : null;
+
+            var lastPageUrl = totalItems > 0
+            ? CreateLinkList(totalPages , pageSize, method, tconst, nconst, searchId)
+            : null;
+
+            var currentPageUrl = CreateLinkList(page, pageSize, method, tconst, nconst, searchId);
+
+            var nextPageUrl = page < totalPages  && totalItems > 0
+                ? CreateLinkList(page + 1, pageSize, method, tconst, nconst, searchId)
+                : null;
+
+            var result = new
+            {
+                firstPageUrl,
+                prevPageUrl,
+                nextPageUrl,
+                lastPageUrl,
+                currentPageUrl,
+                totalItems,
+                totalPages,
+                items
+            };
+            return result;
+        }
+
 
         /*
          

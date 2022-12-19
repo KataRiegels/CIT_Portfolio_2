@@ -162,7 +162,7 @@ namespace WebServer.Controllers
         public IActionResult GetTitleCrew(string tconst, int page = 0, int pageSize = 50)
         {
 
-            var (totalItems, crewDTO) = _dataService
+            var (totalItems, crewDTO) = _dataService 
                 .GetTitleCrew(tconst, page, pageSize)
                 ;
             var crew = crewDTO.Select(x => MapToCrewModel(x));
@@ -329,13 +329,11 @@ namespace WebServer.Controllers
 
         private string? CreateLinkList(int page, int pageSize, string method, string seasonNumber = "")
         {
-            Console.WriteLine("values " + (new { page, pageSize, seasonNumber }).ToString());
 
             var uri = _generator.GetUriByName(
                 HttpContext,
                 method,
-                new {  page, pageSize, seasonNumber});
-                //new {  page, pageSize });
+                new { page, pageSize, seasonNumber });
             return uri;
         }
 
@@ -346,27 +344,24 @@ namespace WebServer.Controllers
         {
             pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
 
-            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize) 
+            var totalPages = (int)Math.Ceiling((double)totalItems / (double)pageSize)
                 ;
-            
+
 
             var firstPageUrl = totalItems > 0
                 ? CreateLinkList(0, pageSize, method, seasonNumber)
                 : null;
-
-            Console.WriteLine("first page " + firstPageUrl);
-            Console.WriteLine("null? " + (totalItems > 0).ToString());
 
 
             var prevPageUrl = page > 0 && totalItems > 0
                 ? CreateLinkList(page - 1, pageSize, method, seasonNumber)
                 : null;
 
-                var lastPageUrl = totalItems > 0
-                ? CreateLinkList(totalPages - 1, pageSize, method, seasonNumber )
-                : null;
+            var lastPageUrl = totalItems > 0
+            ? CreateLinkList(totalPages - 1, pageSize, method, seasonNumber)
+            : null;
 
-            var currentPageUrl = CreateLinkList(page, pageSize, method, seasonNumber );
+            var currentPageUrl = CreateLinkList(page, pageSize, method, seasonNumber);
 
             var nextPageUrl = page < totalPages - 1 && totalItems > 0
                 ? CreateLinkList(page + 1, pageSize, method, seasonNumber)
@@ -410,9 +405,6 @@ namespace WebServer.Controllers
             var firstPageUrl = totalItems > 0
                 ? CreateLinkEpisodes(parentTconst, 0, pageSize, method, seasonNumber)
                 : null;
-
-            Console.WriteLine("first page " + firstPageUrl);
-            Console.WriteLine("null? " + (totalItems > 0).ToString());
 
 
             var prevPageUrl = page > 0 && totalItems > 0

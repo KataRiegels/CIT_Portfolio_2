@@ -39,7 +39,7 @@ namespace DataLayer.DataServices
             return _db.Users.ToList();
         }
 
-        public void CreateUser(string username, string password, string email)
+        public User CreateUser(string username, string password, string email)
         {
             User newUser = new User()
             {
@@ -50,6 +50,8 @@ namespace DataLayer.DataServices
 
             _db.Users.Add(newUser);
             _db.SaveChanges();
+
+            return GetUser(username);
 
         }
 
@@ -153,20 +155,22 @@ namespace DataLayer.DataServices
 
         }
 
-        public IList<TitleForListDTO> GetBookmarkTitlesByUser(string username)
+        public (int, IList<TitleForListDTO>) GetBookmarkTitlesByUser(string username, int page, int pageSize)
         {
             using var db = new ImdbContext();
 
             var bookmarksFilter = db.BookmarkTitles
                 .Where(x => x.Username == username)
                 .ToList();
-
+            var totalItems = bookmarksFilter.Count();
 
             var result = new DataServiceTitles()
                 .GetFilteredTitles(bookmarksFilter
-                    .Select(x => new TconstObject { Tconst = x.Tconst }).ToList());
+                    .Select(x => new TconstObject { Tconst = x.Tconst }).ToList())
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-            return result;
+
+            return (totalItems, result);
         }
 
 
@@ -269,19 +273,20 @@ namespace DataLayer.DataServices
             return createdBookmark;
         }
 
-        public IList<NameForListDTO> GetBookmarkNamesByUser(string username)
+        public (int, IList<NameForListDTO>) GetBookmarkNamesByUser(string username, int page = 1, int pageSize = 20)
         {
             using var db = new ImdbContext();
 
             var bookmarksFilter = db.BookmarkNames
                 .Where(x => x.Username == username)
                 .ToList();
+            var totalItems = bookmarksFilter.Count();
 
             var result = new DataServiceNames()
                 .GetFilteredNames(bookmarksFilter
-                    .Select(x => new NconstObject { Nconst = x.Nconst }).ToList());
-
-            return result;
+                    .Select(x => new NconstObject { Nconst = x.Nconst }).ToList())
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            return (totalItems, result);
         }
 
         public int DeleteBookmarkName(string username, string nconst)
@@ -309,14 +314,53 @@ namespace DataLayer.DataServices
 
 
         
+        /*
+         
+         
+         User rating
+         
+         */
 
 
-        public IList<UserRatingDTO> GetUserRatings(string username)
+        public UserRatingDTO GetUserRating(string username, string tconst)
+        {
+            using var db = new ImdbContext();
+
+            var rating = db.UserRatings
+                .Where(u => u.Username.Equals(username) && u.Tconst.Equals(tconst))
+                .Join(db.TitleBasicss,
+                    rating => rating.Tconst,
+                    title => title.Tconst,
+                    (rating, title)
+                                  => new UserRatingDTO
+                                  {
+                                      Rating = rating.Rating,
+                                      TitleModel = new BasicTitleDTO
+                                      {
+                                          Tconst = title.Tconst,
+                                          StartYear = title.StartYear,
+                                          PrimaryTitle = title.PrimaryTitle,
+                                          TitleType = title.TitleType
+                                      },
+                                      Date = rating.Date
+                                  }
+                )
+                .FirstOrDefault();
+
+            return rating;
+        }
+
+
+        public (int, IList<UserRatingDTO>) GetUserRatings(string username, int page, int pageSize)
         {
             using var db = new ImdbContext();
 
             var ratings = db.UserRatings
-                .Where(u => u.Username.Equals(username))
+                .Where(u => u.Username.Equals(username));
+
+            var totalItems = ratings.Count();
+
+            var result = ratings
                 .Join(db.TitleBasicss,
                     rating => rating.Tconst,
                     title => title.Tconst,
@@ -336,26 +380,51 @@ namespace DataLayer.DataServices
                                   }
 
                 )
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList()
                 .OrderBy(r => r.Date)
                 .ToList();
-            return ratings;
+
+            return (totalItems, result);
 
         }
 
         public bool DeleteUserRating(string username, string tconst)
         {
-            var rating = GetUserRatings(username);
+            using var db = new ImdbContext();
+
+
+            var rating = db.UserRatings.FirstOrDefault(u => u.Username.Equals(username) && u.Tconst.Equals(tconst));
+
             if (rating == null)
-            {
                 return false;
-            }
-            _db.Users.Remove(GetUser(username));
-            _db.SaveChanges();
+
+            db.UserRatings.Remove(rating);
+            db.SaveChanges();
             // check if rating is there
 
             return true;
         }
 
+        // Currently just deletes and creates due to making sure SQL also updates rating rate
+        public UserRating UpdateUserRating(string username, string tconst, int rating)
+        {
+            using var db = new ImdbContext();
+
+            var ratingToUpdate = db.UserRatings.FirstOrDefault(u => u.Username.Equals(username) && u.Tconst.Equals(tconst));
+
+            if (ratingToUpdate == null)
+                return null;
+
+            DeleteUserRating(username, tconst);
+            db.SaveChanges();
+
+            CreateUserRating(username, tconst, rating);
+            db.SaveChanges();
+
+            var newUserRating = db.UserRatings.FirstOrDefault(u => u.Username == username && u.Tconst == tconst);
+
+            return newUserRating; // shouldn't return this - fix
+        }
 
         public UserRating CreateUserRating(string username, string tconst, int rating)
         {
@@ -386,30 +455,31 @@ namespace DataLayer.DataServices
         }
 
 
-        public IList<UserSearch> GetUserSearches(string username)
+        public (int, IList<UserSearch>) GetUserSearches(string username, int page = 0, int pageSize = 10)
         {
 
             using var db = new ImdbContext();
+            var userSearches = db.UserSearches.Where(u => u.Username.Equals(username));
+            var totalItems = userSearches.Count();
+            var result = userSearches
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-            return db.UserSearches.Where(u => u.Username.Equals(username)).ToList();
+
+            return (totalItems, result);
 
 
         }
 
         public UserSearch CreateUserSearch(string username, string searchContent, string searchCategory = null)
         {
-            Console.WriteLine("----------------------DL1");
 
             using var db = new ImdbContext();
             
             var returnedCreatedUserSearch = db.UserSearches.FromSqlInterpolated($"SELECT * FROM save_string_search({username}, {searchContent}, {searchCategory})");
-            Console.WriteLine("----------------------DL2");
             
             var createdSearchId = returnedCreatedUserSearch.FirstOrDefault().SearchId;
-            Console.WriteLine("----------------------DL3");
 
             var createdUserSearch = db.UserSearches.FirstOrDefault(u => u.SearchId == createdSearchId);
-            Console.WriteLine("----------------------DL4");
 
             return createdUserSearch;
 
