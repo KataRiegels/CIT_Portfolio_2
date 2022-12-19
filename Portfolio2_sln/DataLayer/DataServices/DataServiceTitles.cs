@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using System.Xml.Schema;
 
 namespace DataLayer.DataServices
 {
@@ -186,12 +187,12 @@ namespace DataLayer.DataServices
             return cast;
         }
 
-        public IList<TitleCrewDTO> GetTitleCrew(string tconst)
+        public (int, IList<TitleCrewDTO>) GetTitleCrew(string tconst, int page, int pageSize)
         {
             using var db = new ImdbContext();
 
             var cast1 = db.TitlePrincipals
-                .Where(c => c.Tconst.Trim() == tconst.Trim())
+                .Where(c => c.Tconst == tconst)
                 .Join(db.NameBasicss,
                      crew => crew.Nconst,
                      nameBasics => nameBasics.Nconst,
@@ -243,10 +244,12 @@ namespace DataLayer.DataServices
                              }
 
              )
-            .ToList();
+            ;
+            var totalItems = cast.Count();
+            var result = cast
+                .Skip(page * pageSize).Take(pageSize).ToList();
 
-
-            return cast;
+            return (cast.Count(), result);
         }
 
         public TvSeriesEpisodeDTO GetTvSeriesEpisode(string parentTconst, int seasonNumber, int episodeNumber)

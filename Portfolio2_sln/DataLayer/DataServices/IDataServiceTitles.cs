@@ -10,7 +10,7 @@ namespace DataLayer.DataServices
         public TvSeriesEpisodeDTO GetTvSeriesEpisode(string parentTconst, int seasonNumber, int episodeNumber);
         public int GetNumberOfTitles();
         public IList<TitleForListDTO> GetFilteredTitles(List<TconstObject> searchedTitles, int page = 1, int pageSize = 5);
-        public IList<TitleCrewDTO> GetTitleCrew(string tconst);
+        public (int, IList<TitleCrewDTO>) GetTitleCrew(string tconst, int page, int pageSize);
         public IList<TitleCastDTO> GetTitleCast(string tconst);
         BasicTitleDTO GetBasicTitle(string tconst);
         IList<BasicTitleDTO> GetBasicTitles(int page = 0, int pageSize = 20);

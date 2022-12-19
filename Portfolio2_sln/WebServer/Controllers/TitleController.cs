@@ -159,20 +159,18 @@ namespace WebServer.Controllers
 
         // Technically missing the self-reference
         [HttpGet("{tconst}/crew", Name = nameof(GetTitleCrew))]
-        public IActionResult GetTitleCrew(string tconst)
+        public IActionResult GetTitleCrew(string tconst, int page = 0, int pageSize = 50)
         {
 
-            var crew = _dataService
-                .GetTitleCrew(tconst)
-                .Select(x => MapToCrewModel(x))
+            var (totalItems, crewDTO) = _dataService
+                .GetTitleCrew(tconst, page, pageSize)
                 ;
+            var crew = crewDTO.Select(x => MapToCrewModel(x));
 
             if (crew == null)
-            {
                 return NotFound();
-            }
-
-            return Ok(crew);
+            var paging = PagingEpisodes(page, pageSize, totalItems, crew, nameof(GetTitleCrew), tconst);
+            return Ok(paging);
         }
 
         [HttpGet("{tconst}/episodes/{episodeNumber}", Name = nameof(GetTitleSeasonEpisode))]
