@@ -21,7 +21,7 @@ namespace DataLayer.DataServices
 {
     public class DataServiceUser : IDataServiceUser
     {
-        private static ImdbContext _db = new ImdbContext();
+        //private static ImdbContext _db = new ImdbContext();
 
 
 
@@ -31,16 +31,22 @@ namespace DataLayer.DataServices
 
         public User GetUser(string username)
         {
-            return _db.Users.FirstOrDefault(x => x.Username == username);
+            using var db = new ImdbContext();
+
+            return db.Users.FirstOrDefault(x => x.Username == username);
         }
 
         public IList<User> GetUsers()
         {
-            return _db.Users.ToList();
+            using var db = new ImdbContext();
+
+            return db.Users.ToList();
         }
 
         public User CreateUser(string username, string password, string email)
         {
+            using var db = new ImdbContext();
+
             User newUser = new User()
             {
                 Username = username,
@@ -48,8 +54,8 @@ namespace DataLayer.DataServices
                 Email = email
             };
 
-            _db.Users.Add(newUser);
-            _db.SaveChanges();
+            db.Users.Add(newUser);
+            db.SaveChanges();
 
             return GetUser(username);
 
@@ -57,14 +63,16 @@ namespace DataLayer.DataServices
 
         public bool DeleteUser(string username)
         {
+            using var db = new ImdbContext();
+
 
             var product = GetUser(username);
             if (product == null)
             {
                 return false;
             }
-            _db.Users.Remove(GetUser(username));
-            _db.SaveChanges();
+            db.Users.Remove(GetUser(username));
+            db.SaveChanges();
             return true;
         }
 
@@ -490,13 +498,15 @@ namespace DataLayer.DataServices
 
         public int DeleteUserSearch(int searchId)
         {
+            using var db = new ImdbContext();
+
             var userSearchToDelete = GetUserSearch(searchId);
             if (userSearchToDelete == null)
             {
                 return -1;
             }
-            _db.UserSearches.Remove(userSearchToDelete);
-            _db.SaveChanges();
+            db.UserSearches.Remove(userSearchToDelete);
+            db.SaveChanges();
 
             if (GetUserSearch(searchId) != null)
                 return 0;

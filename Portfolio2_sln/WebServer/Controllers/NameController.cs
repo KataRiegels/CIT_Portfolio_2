@@ -103,6 +103,7 @@ namespace WebServer.Controllers
             var model = new CrewModel().ConvertFromDTO(crewDTO);
             Console.WriteLine(crewDTO.Nconst);
             model.BasicName.Url = CreateNameUrl(crewDTO.Nconst);
+            model.BasicTitle.Url = CreateTitleUrl(crewDTO.Tconst);
             return model;
         }
 

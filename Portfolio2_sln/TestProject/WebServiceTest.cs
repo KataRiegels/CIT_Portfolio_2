@@ -40,7 +40,7 @@ namespace TestProject
 
         private const string TitlesApi = "http://localhost:5001/api/titles";
         private const string NamesApi = "http://localhost:5001/api/names";
-
+#if COMMENT
         // Test whether HttpGet {tconst} works and returns correct title
         //[Fact]
         public void ApiTitles_GetWithValidTconst_OkAndTitle()
@@ -230,6 +230,7 @@ namespace TestProject
             var response = client.DeleteAsync(url).Result;
             return response.StatusCode;
         }
+#endif
 
     }
 }

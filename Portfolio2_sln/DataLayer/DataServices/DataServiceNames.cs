@@ -235,6 +235,7 @@ namespace DataLayer.DataServices
                              TitleCrewDTO
                              {
                                  Tconst = crew.Outer.Tconst,
+                                 BasicTitle = new DataServiceTitles().GetBasicTitle(crew.Outer.Tconst),
                                  Nconst = nconst,
                                  PrimaryName = crew.Outer.PrimaryName,
                                  Category = crew.Outer.Category,

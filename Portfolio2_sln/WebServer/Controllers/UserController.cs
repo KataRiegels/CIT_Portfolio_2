@@ -331,8 +331,8 @@ namespace WebServer.Controllers
 
             // should have a status code in case createdUserRating is null (which would mean rating was not created)
 
-            return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
-            //return CreatedAtRoute(null, createdUserRating);
+            //return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
+            return CreatedAtRoute(null, createdUserRating);
         }
 
         [HttpPut("user/ratings/{tconst}")]
@@ -427,7 +427,7 @@ namespace WebServer.Controllers
             //var model = _mapper.Map<UserRatingModel>(rating);
 
             model.TitleModel.Url = _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { rating.TitleModel.Tconst });
-            model.TitleModel.Url = _generator.GetUriByName(HttpContext, nameof(GetUserRating), new { rating.TitleModel.Tconst });
+            model.Url = _generator.GetUriByName(HttpContext, nameof(GetUserRating), new { rating.TitleModel.Tconst });
 
             return model;
         }

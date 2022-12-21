@@ -7,6 +7,8 @@ namespace WebServer.Models.TitleModels
     {
         public string Tconst { get; set; }
         public BasicNameModel BasicName { get; set; }
+        public BasicTitleModel BasicTitle { get; set; }
+
         public string Category { get; set; }
         public string CharacterName { get; set; }
         public string JobName { get; set; }
@@ -17,6 +19,7 @@ namespace WebServer.Models.TitleModels
             {
                 Tconst = inputModel.Tconst,
                 Category = inputModel.Category,
+                BasicTitle = new BasicTitleModel().ConvertBasicTitleModel(inputModel.BasicTitle),
                 BasicName = new BasicNameModel { PrimaryName = inputModel.PrimaryName },
                 JobName = inputModel.JobName,
                 CharacterName = inputModel.CharacterName
