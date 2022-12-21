@@ -327,7 +327,10 @@ namespace WebServer.Controllers
 
             var createdUserRating = _dataService.CreateUserRating(username, rating.Tconst, rating.Rating);
 
-
+            if (createdUserRating == null)
+            {
+                return NotFound();
+            }
 
             // should have a status code in case createdUserRating is null (which would mean rating was not created)
 

@@ -2,7 +2,7 @@
 {
     public class UserRatingCreateModel
     {
-        public string Tconst { get; set; }
+        public string? Tconst { get; set; }
         public int Rating { get; set; }
     }
 }

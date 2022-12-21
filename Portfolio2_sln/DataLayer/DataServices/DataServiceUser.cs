@@ -433,7 +433,7 @@ namespace DataLayer.DataServices
 
             var newUserRating = GetUserRating(username , tconst);
 
-            return newUserRating; // shouldn't return this - fix
+            return newUserRating; 
         }
 
         public UserRatingDTO CreateUserRating(string username, string tconst, int rating)
@@ -446,7 +446,7 @@ namespace DataLayer.DataServices
             var newUserRating = GetUserRating(username, tconst);
 
 
-            return newUserRating; // shouldn't return this - fix
+            return newUserRating; 
         }
 
 
