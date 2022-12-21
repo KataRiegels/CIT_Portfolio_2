@@ -273,7 +273,7 @@ namespace WebServer.Controllers
 
             var prevPageUrl = page > 1 && totalItems > 0
                 ? CreateLinkList(page - 1, pageSize, method, nconst)
-                : null;
+                : CreateLinkList(totalPages, pageSize, method, nconst);
 
             var lastPageUrl = totalItems > 0
                 ? CreateLinkList(totalPages, pageSize, method, nconst)
@@ -283,7 +283,7 @@ namespace WebServer.Controllers
 
             var nextPageUrl = page < totalPages  && totalItems > 0
                 ? CreateLinkList(page + 1, pageSize, method, nconst)
-                : null;
+                : CreateLinkList(1, pageSize, method, nconst);
 
             var result = new
             {

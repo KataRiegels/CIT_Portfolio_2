@@ -33,7 +33,8 @@ namespace TestProject
     {
 
         private const string UserApi = "http://localhost:5001/api/users";
-#if COMMENT
+        private const string TitlesApi = "http://localhost:5001/api/titles";
+
 
         [Fact]
         public void ApiUser_GetRatings_WithAuthorizedUser()
@@ -79,9 +80,9 @@ namespace TestProject
             Assert.Equal(HttpStatusCode.OK, statusCode);
 
         }
+#if COMMENT
 #endif
 
-        /*
          
            [Fact]
         public void ApiUser_DeleteRating_WithAuthorizedUser()
@@ -125,7 +126,6 @@ namespace TestProject
            //Assert.Equal(HttpStatusCode.OK, statusCode);
 
        }
-         */
 
 
 
@@ -144,7 +144,7 @@ namespace TestProject
             var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
 
             Assert.Equal(HttpStatusCode.Created, statusCodePost);
-            Assert.Equal("tt11800658", createdRating["tconst"]);
+            Assert.Equal($"{TitlesApi}/tt11800658", createdRating["titleModel"]["url"]);
             Assert.Equal(4, createdRating["rating"]);
 
             //var (rating, statusCodeGet) = GetObject($"{TitlesApi}/user/ratings/tt11800658", username + ":" + password);
@@ -155,9 +155,9 @@ namespace TestProject
 
 
 
-            var (rating, statusCodeGet) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
+            //var (rating, statusCodeGet) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
 
-            Assert.Equal(HttpStatusCode.NotFound, statusCodeGet);
+            //Assert.Equal(HttpStatusCode.NotFound, statusCodeGet);
 
             /*
              
@@ -208,47 +208,62 @@ namespace TestProject
         }
 
 
-
-
-            /*
-
-
-        [Fact]
-        public void ApiUser_UpdateRating_WithAuthorizedUser()
+        HttpStatusCode PutData(string url, object content, string basicAuth)
         {
-            var username = "testUser";
-            var password = "p4ssW0rd";
+            var client = new HttpClient();
 
+            var byteArray = Encoding.ASCII.GetBytes(basicAuth);
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-
-            var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
-
-            Assert.Equal(4, createdRating["rating"]);
-
-            var statusCodePut = PutData($"{UserApi}/user/ratings/tt11800658", new { rating = "1" },  username + ":" + password);
-            
-            //var (createdRating, statusCodePost) = PostData($"{TitlesApi}/user/ratings/tt11800658", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
-
-            Assert.Equal(HttpStatusCode.Created, statusCodePost);
-
-            var (ratingUpdated, statusCodeGetUpdated) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-
-            Assert.Equal(4, ratingUpdated["rating"]);
-
-
-            //var (rating, statusCodeGet) = GetObject($"{TitlesApi}/user/ratings/tt11800658", username + ":" + password);
-
-            //Assert.Equal("/api/users/user/ratings/tt11800658", rating["url"]);
-            //Assert.Equal("/api/users/user/ratings/tt11800658", rating["titleModel"]["tconst"]);
-            //Assert.Equal("4", rating["rating"]);
-
-            // Should technically also check whether the title's ratings changed
-
-            var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-
-
+            var response = client.PutAsync(
+                url,
+                new StringContent(
+                    JsonConvert.SerializeObject(content),
+                    Encoding.UTF8,
+                    "application/json")).Result;
+            return response.StatusCode;
         }
-             */
+
+
+
+
+
+       [Fact]
+       public void ApiUser_UpdateRating_WithAuthorizedUser()
+       {
+           var username = "testUser";
+           var password = "p4ssW0rd";
+
+
+
+           var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
+
+           Assert.Equal(4, createdRating["rating"]);
+
+           var statusCodePut = PutData($"{UserApi}/user/ratings/tt11800658", new { rating = 1 },  username + ":" + password);
+
+           //var (createdRating, statusCodePost) = PostData($"{TitlesApi}/user/ratings/tt11800658", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
+
+           //Assert.Equal(HttpStatusCode.Created, statusCodePost);
+
+           var (ratingUpdated, statusCodeGetUpdated) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
+
+           Assert.Equal(4, ratingUpdated["rating"]);
+
+
+           //var (rating, statusCodeGet) = GetObject($"{TitlesApi}/user/ratings/tt11800658", username + ":" + password);
+
+           //Assert.Equal("/api/users/user/ratings/tt11800658", rating["url"]);
+           //Assert.Equal("/api/users/user/ratings/tt11800658", rating["titleModel"]["tconst"]);
+           //Assert.Equal("4", rating["rating"]);
+
+           // Should technically also check whether the title's ratings changed
+
+           var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
+
+
+       }
 
 
 
@@ -271,22 +286,7 @@ namespace TestProject
         }
 
 
-        HttpStatusCode PutData(string url, object content, string basicAuth)
-        {
-            var client = new HttpClient();
-
-            var byteArray = Encoding.ASCII.GetBytes(basicAuth);
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-            var response = client.PutAsync(
-                url,
-                new StringContent(
-                    JsonConvert.SerializeObject(content),
-                    Encoding.UTF8,
-                    "application/json")).Result;
-            return response.StatusCode;
-        }
+       
 
         HttpStatusCode DeleteData(string url, string basicAuth)
         {

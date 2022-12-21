@@ -185,7 +185,7 @@ namespace WebServer.Controllers
 
             var prevPageUrl = page > 1 && totalItems > 0
                 ? CreateLink(page - 1, pageSize, method, searchContent)
-                : null;
+                : CreateLink(totalPages, pageSize, method, searchContent);
 
             var lastPageUrl = totalItems > 0
                 ? CreateLink(totalPages, pageSize, method, searchContent)
@@ -195,7 +195,7 @@ namespace WebServer.Controllers
 
             var nextPageUrl = page < totalPages && totalItems > 0
                 ? CreateLink(page + 1, pageSize, method, searchContent)
-                : null;
+                : CreateLink(1, pageSize, method, searchContent);
 
             var result = new
             {

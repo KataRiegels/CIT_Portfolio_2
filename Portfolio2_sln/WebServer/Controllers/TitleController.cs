@@ -353,7 +353,7 @@ namespace WebServer.Controllers
 
             var prevPageUrl = page > 1 && totalItems > 0
                 ? CreateLinkList(page - 1, pageSize, method, seasonNumber)
-                : null;
+                : CreateLinkList(totalPages, pageSize, method, seasonNumber);
 
             var lastPageUrl = totalItems > 0
             ? CreateLinkList(totalPages , pageSize, method, seasonNumber)
@@ -363,7 +363,7 @@ namespace WebServer.Controllers
 
             var nextPageUrl = page < totalPages  && totalItems > 0
                 ? CreateLinkList(page + 1, pageSize, method, seasonNumber)
-                : null;
+                : CreateLinkList(1, pageSize, method, seasonNumber);
 
             var result = new
             {
@@ -408,7 +408,7 @@ namespace WebServer.Controllers
 
             var prevPageUrl = page > 1 && totalItems > 0
                 ? CreateLinkEpisodes(parentTconst, page - 1, pageSize, method, seasonNumber)
-                : null;
+                : CreateLinkEpisodes(parentTconst, totalPages, pageSize, method, seasonNumber);
 
             var lastPageUrl = totalItems > 0
             ? CreateLinkEpisodes(parentTconst, totalPages , pageSize, method, seasonNumber)
@@ -418,7 +418,7 @@ namespace WebServer.Controllers
 
             var nextPageUrl = page < totalPages && totalItems > 0
                 ? CreateLinkEpisodes(parentTconst, page + 1, pageSize, method, seasonNumber)
-                : null;
+                : CreateLinkEpisodes(parentTconst, 1, pageSize, method, seasonNumber);
 
             var result = new
             {

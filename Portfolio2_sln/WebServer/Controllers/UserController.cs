@@ -321,7 +321,7 @@ namespace WebServer.Controllers
         [HttpPost("user/ratings")]
         [BasicAuthentication]
 
-        public IActionResult CreateRating(UserRatingCreateModel rating)
+        public IActionResult CreateRating([FromBody] UserRatingCreateModel rating)
         {
             var username = GetUsernameFromAuthorization();
 
@@ -331,18 +331,18 @@ namespace WebServer.Controllers
 
             // should have a status code in case createdUserRating is null (which would mean rating was not created)
 
-            //return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
-            return CreatedAtRoute(null, createdUserRating);
+            return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
+            //return CreatedAtRoute(null, createdUserRating);
         }
 
         [HttpPut("user/ratings/{tconst}")]
         [BasicAuthentication]
 
-        public IActionResult UpdateRating(string tconst, int rating)
+        public IActionResult UpdateRating(string tconst, [FromBody] UserRatingCreateModel rating)
         {
             var username = GetUsernameFromAuthorization();
 
-            var createdUserRating = _dataService.UpdateUserRating(username, tconst, rating);
+            var createdUserRating = _dataService.UpdateUserRating(username, tconst, rating.Rating);
 
 
 
@@ -691,17 +691,22 @@ namespace WebServer.Controllers
 
             var prevPageUrl = page > 1 && totalItems > 0
                 ? CreateLinkList(page - 1, pageSize, method, tconst, nconst, searchId)
-                : null;
+                : CreateLinkList(page, pageSize, method, tconst, nconst, searchId) ;
+
+            //var prevPageUrl = page > 1 && totalItems > 0
+            //    ? CreateLinkList(page - 1, pageSize, method, tconst, nconst, searchId)
+            //    : null;
+
 
             var lastPageUrl = totalItems > 0
             ? CreateLinkList(totalPages , pageSize, method, tconst, nconst, searchId)
-            : null;
+            : CreateLinkList(totalPages, pageSize, method, tconst, nconst, searchId);
 
             var currentPageUrl = CreateLinkList(page, pageSize, method, tconst, nconst, searchId);
 
             var nextPageUrl = page < totalPages  && totalItems > 0
                 ? CreateLinkList(page + 1, pageSize, method, tconst, nconst, searchId)
-                : null;
+                : CreateLinkList(1, pageSize, method, tconst, nconst, searchId);
 
             var result = new
             {
