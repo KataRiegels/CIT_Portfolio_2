@@ -49,7 +49,7 @@ namespace WebServer.Controllers
             return Ok(result);
         }
 
-        [HttpGet( Name = nameof(GetSearchResultNoCategory))]
+        [HttpGet("all", Name = nameof(GetSearchResultNoCategory))]
         public IActionResult GetSearchResultNoCategory(string searchContent)
         {
 
