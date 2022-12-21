@@ -22,7 +22,7 @@ using WebServer.Models.UserModels;
 namespace WebServer.Controllers
 {
     [Route("api/users")]
-    [ApiController]
+    [ApiController]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
     public class UserController : ControllerBase
     {
         private IDataServiceUser _dataService;
@@ -308,10 +308,11 @@ namespace WebServer.Controllers
             var username = GetUsernameFromAuthorization();
 
             var ratingDTO = _dataService.GetUserRating(username, tconst);
-            var rating = MapUserRating(ratingDTO);
 
-            if (rating == null)
+            if (ratingDTO == null)
                 return NotFound();
+
+            var rating = MapUserRating(ratingDTO);
 
             return Ok(rating);
         }
@@ -333,6 +334,24 @@ namespace WebServer.Controllers
             return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
             //return CreatedAtRoute(null, createdUserRating);
         }
+
+        [HttpPut("user/ratings/{tconst}")]
+        [BasicAuthentication]
+
+        public IActionResult UpdateRating(string tconst, int rating)
+        {
+            var username = GetUsernameFromAuthorization();
+
+            var createdUserRating = _dataService.UpdateUserRating(username, tconst, rating);
+
+
+
+            // should have a status code in case createdUserRating is null (which would mean rating was not created)
+
+            return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
+            //return CreatedAtRoute(null, createdUserRating);
+        }
+
 
 
         /*

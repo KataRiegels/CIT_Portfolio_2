@@ -123,7 +123,7 @@ namespace WebServer.Controllers
         //[AdminAuthentiction]
         public IActionResult GetDetailedTitle(string tconst)
         {
-            //string user = HttpContext.Request.Headers["Authorization"];
+            //string quser = HttpContext.Request.Headers["Authorization"];
             //string encodedUsernamePassword = user.Remove(0,"Basic ".Length).Trim();
             //Encoding encoding = Encoding.GetEncoding("iso-8859-1");
             //string usernamePassword = encoding.GetString(Convert.FromBase64String(encodedUsernamePassword));
@@ -383,6 +383,7 @@ namespace WebServer.Controllers
         private string? CreateLinkEpisodes(string tconst, int page, int pageSize, string method,  string seasonNumber = "")
         {
 
+            //var uri = _generator.GetUriByName(
             var uri = _generator.GetUriByName(
                 HttpContext,
                 method,

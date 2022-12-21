@@ -118,7 +118,7 @@ namespace DataLayer.DataServices
             return titles;
         }
 
-        public IList<TitleForListDTO> GetListTitles(int page = 0, int pageSize = 1)
+        public IList<TitleForListDTO> GetListTitles(int page = 1, int pageSize = 1)
         {
             using var db = new ImdbContext();
 
@@ -354,18 +354,49 @@ namespace DataLayer.DataServices
 
             int totalEpisodes = filteredParentTitle.Count();
 
-            //var result =
-            //new TvSeriesSeasonDTO
-            //{
-            //    ParentTconst = tconst,
-            //    SeasonNumber = seasonNumber,
-            //    Episodes = filteredEpisodeTitles
-            //};
 
             return (totalEpisodes,filteredEpisodeTitles);
         }
 
-            public List<TvSeriesSeasonDTO> GetTvSeriesSeasons(string tconst)
+        public (int, IList<TvSeriesEpisodeDTO>) GetTvSeriesEpisodesWithContext(ImdbContext db, string tconst, int seasonNumber, int page, int pageSize)
+        {
+            //using var db = new ImdbContext();
+
+            var filteredParentTitle = db.TitleEpisodes
+                .Where(p => p.ParentTconst.Trim() == tconst.Trim())
+                .Where(s => s.SeasonNumber == seasonNumber)
+                .ToList();
+
+
+
+            var filteredEpisodeTitles = filteredParentTitle
+            .Join(db.TitleBasicss,
+                episodeTable => episodeTable.Tconst,
+                titleBasicsTable => titleBasicsTable.Tconst,
+                (episodeTable, titleBasicsTable)
+                        => new TvSeriesEpisodeDTO
+                        {
+                            SeasonNumber = seasonNumber,
+                            Tconst = episodeTable.Tconst,
+                            PrimaryTitle = titleBasicsTable.PrimaryTitle,
+                            EpisodeNumber = episodeTable.EpisodeNumber,
+                            ParentTconst = episodeTable.ParentTconst
+                        }
+                ).OrderBy(e => e.EpisodeNumber)
+                .Skip((page - 1) * pageSize).Take(pageSize)
+
+                .ToList();
+
+            int totalEpisodes = filteredParentTitle.Count();
+
+
+            return (totalEpisodes, filteredEpisodeTitles);
+        }
+
+
+
+
+        public List<TvSeriesSeasonDTO> GetTvSeriesSeasons(string tconst)
         {
             using var db = new ImdbContext();
 
