@@ -44,7 +44,9 @@ namespace DataLayer.DataServices
 
         public BasicTitleDTO GetBasicTitle(string tconst)
         {
+            Console.WriteLine("__sdasd-af------------------------------------------");
 
+            Console.WriteLine(tconst);
             using var db = new ImdbContext();
             //var basicTitle = _db.TitleBasicss
             var basicTitle = db.TitleBasicss
@@ -56,15 +58,14 @@ namespace DataLayer.DataServices
                 PrimaryTitle = basicTitle.PrimaryTitle,
                 StartYear = basicTitle.StartYear,
             };
+            Console.WriteLine("_________::::::::::_____________");
             Console.WriteLine(basic.PrimaryTitle);   
-
             return basic;
         }
 
         public IList<BasicTitleDTO> GetBasicTitles(int page = 0, int pageSize = 20)
         {
-
-            Console.WriteLine(_db.TitleBasicss.First().Tconst);
+            Console.WriteLine(_db.TitleBasicss.FirstOrDefault().Tconst);
             var basicTitles = _db.TitleBasicss
                 .Select(t => new BasicTitleDTO
                 {

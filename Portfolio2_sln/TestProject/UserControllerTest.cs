@@ -141,9 +141,11 @@ namespace TestProject
             var username = "testUser";
             var password = "p4ssW0rd";
 
-            var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = 4 }, username + ":" + password);
+            var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
 
             Assert.Equal(HttpStatusCode.Created, statusCodePost);
+            Assert.Equal("tt11800658", createdRating["tconst"]);
+            Assert.Equal(4, createdRating["rating"]);
 
             //var (rating, statusCodeGet) = GetObject($"{TitlesApi}/user/ratings/tt11800658", username + ":" + password);
 

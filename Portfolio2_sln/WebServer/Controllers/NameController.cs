@@ -81,11 +81,10 @@ namespace WebServer.Controllers
                 .GetRelatedTitles(nconst, page, pageSize);
 
             //Console.WriteLine(relations.First().Nconst);
-            Console.WriteLine(relations.Count());
+            //Console.WriteLine(relations.Count());
 
             var result = relations
                 .Select(x => MapToCrewModel(x))
-
                 ;
 
             if (relations == null)

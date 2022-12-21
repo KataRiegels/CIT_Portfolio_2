@@ -202,7 +202,6 @@ namespace DataLayer.DataServices
                      }
              );
 
-
             var cast = cast1
                 .GroupJoin(db.Jobs,
                      crew => new { crew.Nconst, crew.Tconst },
@@ -220,9 +219,10 @@ namespace DataLayer.DataServices
                                  JobName = job.JobName,
                                  Nconst = nconst,
                              }
-             ).ToList();
+             )
+            //    .ToList();
 
-            var cast2 = cast
+            //var cast2 = cast
                 .GroupJoin(db.Characters,
                      crew => new { crew.Nconst, crew.Tconst },
                      chars => new { chars.Nconst, chars.Tconst },
@@ -235,6 +235,9 @@ namespace DataLayer.DataServices
                              TitleCrewDTO
                              {
                                  Tconst = crew.Outer.Tconst,
+                                 //Tconst = test(crew.Outer.Tconst),
+                                 //Tconst = "jj",
+                                 //BasicTitle = new BasicTitleDTO(),
                                  BasicTitle = new DataServiceTitles().GetBasicTitle(crew.Outer.Tconst),
                                  Nconst = nconst,
                                  PrimaryName = crew.Outer.PrimaryName,
@@ -243,19 +246,26 @@ namespace DataLayer.DataServices
                                  CharacterName = chars.CharacterName
                              }
 
-             ).ToList()
+             )
             ;
+            Console.WriteLine("-----------------------------------------");
 
 
             var totalItems = cast.Count();
-            Console.WriteLine("data layer total " + cast2.Count());
-            var result = cast2
-                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            Console.WriteLine("data layer total " + cast.Count());
+            var result = cast
+                .Skip((page - 1) * pageSize).Take(pageSize ).ToList();
 
             return (cast.Count(), result);
             //return (cast.Count(), null);
         }
 
+        private string? test(string? tconst)
+        {
+            Console.WriteLine("--------------------------------------------------------");
+            return "sdd";
+            return tconst;
+        }
 
         /*
          
