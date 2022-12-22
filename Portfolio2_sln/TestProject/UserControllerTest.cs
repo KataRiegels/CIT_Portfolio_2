@@ -80,50 +80,30 @@ namespace TestProject
             Assert.Equal(HttpStatusCode.OK, statusCode);
 
         }
-#if COMMENT
-#endif
 
          
            [Fact]
         public void ApiUser_DeleteRating_WithAuthorizedUser()
-
-
-        //public void ApiUser_DeleteRating_WithAuthorizedUser()
         {
             var username = "testUser";
-               var password = "p4ssW0rd";
+            var password = "p4ssW0rd";
+
+
+            var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = 4 }, username + ":" + password);
+
+            Assert.Equal(HttpStatusCode.Created, statusCodePost);
+
+
+            var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
+
+            Assert.Equal(HttpStatusCode.OK, statusCodeDelete);
 
 
 
-               var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = 4 }, username + ":" + password);
+            var (rating, statusCodeGet) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
 
-               Assert.Equal(HttpStatusCode.Created, statusCodePost);
+            Assert.Equal(HttpStatusCode.NotFound, statusCodeGet);
 
-               //var (rating, statusCodeGet) = GetObject($"{TitlesApi}/user/ratings/tt11800658", username + ":" + password);
-
-               var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-
-               Assert.Equal(HttpStatusCode.OK, statusCodeDelete);
-
-
-
-               var (rating, statusCodeGet) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-
-               Assert.Equal(HttpStatusCode.NotFound, statusCodeGet);
-
-               //var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-
-
-
-           //Assert.Equal("/api/users/user/ratings/tt11800658", rating["url"]);
-           //Assert.Equal("/api/users/user/ratings/tt11800658", rating["titleModel"]["tconst"]);
-           //Assert.Equal("4", rating["rating"]);
-
-           //Assert.Equal("/api/users/user/ratings?page=1&pageSize=10", title["firstPageUrl"]);
-
-
-           //Assert.Equal( , title["items"]);
-           //Assert.Equal(HttpStatusCode.OK, statusCode);
 
        }
 
@@ -131,11 +111,9 @@ namespace TestProject
 
 
         [Fact]
-        //public void ApiUser_DeleteRating_WithAuthorizedUser()
 
         public void ApiUser_CreateRatings_WithAuthorizedUser()
 
-        //public void ApiUser_CreateRatings_WithAuthorizedUser()
         {
 
             var username = "testUser";
@@ -147,47 +125,59 @@ namespace TestProject
             Assert.Equal($"{TitlesApi}/tt11800658", createdRating["titleModel"]["url"]);
             Assert.Equal(4, createdRating["rating"]);
 
-            //var (rating, statusCodeGet) = GetObject($"{TitlesApi}/user/ratings/tt11800658", username + ":" + password);
 
             var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
 
             Assert.Equal(HttpStatusCode.OK, statusCodeDelete);
 
 
-
-            //var (rating, statusCodeGet) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-
-            //Assert.Equal(HttpStatusCode.NotFound, statusCodeGet);
-
-            /*
-             
-            var username = "testUser";
-            var password = "p4ssW0rd";
-
-
-
-            var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
-
-            Assert.Equal("tt11800658", createdRating["tconst"]);
-
-            //Assert.Equal(HttpStatusCode.Created, statusCodePost);
-
-            var (rating, statusCodeGet) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-
-            //Assert.Equal($"{UserApi}/user/ratings/tt11800658", rating["url"]);
-            //Assert.Equal("/api/users/user/ratings/tt11800658", rating["titleModel"]["tconst"]);
-            //Assert.Equal("4", rating["rating"]);
-
-            // Should technically also check whether the title's ratings changed
-            var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-        
-             */
-
         }
         
 
 
 
+
+   
+
+        [Fact]
+        public void ApiUser_UpdateRating_WithAuthorizedUser_InvalidId()
+        {
+            var username = "testUser";
+            var password = "p4ssW0rd";
+
+
+            var statusCodePut = PutData($"{UserApi}/user/ratings/tt1180065s", new { rating = 1 }, username + ":" + password);
+
+
+
+            Assert.Equal(HttpStatusCode.NotFound, statusCodePut);
+        }
+         
+
+        [Fact]
+       public void ApiUser_UpdateRating_WithAuthorizedUser()
+       {
+           var username = "testUser";
+           var password = "p4ssW0rd";
+
+
+
+           var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
+
+           Assert.Equal(4, createdRating["rating"]);
+
+           var statusCodePut = PutData($"{UserApi}/user/ratings/tt11800658", new { rating = 1 },  username + ":" + password);
+
+           //var (createdRating, statusCodePost) = PostData($"{TitlesApi}/user/ratings/tt11800658", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
+
+           Assert.Equal(HttpStatusCode.Created, statusCodePut);
+
+           var (ratingUpdated, statusCodeGetUpdated) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
+
+           Assert.Equal(1, ratingUpdated["rating"]);
+
+           var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
+       }
 
         (JObject, HttpStatusCode) PostData(string url, object content, string basicAuth)
         {
@@ -224,62 +214,6 @@ namespace TestProject
                     "application/json")).Result;
             return response.StatusCode;
         }
-
-
-        [Fact]
-        public void ApiUser_UpdateRating_WithAuthorizedUser_InvalidId()
-        {
-            var username = "testUser";
-            var password = "p4ssW0rd";
-
-
-
-            //var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
-
-            //Assert.Equal(4, createdRating["rating"]);
-
-            var statusCodePut = PutData($"{UserApi}/user/ratings/tt11800658s", new { rating = 1 }, username + ":" + password);
-
-
-            //var (createdRating, statusCodePost) = PostData($"{TitlesApi}/user/ratings/tt11800658", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
-
-            Assert.Equal(HttpStatusCode.NotFound, statusCodePut);
-
-            //var (ratingUpdated, statusCodeGetUpdated) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-
-            //Assert.Equal(1, ratingUpdated["rating"]);
-
-            //var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-        }
-        /*
-         
-
-        [Fact]
-       public void ApiUser_UpdateRating_WithAuthorizedUser()
-       {
-           var username = "testUser";
-           var password = "p4ssW0rd";
-
-
-
-           var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
-
-           Assert.Equal(4, createdRating["rating"]);
-
-           var statusCodePut = PutData($"{UserApi}/user/ratings/tt11800658", new { rating = 1 },  username + ":" + password);
-
-           //var (createdRating, statusCodePost) = PostData($"{TitlesApi}/user/ratings/tt11800658", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
-
-           Assert.Equal(HttpStatusCode.Created, statusCodePut);
-
-           var (ratingUpdated, statusCodeGetUpdated) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-
-           Assert.Equal(1, ratingUpdated["rating"]);
-
-           var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-       }
-
-         */
 
 
 

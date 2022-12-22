@@ -21,8 +21,6 @@ namespace DataLayer.DataServices
 {
     public class DataServiceUser : IDataServiceUser
     {
-        //private static ImdbContext _db = new ImdbContext();
-
 
 
         /* ----------------------------------------------------------------------------------------------------------
@@ -32,6 +30,11 @@ namespace DataLayer.DataServices
         public User GetUser(string username)
         {
             using var db = new ImdbContext();
+
+            if (!db.Users.Any(x => x.Username == username))
+            {
+                return null;
+            }
 
             return db.Users.FirstOrDefault(x => x.Username == username);
         }
@@ -79,15 +82,8 @@ namespace DataLayer.DataServices
         /*
          
          BOOKMARK TITLES
-         
          */
-
-        //public BookmarkTitle GetBookmarkTitle(string username, string tconst)
-        //{
-        //    return _db.BookmarkTitles.FirstOrDefault(x => x.Username == username && x.Tconst.Trim() == tconst.Trim());
-        //}
-
-
+     
         public BookmarkName GetBookmarkName(string username, string nconst)
         {
             using var db = new ImdbContext();
@@ -420,10 +416,18 @@ namespace DataLayer.DataServices
         {
             using var db = new ImdbContext();
 
+            var checkIfExists = db.UserRatings.Any(u => u.Username.Equals(username) && u.Tconst.Equals(tconst));
+
+            if (checkIfExists == false)
+            {
+
+            Console.WriteLine("fuck");
+                return null;
+            }
+
+
             var ratingToUpdate = db.UserRatings.FirstOrDefault(u => u.Username.Equals(username) && u.Tconst.Equals(tconst));
 
-            if (ratingToUpdate == null)
-                return null;
 
             DeleteUserRating(username, tconst);
             db.SaveChanges();

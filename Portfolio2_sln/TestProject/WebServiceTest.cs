@@ -20,12 +20,17 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authentication;
 using System.Text.RegularExpressions;
+using DataLayer.DomainModels.UserModels;
+using WebServer.Models.UserModels;
 
 namespace TestProject
 
 {
     public class WebServiceTest
     {
+        private readonly Mock<IDataServiceTitles> _dataServiceMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly Mock<LinkGenerator> _linkGeneratorMock;
         //private Mock<IRepository<Comment>> _mockRepository;
         //private Mock<IDataServiceTitles> _mockRepository;
         //private IDataServiceTitles _service;
@@ -40,6 +45,18 @@ namespace TestProject
 
         private const string TitlesApi = "http://localhost:5001/api/titles";
         private const string NamesApi = "http://localhost:5001/api/names";
+
+        //var mockRepository = new Mock<IDataServiceTitles>();
+        //var mockLinkGenerator = new Mock<LinkGenerator>();
+        //var mockMapper = new Mock<IMapper>();
+
+        public WebServiceTest()
+        {
+            _dataServiceMock = new Mock<IDataServiceTitles>();
+            _mapperMock = new Mock<IMapper>();
+            _linkGeneratorMock = new Mock<LinkGenerator>();
+        }
+
 #if COMMENT
         // Test whether HttpGet {tconst} works and returns correct title
         //[Fact]
@@ -179,9 +196,71 @@ namespace TestProject
             //Assert.NotNull(contentResult.Content);
             //Assert.Equal(42, contentResult.Content.Tconst);
         }
-
-
          */
+
+        [Fact]
+        public void GetReturnsProductWithSameId()
+        {
+            // Arrange
+            var mockRepository = new Mock<IDataServiceTitles>();
+            var mockLinkGenerator = new Mock<LinkGenerator>();
+            var mockMapper = new Mock<IMapper>();
+
+            mockRepository.Setup(x => x.GetTitle("tt10458336"))
+                .Returns(new TitleBasics { Tconst = "tt10458336" });
+            //mockLinkGenerator.Setup(x => x.GetUriByName(new DefaultHttpContext(), nameof(), new { }));
+
+
+            var controller = new TitleController(mockRepository.Object, mockLinkGenerator.Object, mockMapper.Object);
+            controller.ControllerContext.HttpContext = new DefaultHttpContext();
+            // Act
+            var actionResult = controller.GetTitle("tt10458336");
+
+            var contentResult = actionResult as ObjectResult;
+
+
+
+            var test = contentResult.StatusCode;
+            var temp = controller.StatusCode((int)contentResult.StatusCode).StatusCode;
+            var tempt2 = HttpStatusCode.OK;
+            Assert.Equal(StatusCodes.Status200OK, (int)contentResult.StatusCode);
+
+
+            // Assert
+            //Assert.NotNull(contentResult);
+            //Assert.NotNull(contentResult.Content);
+            //Assert.Equal(42, contentResult.Content.Tconst);
+        }
+#endif
+
+        /*
+         
+        [Fact]
+        public void CreateCategory_ValidNewCategory_DataServiceCreateCategoryMustBeCalledOnce()
+        {
+
+            _mapperMock.Setup(x => x.Map<Category>(It.IsAny<CreateCategoryViewModel>())).Returns(new Category());
+            _mapperMock.Setup(x => x.Map<CategoryViewModel>(It.IsAny<Category>())).Returns(new CategoryViewModel());
+
+            _linkGeneratorMock.Setup(x => x.GetUriByAddress(
+                    It.IsAny<HttpContext>(),
+                    It.IsAny<string>(),
+                    It.IsAny<RouteValueDictionary>(),
+                    default, default, default, default, default, default))
+                .Returns("");
+
+            var ctrl = new CategoriesController(_dataServiceMock.Object, _linkGeneratorMock.Object, _mapperMock.Object);
+            ctrl.ControllerContext = new ControllerContext();
+            ctrl.ControllerContext.HttpContext = new DefaultHttpContext();
+
+
+            ctrl.CreateCategory(new CreateCategoryViewModel());
+
+            _dataServiceMock.Verify(x => x.CreateCategory(It.IsAny<Category>()), Times.Once);
+
+        }
+         */
+
 
 
         //["Crime", "Drama", "Mystery"]
@@ -230,7 +309,6 @@ namespace TestProject
             var response = client.DeleteAsync(url).Result;
             return response.StatusCode;
         }
-#endif
 
     }
 }

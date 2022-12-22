@@ -32,6 +32,7 @@ app.UseCors(
     options => options.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()
 );
 app.UseAuthorization();
+//app.UseAuthentication();
 
 app.MapControllers();
 app.Run();

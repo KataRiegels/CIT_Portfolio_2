@@ -276,6 +276,7 @@ namespace WebServer.Controllers
         {
             var username = GetUsernameFromAuthorization();
 
+
             var result = _dataService.DeleteBookmarkName(username, nconst);
 
             // If bookmark wasn't in the bookmark table
@@ -347,7 +348,10 @@ namespace WebServer.Controllers
 
             var createdUserRating = _dataService.UpdateUserRating(username, tconst, rating.Rating);
 
-
+            if (createdUserRating == null)
+            {
+                return NotFound();
+            }
 
             // should have a status code in case createdUserRating is null (which would mean rating was not created)
 
