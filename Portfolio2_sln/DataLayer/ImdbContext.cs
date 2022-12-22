@@ -10,13 +10,12 @@ namespace DataLayer
 {
     public class ImdbContext : DbContext
     {
-        const string ConnectionString = "host=localhost;db=imdb_new_tester;uid=postgres;pwd=Jse33pjp";
-        //const string ConnectionString = "host=localhost;db=imdb_backup;uid=postgres;pwd=Jse33pjp";
+        //const string ConnectionString = "host=localhost;db=imdb_new_tester;uid=postgres;pwd=Jse33pjp";
         //const string ConnectionString = "host=localhost;db=imdb;uid=postgres;pwd=password";
+        const string ConnectionString = "host=cit.ruc.dk;db=cit12;uid=cit12;pwd=klsZE4x07aG5";
+
         public DbSet<TitleBasics> TitleBasicss { get; set; }
-        //public DbSet<DetailedTitleDTO> DetailedTitles { get; set; }
         public DbSet<NameBasics> NameBasicss { get; set; }
-        //public DbSet<DetailedNameDTO> DetailedNames { get; set; }
         public DbSet<FullTitleViewModel> FullViewTitles { get; set; }
         public DbSet<FullNameViewModel> FullViewNames { get; set; }
 
