@@ -1,96 +1,62 @@
-﻿using AutoMapper;
-using DataLayer.DataServices;
+﻿using DataLayer.DataServices;
+using DataLayer.DTOs.NameObjects;
+using DataLayer.DTOs.SearchObjects;
+using DataLayer.DTOs.TitleObjects;
 using Microsoft.AspNetCore.Mvc;
-using DataLayer;
-using WebServer.Models.TitleModels;
 using WebServer.Models.NameModels;
 using WebServer.Models.SearchModels;
-using WebServer.Models.UserModels;
-using DataLayer.DomainModels.TitleModels;
-using DataLayer.DTOs.NameObjects;
-using DataLayer.DTOs.TitleObjects;
-using DataLayer.DTOs.SearchObjects;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Runtime.CompilerServices;
+using WebServer.Models.TitleModels;
 
 namespace WebServer.Controllers
 {
     [Route("api/search")]
-        [ApiController]
-        public class SearchController : ControllerBase
-        {
-            private IDataServiceSearches _dataService;
-            private readonly LinkGenerator _generator;
-            private const int MaxPageSize = 25;
+    [ApiController]
+    public class SearchController : ControllerBase
+    {
+        private IDataServiceSearches _dataService;
+        private readonly LinkGenerator _generator;
+        private const int MaxPageSize = 25;
 
 
         public SearchController(IDataServiceSearches dataService, LinkGenerator generator)
-            {
-                _dataService = dataService;
-                _generator = generator;
-
-
-            }
-
-        [HttpGet("{searchId}", Name = nameof(GetSearchResultFromId))]
-        public IActionResult GetSearchResultFromId(int searchId)
         {
-            //var title = _dataService.GetTitle(tconst);
-            var title = _dataService.GetSearchResult(searchId);
-            //var generatedResult = _dataService.GenerateSearchResults(title.SearchContent, searchCategory);
-            //SearchResultModel results = CreateSearchModel(generatedResult);
-            var result = CreateSearchModel(title);
+            _dataService = dataService;
+            _generator = generator;
 
-            if (result == null)
-            {
-                return NotFound();
-            }
 
-            return Ok(result);
         }
+
 
         [HttpGet("all", Name = nameof(GetSearchResultNoCategory))]
         public IActionResult GetSearchResultNoCategory(string searchContent)
         {
 
-            (var nameResultsDTO,  var totalNameResults)  = _dataService.GeneratePersonSearchResult(searchContent, 0, 5);
+            (var nameResultsDTO, var totalNameResults) = _dataService.GeneratePersonSearchResult(searchContent, 0, 5);
             (var titleResultsDTO, var totalTitleResults) = _dataService.GenerateTitleSearchResult(searchContent, 0, 5);
 
-            var nameResultsUrl  = _generator.GetUriByName(HttpContext, nameof(GetSearchResultNames),  new { searchContent = searchContent });
+            var nameResultsUrl = _generator.GetUriByName(HttpContext, nameof(GetSearchResultNames), new { searchContent = searchContent });
             var titleResultsUrl = _generator.GetUriByName(HttpContext, nameof(GetSearchResultTitles), new { searchContent = searchContent });
 
-            var nameResults  = nameResultsDTO.Select(x => MapNameSearchResults(x)).ToList();
+            var nameResults = nameResultsDTO.Select(x => MapNameSearchResults(x)).ToList();
             var titleResults = titleResultsDTO.Select(x => MapTitleSearchResults(x)).ToList();
 
 
-            var results = new 
-                { TitleResults = new { Url = titleResultsUrl, titleResultItems = titleResults }, 
-                  NameResults = new { Url = nameResultsUrl, nameResultItems = nameResults }
-        };
-
-            //var title = _dataService.GetTitle(tconst);
-            //var generatedResult = _dataService.GenerateSearchResults(searchContent);
-            //SearchResultModel results = CreateSearchModel(generatedResult);
-            //var results = _dataService.CreateUserSearch(username, searchContent, searchCategory);
-            //var titleResults = results.TitleResults;
-            //results.Url = _generator.GetUriByName(HttpContext, nameof(GetSearchResultNoCategory), new { searchContent, searchCategory });
-            //var test = CreateUserSearchResultsModel(results);
-
-            //if (results == null)
-            //{
-            //    return NotFound();
-            //}
+            var results = new
+            {
+                TitleResults = new { Url = titleResultsUrl, titleResultItems = titleResults },
+                NameResults = new { Url = nameResultsUrl, nameResultItems = nameResults }
+            };
 
             return Ok(results);
         }
 
-        [HttpGet("names",Name = nameof(GetSearchResultNames))]
+        [HttpGet("names", Name = nameof(GetSearchResultNames))]
         public IActionResult GetSearchResultNames(string searchContent, int page = 1, int pageSize = 10)
         {
 
 
             (var nameResults, var totalItems) = _dataService.GeneratePersonSearchResult(searchContent, page, pageSize);
-            var model =  nameResults.Select(x => MapNameSearchResults(x))
+            var model = nameResults.Select(x => MapNameSearchResults(x))
              .ToList();
 
             if (model == null)
@@ -137,7 +103,7 @@ namespace WebServer.Controllers
 
             var model = new NameForListModel().ConvertFromDTO(nameResults);
             model.BasicName.Url = CreateTitleUrl(nameResults.BasicName.Nconst);
-            
+
             if (nameResults.KnownForTitleBasics != null)
             {
                 model.KnownForTitleBasics.Url = CreateTitleUrl(nameResults.KnownForTitleBasics.Tconst);
@@ -165,8 +131,8 @@ namespace WebServer.Controllers
         {
             return _generator.GetUriByName(
                 HttpContext,
-                method, 
-                new { page, pageSize, searchContent});
+                method,
+                new { page, pageSize, searchContent });
         }
 
 
@@ -209,46 +175,6 @@ namespace WebServer.Controllers
                 items
             };
             return result;
-        }
-
-
-        /*  DELETABLE   */
-        public SearchResultModel CreateSearchModel(SearchResultDTO searchResult)
-        {
-            //var model = _mapper.Map<UserSearchResultsModel>(searchResult);
-            var model = new SearchResultModel().ConvertFromDTO(searchResult);
-            if (searchResult.TitleResults != null)
-            {
-                var titleResults = searchResult.TitleResults
-                    .Select(x => MapTitleSearchResults(x))
-                    .ToList();
-                model.TitleResults = titleResults;
-            }
-            if (searchResult.NameResults != null)
-            {
-                Console.WriteLine(searchResult.NameResults.Count());
-                var nameResults = searchResult.NameResults
-                 .Select(x => MapNameSearchResults(x))
-                 .ToList();
-                model.NameResults = nameResults;
-            }
-            //var nameResults = searchResult.NameResults;
-
-            return model;
-            //model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
-            //if (titleBasics.ParentTitle != null)
-            //{
-            //    model.ParentTitle.Url = CreateTitleUrl(titleBasics.ParentTitle.Tconst);
-            //}
-
-
-
-            //var titleResults = searchResult.TitleResults
-            //    .Select(x => MapTitleSearchResults(x))
-            //    .ToList();
-            //model.TitleResults = titleResults;
-
-            return model;
         }
 
     }

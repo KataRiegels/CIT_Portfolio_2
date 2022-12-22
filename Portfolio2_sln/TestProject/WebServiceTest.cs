@@ -1,27 +1,11 @@
-using DataLayer;
-using Newtonsoft.Json.Linq;
+using AutoMapper;
+using DataLayer.DataServices;
+using Microsoft.AspNetCore.Routing;
+using Moq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Text;
-using WebServer.Models.NameModels;
-using DataLayer.DataServices;
-using Moq;
-using DataLayer.DomainModels.TitleModels;
-using WebServer.Controllers;
-using System.Web.Http;
-using AutoMapper;
-using Microsoft.AspNetCore.Routing;
-using System.Reflection.Emit;
-using System.Web.Http.Results;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics.Contracts;
-using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Authentication;
-using System.Text.RegularExpressions;
-using DataLayer.DomainModels.UserModels;
-using WebServer.Models.UserModels;
 
 namespace TestProject
 

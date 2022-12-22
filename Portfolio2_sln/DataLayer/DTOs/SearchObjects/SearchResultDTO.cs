@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataLayer.DTOs.NameObjects;
+﻿using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.TitleObjects;
 
 namespace DataLayer.DTOs.SearchObjects

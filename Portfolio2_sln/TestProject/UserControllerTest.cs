@@ -1,29 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataLayer;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using System.Net;
-using System.Text;
-using WebServer.Models.NameModels;
-using DataLayer.DataServices;
-using Moq;
-using DataLayer.DomainModels.TitleModels;
-using WebServer.Controllers;
-using System.Web.Http;
-using AutoMapper;
-using Microsoft.AspNetCore.Routing;
-using System.Reflection.Emit;
-using System.Web.Http.Results;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics.Contracts;
-using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Authentication;
+using System.Text;
 using System.Text.RegularExpressions;
 
 
@@ -47,7 +26,6 @@ namespace TestProject
             Assert.Equal($"{UserApi}/user/ratings?page=1&pageSize=10", title["firstPageUrl"]);
 
 
-            //Assert.Equal( , title["items"]);
             Assert.Equal(HttpStatusCode.OK, statusCode);
 
         }
@@ -81,8 +59,8 @@ namespace TestProject
 
         }
 
-         
-           [Fact]
+
+        [Fact]
         public void ApiUser_DeleteRating_WithAuthorizedUser()
         {
             var username = "testUser";
@@ -105,7 +83,7 @@ namespace TestProject
             Assert.Equal(HttpStatusCode.NotFound, statusCodeGet);
 
 
-       }
+        }
 
 
 
@@ -132,12 +110,12 @@ namespace TestProject
 
 
         }
-        
 
 
 
 
-   
+
+
 
         [Fact]
         public void ApiUser_UpdateRating_WithAuthorizedUser_InvalidId()
@@ -152,32 +130,31 @@ namespace TestProject
 
             Assert.Equal(HttpStatusCode.NotFound, statusCodePut);
         }
-         
+
 
         [Fact]
-       public void ApiUser_UpdateRating_WithAuthorizedUser()
-       {
-           var username = "testUser";
-           var password = "p4ssW0rd";
+        public void ApiUser_UpdateRating_WithAuthorizedUser()
+        {
+            var username = "testUser";
+            var password = "p4ssW0rd";
 
 
 
-           var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
+            var (createdRating, statusCodePost) = PostData($"{UserApi}/user/ratings", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
 
-           Assert.Equal(4, createdRating["rating"]);
+            Assert.Equal(4, createdRating["rating"]);
 
-           var statusCodePut = PutData($"{UserApi}/user/ratings/tt11800658", new { rating = 1 },  username + ":" + password);
+            var statusCodePut = PutData($"{UserApi}/user/ratings/tt11800658", new { rating = 1 }, username + ":" + password);
 
-           //var (createdRating, statusCodePost) = PostData($"{TitlesApi}/user/ratings/tt11800658", new { tconst = "tt11800658", rating = "4" }, username + ":" + password);
 
-           Assert.Equal(HttpStatusCode.Created, statusCodePut);
+            Assert.Equal(HttpStatusCode.Created, statusCodePut);
 
-           var (ratingUpdated, statusCodeGetUpdated) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
+            var (ratingUpdated, statusCodeGetUpdated) = GetObject($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
 
-           Assert.Equal(1, ratingUpdated["rating"]);
+            Assert.Equal(1, ratingUpdated["rating"]);
 
-           var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
-       }
+            var statusCodeDelete = DeleteData($"{UserApi}/user/ratings/tt11800658", username + ":" + password);
+        }
 
         (JObject, HttpStatusCode) PostData(string url, object content, string basicAuth)
         {
@@ -227,7 +204,6 @@ namespace TestProject
             var byteArray = Encoding.ASCII.GetBytes(basicAuth);
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            //new AuthenticationHeaderValue("Basic", basicAuth);
 
             var response = client.GetAsync(url).Result;
             var data = response.Content.ReadAsStringAsync().Result;
@@ -235,7 +211,7 @@ namespace TestProject
         }
 
 
-       
+
 
         HttpStatusCode DeleteData(string url, string basicAuth)
         {

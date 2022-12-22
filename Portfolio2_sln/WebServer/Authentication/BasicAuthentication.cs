@@ -2,7 +2,7 @@
 
 namespace WebServer.Authentication
 {
-    public class BasicAuthentication: AuthorizeAttribute
+    public class BasicAuthentication : AuthorizeAttribute
 
     {
         public BasicAuthentication()

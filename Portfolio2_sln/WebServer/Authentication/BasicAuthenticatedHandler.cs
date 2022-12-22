@@ -1,21 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using DataLayer.DataServices;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
-using DataLayer.DataServices;
 
 namespace WebServer.Authentication
 {
     public class BasicAuthenticatedHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        public BasicAuthenticatedHandler (
+        public BasicAuthenticatedHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock
-            ) : base(options, logger, encoder, clock) { 
+            ) : base(options, logger, encoder, clock)
+        {
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -31,7 +32,7 @@ namespace WebServer.Authentication
 
             var authenticationHeader = Request.Headers["Authorization"].ToString();
             var authHeaderRegex = new Regex("Basic (.*)");
-             
+
             // Checks whether the authorization header contains "Basic ", which is added when using basic authentication
             if (!authHeaderRegex.IsMatch(authenticationHeader))
             {

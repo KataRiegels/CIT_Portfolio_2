@@ -11,29 +11,10 @@ namespace WebServer.Models.TitleModels
         public TvSeriesSeasonModel ConvertFromDTO(TvSeriesSeasonDTO inputModel)
         {
 
-            var episodes = Episodes;
-
-            var result = new TvSeriesSeasonModel()
-            {
-                ParentTconst = inputModel.ParentTconst,
-                SeasonNumber = inputModel.SeasonNumber,
-                //Episodes = (new TvSeriesEpisodeModel().ConvertFromDtoObject(inputModel.Episodes))
-                //PrimaryTitle = inputModel.PrimaryTitle,
-                //EpisodeNumber = inputModel.EpisodeNumber,
-            };
-
-            foreach (var episode in inputModel.Episodes)
-            {
-
-            }
             return new TvSeriesSeasonModel()
             {
                 ParentTconst = inputModel.ParentTconst,
                 SeasonNumber = inputModel.SeasonNumber,
-                //Episodes = inputModel.Episodes
-                //Episodes = (new TvSeriesEpisodeModel().ConvertFromDtoObject(inputModel.Episodes))
-                //PrimaryTitle = inputModel.PrimaryTitle,
-                //EpisodeNumber = inputModel.EpisodeNumber,
             };
         }
 

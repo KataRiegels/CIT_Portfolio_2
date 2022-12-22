@@ -9,10 +9,11 @@ namespace WebServer.Models.NameModels
         public string? BirthYear { get; set; }
         public string? DeathYear { get; set; }
         public IList<string>? KnwonForTconst { get; set; }
-    
+
         public DetailedNameModel ConvertFromDTO(DetailedNameDTO inputModel)
         {
-            return new DetailedNameModel {
+            return new DetailedNameModel
+            {
                 BirthYear = inputModel.BirthYear,
                 PrimaryName = inputModel.PrimaryName,
                 DeathYear = inputModel.DeathYear,

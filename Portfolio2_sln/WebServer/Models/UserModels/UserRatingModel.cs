@@ -1,5 +1,4 @@
 ﻿using DataLayer.DTOs.UserObjects;
-using DataLayer.DomainModels.UserModels;
 using WebServer.Models.TitleModels;
 
 namespace WebServer.Models.UserModels
@@ -15,9 +14,10 @@ namespace WebServer.Models.UserModels
         public UserRatingModel ConvertFromDTO(UserRatingDTO inputModel)
         {
 
-            return new UserRatingModel { 
+            return new UserRatingModel
+            {
                 Rating = inputModel.Rating,
-                TitleModel = new BasicTitleModel().ConvertBasicTitleModel(inputModel.TitleModel),
+                TitleModel = new BasicTitleModel().ConvertFromDTO(inputModel.TitleModel),
             };
         }
     }

@@ -1,21 +1,9 @@
 ﻿using DataLayer.DataTransferObjects;
+using DataLayer.DomainModels.UserModels;
 using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.TitleObjects;
 using DataLayer.DTOs.UserObjects;
-using DataLayer.DomainModels.NameModels;
-using DataLayer.DomainModels.TitleModels;
-using DataLayer.DomainModels.UserModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
-using System;
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataLayer.DataServices
 {
@@ -83,7 +71,7 @@ namespace DataLayer.DataServices
          
          BOOKMARK TITLES
          */
-     
+
         public BookmarkName GetBookmarkName(string username, string nconst)
         {
             using var db = new ImdbContext();
@@ -91,59 +79,6 @@ namespace DataLayer.DataServices
             return db.BookmarkNames.FirstOrDefault(x => x.Username == username && x.Nconst.Equals(nconst));
         }
 
-
-        public IList<BookmarkTitle> GetBookmarkTitles()
-        {
-            using var db = new ImdbContext();
-
-            return db.BookmarkTitles.ToList();
-        }
-
-
-
-        
-        
-
-        public IList<TitleForListDTO> GetFilteredTitles(List<BookmarkTitle> searchedTitles, int page = 1, int pageSize = 5)
-        {
-            using var db = new ImdbContext();
-
-            // Filters the FullViewTitles to only have those returned from the string search
-            var filteredTitles = db.FullViewTitles.ToList()
-                .Join(searchedTitles,
-                    fullView => fullView.Tconst,
-                    searchResults => searchResults.Tconst,
-                    (fullView, searchResults)
-                                  => fullView
-                    );
-
-            // Groups the titles so we can make a list of genres for each title
-            // and creates the list form DTO
-            var groupedTitles = filteredTitles
-
-                .ToList()
-                .GroupBy(t => t.Tconst, (key, model) => new TitleForListDTO
-                {
-                    BasicTitle = new BasicTitleDTO
-                    {
-                        Tconst = model.First().Tconst,
-                        PrimaryTitle = model.First().PrimaryTitle,
-                        StartYear = model.First().StartYear,
-                        TitleType = model.First().TitleType,
-                    },
-                    Runtime = model.First().Runtime,
-                    Rating = model.First().Rating,
-                    Genres = model.Select(m => m.Genre).Distinct().ToList(),
-                    ParentTitle = string.IsNullOrEmpty(model.FirstOrDefault().ParentTconst)
-                                    ? null
-                                    : new DataService().GetBasicTitle(model.FirstOrDefault().ParentTconst)
-                })
-                .Skip(page * pageSize).Take(pageSize)
-                .ToList();
-
-
-            return groupedTitles;
-        }
 
         /*
          
@@ -231,7 +166,6 @@ namespace DataLayer.DataServices
             if (bookmarkToUpdate == null)
                 return null;
 
-            //bookmarkToUpdate.Username = username;
             bookmarkToUpdate.Tconst = newTconst;
 
             db.SaveChanges();
@@ -249,14 +183,6 @@ namespace DataLayer.DataServices
          ------------- Bookmark names --------------
          
          */
-
-        //public BookmarkName GetBookmarkNameDM(string username, string nconst)
-        //{
-        //    using var db = new ImdbContext();
-
-        //    return db.BookmarkNames.FirstOrDefault(bt => bt.Username.Equals(username) && bt.Nconst.Equals(nconst));
-
-        //}
 
 
         public BookmarkName CreateBookmarkName(string username, string nconst)
@@ -317,7 +243,7 @@ namespace DataLayer.DataServices
         }
 
 
-        
+
         /*
          
          
@@ -378,7 +304,6 @@ namespace DataLayer.DataServices
                                           StartYear = title.StartYear,
                                           PrimaryTitle = title.PrimaryTitle,
                                           TitleType = title.TitleType
-
                                       },
                                       Date = rating.Date
                                   }
@@ -405,9 +330,6 @@ namespace DataLayer.DataServices
             db.UserRatings.Remove(rating);
             db.SaveChanges();
 
-
-            // check if rating is there
-
             return true;
         }
 
@@ -421,7 +343,7 @@ namespace DataLayer.DataServices
             if (checkIfExists == false)
             {
 
-            Console.WriteLine("fuck");
+                Console.WriteLine("fuck");
                 return null;
             }
 
@@ -435,9 +357,9 @@ namespace DataLayer.DataServices
             CreateUserRating(username, tconst, rating);
             db.SaveChanges();
 
-            var newUserRating = GetUserRating(username , tconst);
+            var newUserRating = GetUserRating(username, tconst);
 
-            return newUserRating; 
+            return newUserRating;
         }
 
         public UserRatingDTO CreateUserRating(string username, string tconst, int rating)
@@ -446,11 +368,10 @@ namespace DataLayer.DataServices
 
             db.Database.ExecuteSqlInterpolated($"select * from create_user_rating({username}, {tconst}, {rating})");
 
-            //var newUserRating = db.UserRatings.FirstOrDefault(u => u.Username == username && u.Tconst == tconst);
             var newUserRating = GetUserRating(username, tconst);
 
 
-            return newUserRating; 
+            return newUserRating;
         }
 
 
@@ -458,14 +379,14 @@ namespace DataLayer.DataServices
          *
          *  --------- USER SEARCHES ------------
          *
-         */ 
+         */
 
 
         public UserSearch GetUserSearch(int searchId)
         {
             using var db = new ImdbContext();
 
-            return db.UserSearches.FirstOrDefault(u =>  u.SearchId == searchId);
+            return db.UserSearches.FirstOrDefault(u => u.SearchId == searchId);
 
         }
 
@@ -489,9 +410,9 @@ namespace DataLayer.DataServices
         {
 
             using var db = new ImdbContext();
-            
+
             var returnedCreatedUserSearch = db.UserSearches.FromSqlInterpolated($"SELECT * FROM save_string_search({username}, {searchContent}, {searchCategory})");
-            
+
             var createdSearchId = returnedCreatedUserSearch.FirstOrDefault().SearchId;
 
             var createdUserSearch = db.UserSearches.FirstOrDefault(u => u.SearchId == createdSearchId);
@@ -515,7 +436,6 @@ namespace DataLayer.DataServices
             if (GetUserSearch(searchId) != null)
                 return 0;
 
-            // check if rating is there
 
             return 1;
         }

@@ -19,7 +19,7 @@ namespace WebServer.Models.TitleModels
             {
                 Tconst = inputModel.Tconst,
                 Category = inputModel.Category,
-                BasicTitle = new BasicTitleModel().ConvertBasicTitleModel(inputModel.BasicTitle),
+                BasicTitle = new BasicTitleModel().ConvertFromDTO(inputModel.BasicTitle),
                 BasicName = new BasicNameModel { PrimaryName = inputModel.PrimaryName },
                 JobName = inputModel.JobName,
                 CharacterName = inputModel.CharacterName

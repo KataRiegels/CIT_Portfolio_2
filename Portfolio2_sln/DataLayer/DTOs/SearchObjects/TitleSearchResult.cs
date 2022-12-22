@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataLayer.DTOs.SearchObjects
+﻿namespace DataLayer.DTOs.SearchObjects
 {
     public class TitleSearchResult
     {

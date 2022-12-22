@@ -1,16 +1,5 @@
 ﻿using DataLayer.DataTransferObjects;
 using DataLayer.DomainModels.NameModels;
-using DataLayer.DomainModels.TitleModels;
-using DataLayer.DomainModels.UserModels;
-using DataLayer.DataServices;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.TitleObjects;
 
@@ -55,7 +44,7 @@ namespace DataLayer.DataServices
                     Nconst = n.Nconst,
                     PrimaryName = n.PrimaryName
                 })
-                .Skip((page - 1 ) * pageSize).Take(pageSize).ToList();
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             return basicnames;
         }
@@ -97,7 +86,7 @@ namespace DataLayer.DataServices
                            },
                            KnownForTitleBasics = knownFor.Any() ?
                                     new DataServiceTitles().
-                                    GetBasicTitle(knownFor.FirstOrDefault().Tconst) 
+                                    GetBasicTitle(knownFor.FirstOrDefault().Tconst)
                                     : null
                        }
                     )
@@ -110,11 +99,11 @@ namespace DataLayer.DataServices
         public IList<NameForListDTO> GetListNames(int page = 0, int pageSize = 20)
         {
             // Joins the filtered name_basics with known_for to get list form of matching names
-            
+
             using var db = new ImdbContext();
 
             var names = db.NameBasicss.ToList()
-                .Skip((page -1 ) * pageSize).Take(pageSize)
+                .Skip((page - 1) * pageSize).Take(pageSize)
                 .GroupJoin(db.NameKnownFors,
                        basics => basics.Nconst,
                        knownFor => knownFor.Nconst,
@@ -254,7 +243,7 @@ namespace DataLayer.DataServices
             var totalItems = cast.Count();
             Console.WriteLine("data layer total " + cast.Count());
             var result = cast
-                .Skip((page - 1) * pageSize).Take(pageSize ).ToList();
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             return (cast.Count(), result);
             //return (cast.Count(), null);

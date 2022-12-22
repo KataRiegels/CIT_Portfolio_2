@@ -1,13 +1,4 @@
-﻿
-
-
-
-
-
-using AutoMapper;
-using DataLayer.DTOs.TitleObjects;
-using System.Reflection.Emit;
-using WebServer.Models.TitleModels;
+﻿using DataLayer.DTOs.TitleObjects;
 
 
 namespace WebServer.Models.TitleModels
@@ -31,14 +22,14 @@ namespace WebServer.Models.TitleModels
         public TitleForListModel ConvertFromDTO(TitleForListDTO inputModel)
         {
 
-            //var basic = new BasicTitleModel().ConvertBasicTitleModel(inputModel.BasicTitle);
+            //var basic = new BasicTitleModel().ConvertFromDTO(inputModel.BasicTitle);
             return new TitleForListModel()
             {
-                BasicTitle = new BasicTitleModel().ConvertBasicTitleModel(inputModel.BasicTitle),
+                BasicTitle = new BasicTitleModel().ConvertFromDTO(inputModel.BasicTitle),
                 Runtime = inputModel.Runtime,
                 Rating = inputModel.Rating,
                 Genres = inputModel.Genres,
-                ParentTitle = new BasicTitleModel().ConvertBasicTitleModel(inputModel.ParentTitle)
+                ParentTitle = new BasicTitleModel().ConvertFromDTO(inputModel.ParentTitle)
             };
         }
 

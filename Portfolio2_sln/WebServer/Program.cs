@@ -10,7 +10,6 @@ builder.Services.AddControllers();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddSingleton<IDataService, DataService>();
 builder.Services.AddSingleton<IDataServiceNames, DataServiceNames>();
 builder.Services.AddSingleton<IDataServiceTitles, DataServiceTitles>();
 builder.Services.AddSingleton<IDataServiceUser, DataServiceUser>();

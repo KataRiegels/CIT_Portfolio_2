@@ -1,33 +1,26 @@
 ﻿using AutoMapper;
 using DataLayer.DataServices;
+using DataLayer.DomainModels.UserModels;
 using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.SearchObjects;
 using DataLayer.DTOs.TitleObjects;
 using DataLayer.DTOs.UserObjects;
-using DataLayer.DomainModels.TitleModels;
-using DataLayer.DomainModels.UserModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using WebServer.Authentication;
 using WebServer.Models.NameModels;
 using WebServer.Models.TitleModels;
 using WebServer.Models.UserModels;
-//using WebServer.Models;
 
 
 namespace WebServer.Controllers
 {
     [Route("api/users")]
-    [ApiController]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+    [ApiController]
     public class UserController : ControllerBase
     {
         private IDataServiceUser _dataService;
-        //private IDataService _dataServiceTitle;
-        //private IDataServiceUser _dataServiceUser;
         private readonly LinkGenerator _generator;
         private readonly IMapper _mapper;
         int MaxPageSize = 50;
@@ -53,7 +46,6 @@ namespace WebServer.Controllers
         public IActionResult GetUser(string username)
         {
 
-            //var title = _dataService.GetTitle(tconst);
             UserModel title = CreateUserModel(_dataService.GetUser(username));
 
             if (title == null)
@@ -67,8 +59,6 @@ namespace WebServer.Controllers
         [HttpPost]
         public IActionResult CreateUser([FromBody] UserCreateModel newUser)
         {
-            //var dsUser = new DataServiceUser();
-            //var user = _mapper.Map<User>(newUser);
             var user = _dataService.CreateUser(newUser.Username, newUser.Password, newUser.Email);
             return CreatedAtRoute(null, CreateUserModel(user));
         }
@@ -86,6 +76,17 @@ namespace WebServer.Controllers
             }
             return Ok();
         }
+
+        public UserModel CreateUserModel(User user)
+        {
+            var model = _mapper.Map<UserModel>(user);
+            model.Url = _generator.GetUriByName(HttpContext, nameof(GetUser), new { user.Username });
+
+            return model;
+        }
+
+
+
 
         /*
          
@@ -111,24 +112,6 @@ namespace WebServer.Controllers
             return Ok(bookmark);
         }
 
-
-        /*
-         
-        // Get domain object - Would be used for Uri (since it contains Tconst) 
-        [HttpGet("user/titlebookmarks/{tconst}")]
-        [BasicAuthentication]
-        public IActionResult GetTitleBookmark(string tconst)
-        {
-            var username = GetUsernameFromAuthorization();
-
-            //var bookmark = MapTitleList(_dataService.GetBookmarkTitle(username, tconst));
-
-            if (bookmark == null)
-                return NotFound();
-
-            return Ok(bookmark);
-        }
-         */
 
 
         // Get list of titles that active user has bookmarked
@@ -173,7 +156,7 @@ namespace WebServer.Controllers
             var username = GetUsernameFromAuthorization();
 
             var result = _dataService.DeleteBookmarkTitle(username, tconst);
-            
+
 
             // If bookmark wasn't in the bookmark table
             if (result == -1)
@@ -235,18 +218,15 @@ namespace WebServer.Controllers
             var username = GetUsernameFromAuthorization();
 
             var (totalItems, bookmark) = _dataService.GetBookmarkNamesByUser(username, page, pageSize);
-                
-            var result = bookmark    
+
+            var result = bookmark
                 .Select(x => MapNameList(x));
-
-
 
 
             if (bookmark == null)
                 return NotFound();
 
             var paging = Paging(page, pageSize, totalItems, result, nameof(GetBookmarksNameByUser));
-
 
 
             return Ok(paging);
@@ -260,13 +240,13 @@ namespace WebServer.Controllers
         {
             var username = GetUsernameFromAuthorization();
 
-            var createdBookmark = _dataService.CreateBookmarkName(username, bookmark.Nconst );
+            var createdBookmark = _dataService.CreateBookmarkName(username, bookmark.Nconst);
 
             // Client recieves create bookmark. If no bookmark was created, well receive null
             return CreatedAtRoute(null, createdBookmark);
         }
 
-       
+
 
 
         // Delete bookmark
@@ -333,10 +313,7 @@ namespace WebServer.Controllers
                 return NotFound();
             }
 
-            // should have a status code in case createdUserRating is null (which would mean rating was not created)
-
-            return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
-            //return CreatedAtRoute(null, createdUserRating);
+            return CreatedAtRoute(null, MapUserRating(createdUserRating));
         }
 
         [HttpPut("user/ratings/{tconst}")]
@@ -353,30 +330,9 @@ namespace WebServer.Controllers
                 return NotFound();
             }
 
-            // should have a status code in case createdUserRating is null (which would mean rating was not created)
-
-            return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
-            //return CreatedAtRoute(null, createdUserRating);
+            return CreatedAtRoute(null, MapUserRating(createdUserRating));
         }
 
-
-
-        /*
-         
-        [HttpPost("user/ratings")]
-        [BasicAuthentication]
-        public IActionResult UpdateRating(UserRatingCreateModel rating)
-        {
-            var username = GetUsernameFromAuthorization();
-
-            var createdUserRating = _dataService.UpdateUserRating(username, rating.Tconst, rating.Rating);
-
-            // should have a status code in case createdUserRating is null (which would mean rating was not created)
-
-            return CreatedAtRoute(null, CreateUserRatingModel(createdUserRating));
-            //return CreatedAtRoute(null, createdUserRating);
-        }
-         */
 
 
         [HttpDelete("user/ratings/{tconst}")]
@@ -410,10 +366,9 @@ namespace WebServer.Controllers
             var username = GetUsernameFromAuthorization();
 
             var (totalItems, ratingDTO) = _dataService.GetUserRatings(username, page, pageSize);
-               
+
             var rating = ratingDTO
-                .Select(x => MapUserRating(x))
-                ;
+                .Select(x => MapUserRating(x));
 
             if (rating == null)
             {
@@ -427,25 +382,11 @@ namespace WebServer.Controllers
         }
 
 
-        public UserRatingModel CreateUserRatingModel(UserRatingDTO rating)
-        {
-
-            var model = new UserRatingModel().ConvertFromDTO(rating);
-            //var model = _mapper.Map<UserRatingModel>(rating);
-
-            model.TitleModel.Url = _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { rating.TitleModel.Tconst });
-            model.Url = _generator.GetUriByName(HttpContext, nameof(GetUserRating), new { rating.TitleModel.Tconst });
-
-            return model;
-        }
-
-
         public UserRatingModel MapUserRating(UserRatingDTO rating)
         {
             var model = new UserRatingModel().ConvertFromDTO(rating);
             model.TitleModel.Url = CreateTitleUrl(rating.TitleModel.Tconst);
             model.Url = _generator.GetUriByName(HttpContext, nameof(GetUserRating), new { rating.TitleModel.Tconst });
-            //CreateTitleUrl(rating.ParentTitle.Tconst);
 
             return model;
         }
@@ -473,7 +414,6 @@ namespace WebServer.Controllers
 
         [HttpGet("user/searches/{searchId}", Name = nameof(GetUserSearch))]
         [BasicAuthentication]
-
         public IActionResult GetUserSearch(int searchId)
         {
             var username = GetUsernameFromAuthorization();
@@ -484,8 +424,8 @@ namespace WebServer.Controllers
                 return StatusCode(401);
 
 
-            var result = MapUserSearch(userSearch); 
-             
+            var result = MapUserSearch(userSearch);
+
             if (userSearch == null)
                 return NotFound();
 
@@ -495,28 +435,25 @@ namespace WebServer.Controllers
 
         [HttpPost("user/searches")]
         [BasicAuthentication]
-
         public IActionResult CreateUserSearch([FromBody] UserSearchCreateModel userSearch)
         {
             var username = GetUsernameFromAuthorization();
 
             var results = _dataService.CreateUserSearch(username, userSearch.SearchContent, userSearch.SearchCategory);
-            
+
             return CreatedAtRoute(null, results);
         }
 
         [HttpGet("user/searches", Name = nameof(GetUserSearches))]
         [BasicAuthentication]
-
         public IActionResult GetUserSearches(int page = 1, int pageSize = 10)
         {
             var username = GetUsernameFromAuthorization();
 
             var (totalItems, searches) = _dataService.GetUserSearches(username, page, pageSize);
-               
-            var returnSearches     = 
-                searches.Select(x => MapUserSearch(x))
-                ;
+
+            var returnSearches =
+                searches.Select(x => MapUserSearch(x));
 
             if (searches == null)
             {
@@ -536,10 +473,9 @@ namespace WebServer.Controllers
         {
             var username = GetUsernameFromAuthorization();
 
-            //var title = _dataService.GetTitle(tconst);
             var userSearch = _dataService.GetUserSearch(searchId);
 
-            // Trying to delete a search that is somehow not the logged in user
+            // Trying to delete a search that is somehow not from the logged in user
             if (userSearch.Username != username)
             {
                 return StatusCode(401);
@@ -557,19 +493,34 @@ namespace WebServer.Controllers
         }
 
 
+        public object MapUserSearch(UserSearch userSearch)
+        {
+
+            var searchUrl = _generator.GetUriByName(HttpContext, nameof(GetUserSearchObject), new { userSearch.SearchId });
+
+            var result = new
+            {
+                Url = searchUrl,
+                SearchContent = userSearch.SearchContent,
+                SearchCategory = userSearch.SearchCategory,
+            };
+
+            return result;
+        }
+
+
+
+
 
         public NameForListModel MapNameList(NameForListDTO nameResults)
         {
 
             var model = new NameForListModel().ConvertFromDTO(nameResults);
-            model.BasicName.Url = CreateTitleUrl(nameResults.BasicName.Nconst);
+            model.BasicName.Url = CreateNameUrl(nameResults.BasicName.Nconst);
             if (nameResults.KnownForTitleBasics != null)
             {
                 model.KnownForTitleBasics.Url = CreateTitleUrl(nameResults.KnownForTitleBasics.Tconst);
             }
-            //var model = _mapper.Map<NameForListModel>(nameResults);
-            //model.BasicName = _mapper.Map<BasicNameModel>(model.BasicName);
-            //model.BasicName.Url = _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nameResults.BasicName.Nconst });
             return model;
         }
 
@@ -577,7 +528,7 @@ namespace WebServer.Controllers
         {
             var model = new TitleForListModel().ConvertFromDTO(titleBasics);
             model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
-            model.Url =  _generator.GetUriByName(HttpContext, nameof(TitleController.GetListTitle), new { model.BasicTitle });
+            model.Url = _generator.GetUriByName(HttpContext, nameof(TitleController.GetListTitle), new { model.BasicTitle });
 
 
             if (titleBasics.ParentTitle != null)
@@ -588,65 +539,13 @@ namespace WebServer.Controllers
             return model;
         }
 
-        public BookmarkTitleModel CreateBookmarkTitleModel(BookmarkTitle bookmark)
-        {
-            var model = _mapper.Map<BookmarkTitleModel>(bookmark);
-            //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
-            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
-
-            return model;
-        }
-        public UserModel CreateUserModel(User user)
-        {
-            var model = _mapper.Map<UserModel>(user);
-            model.Url = _generator.GetUriByName(HttpContext, nameof(GetUser), new { user.Username });
-            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
-
-            return model;
-        }
-
-       
+    
 
 
-        public UserSearchResultsModel CreateUserSearchResultsModel(SearchResultDTO searchResult)
-        {
-            var model = _mapper.Map<UserSearchResultsModel>(searchResult);
-            var titleResults = searchResult.TitleResults
-                .Select(x => MapTitleSearchResults(x))
-                .ToList();
-            var nameResults = searchResult.NameResults;
-            model.TitleResults = titleResults;
 
-            return model;
-        }
-
-
-        
-
-        // Map tite list form DTO to WebServer model, including adding URL's
-        public TitleForListModel MapTitleSearchResults(TitleForListDTO titleBasics)
-        {
-            var model = new TitleForListModel().ConvertFromDTO(titleBasics);
-            model.BasicTitle.Url = CreateTitleUrl(titleBasics.BasicTitle.Tconst);
-            if (titleBasics.ParentTitle != null)
-            {
-                model.ParentTitle.Url = CreateTitleUrl(titleBasics.ParentTitle.Tconst);
-            }
-
-            return model;
-        }
-
-        public NameForListModel MapNameSearchResults(NameForListDTO nameResults)
-        {
-            var model = _mapper.Map<NameForListModel>(nameResults);
-            model.BasicName = _mapper.Map<BasicNameModel>(model.BasicName);
-            model.BasicName.Url = _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nameResults.BasicName.Nconst });
-            return model;
-        }
 
         private string CreateTitleUrl(string tconst)
         {
-            tconst = tconst.Trim();
             if (string.IsNullOrEmpty(tconst)) return null;
             return _generator.GetUriByName(HttpContext, nameof(TitleController.GetTitle), new { tconst });
         }
@@ -654,7 +553,6 @@ namespace WebServer.Controllers
 
         private string CreateNameUrl(string nconst)
         {
-            nconst = nconst.Trim();
             if (string.IsNullOrEmpty(nconst)) return null;
             return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
         }
@@ -672,9 +570,8 @@ namespace WebServer.Controllers
             return authUsername;
         }
 
-        private string? CreateLinkList(int page, int pageSize, string method, string tconst = "", string nconst = "",  string searchId = "")
+        private string? CreateLinkList(int page, int pageSize, string method, string tconst = "", string nconst = "", string searchId = "")
         {
-
             var uri = _generator.GetUriByName(
                 HttpContext,
                 method,
@@ -698,20 +595,16 @@ namespace WebServer.Controllers
 
             var prevPageUrl = page > 1 && totalItems > 0
                 ? CreateLinkList(page - 1, pageSize, method, tconst, nconst, searchId)
-                : CreateLinkList(page, pageSize, method, tconst, nconst, searchId) ;
-
-            //var prevPageUrl = page > 1 && totalItems > 0
-            //    ? CreateLinkList(page - 1, pageSize, method, tconst, nconst, searchId)
-            //    : null;
+                : CreateLinkList(page, pageSize, method, tconst, nconst, searchId);
 
 
             var lastPageUrl = totalItems > 0
-            ? CreateLinkList(totalPages , pageSize, method, tconst, nconst, searchId)
+            ? CreateLinkList(totalPages, pageSize, method, tconst, nconst, searchId)
             : CreateLinkList(totalPages, pageSize, method, tconst, nconst, searchId);
 
             var currentPageUrl = CreateLinkList(page, pageSize, method, tconst, nconst, searchId);
 
-            var nextPageUrl = page < totalPages  && totalItems > 0
+            var nextPageUrl = page < totalPages && totalItems > 0
                 ? CreateLinkList(page + 1, pageSize, method, tconst, nconst, searchId)
                 : CreateLinkList(1, pageSize, method, tconst, nconst, searchId);
 
@@ -730,67 +623,9 @@ namespace WebServer.Controllers
         }
 
 
-        /*
-         
-
-        public BookmarkTitleModel CreateBookmarkTitleModel(BookmarkTitle bookmark)
-        {
-            var model = _mapper.Map<BookmarkTitleModel>(bookmark);
-            var title = _dataService.GetBasicTitle(bookmark.Tconst);
-            //var something = new {TitleController }.CreateBasicTitleModel(title);
-            model.Title = _mapper.Map<BasicTitleModel>(title);
-            model.Title.Url = _generator.GetUriByName(HttpContext, nameof(WebServer.Controllers.TitleController.GetTitle), new { title.Tconst });
-
-            //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
-
-            return model;
-        }
-         */
 
 
 
-        //public UserSearchModel CreateUserSearchModel(UserSearch search)
-        public object MapUserSearch(UserSearch userSearch)
-        {
-
-            var searchUrl = _generator.GetUriByName(HttpContext, nameof(GetUserSearchObject), new { userSearch.SearchId });
-
-            var result = new
-            {
-                Url = searchUrl,
-                SearchContent = userSearch.SearchContent,
-                SearchCategory = userSearch.SearchCategory,
-            };
-
-            //var model = new UserSearchModel().ConvertFromDTO(search);
-            ////var model = _mapper.Map<UserSearchModel>(search);
-            //model.Url = _generator.GetUriByName(HttpContext, nameof(SearchController.GetSearchResult), new { model.SearchContent, model.SearchCategory });
-
-            //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
-            //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
-
-            return result;
-        }
-
-
-
-   
-
-
-        //public UserSearchModel CreateUserSearchModel(UserSearch search)
-        //{
-        //    var model = _mapper.Map<UserSearchModel>(search);
-        //    //model.TitleUrl = _generator.GetUriByName(HttpContext, nameof(GetTitle), new { bookmark.Username });
-        //    //model.Genres = _dataService.GetGenresFromTitle(titleBasics.Tconst);
-
-        //    return model;
-        //}
-
-
-        /*
-         
-         
-         */
 
 
     }

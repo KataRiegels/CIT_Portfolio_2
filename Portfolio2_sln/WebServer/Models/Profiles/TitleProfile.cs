@@ -1,13 +1,7 @@
 ﻿using AutoMapper;
-using DataLayer;
 using DataLayer.DomainModels.TitleModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebServer.Models.TitleModels;
 using DataLayer.DTOs.TitleObjects;
+using WebServer.Models.TitleModels;
 
 namespace WebServer.Models.Profiles
 {
@@ -19,7 +13,6 @@ namespace WebServer.Models.Profiles
             CreateMap<TitleForListDTO, TitleForListModel>();
             CreateMap<DetailedTitleDTO, DetailedTitleModel>();
 
-            CreateMap<TitleBasics, TitleModel>();
 
         }
     }

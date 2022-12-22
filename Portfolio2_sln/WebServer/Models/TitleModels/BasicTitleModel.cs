@@ -9,10 +9,8 @@ namespace WebServer.Models.TitleModels
         public string PrimaryTitle { get; set; }
         public string StartYear { get; set; }
 
-        public BasicTitleModel() { }
 
-
-        public BasicTitleModel ConvertBasicTitleModel(BasicTitleDTO inputModel)
+        public BasicTitleModel ConvertFromDTO(BasicTitleDTO inputModel)
         {
             if (inputModel != null)
             {

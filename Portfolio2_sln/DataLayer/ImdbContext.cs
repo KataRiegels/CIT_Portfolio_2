@@ -1,12 +1,10 @@
 ﻿
-using Microsoft.EntityFrameworkCore;
+using DataLayer.DomainModels.NameModels;
 using DataLayer.DomainModels.TitleModels;
-using DataLayer.DomainModels.NameModels;
 using DataLayer.DomainModels.UserModels;
-using System.ComponentModel.DataAnnotations;
-using DataLayer.DTOs.TitleObjects;
 using DataLayer.DTOs.SearchObjects;
-using DataLayer.DomainModels.NameModels;
+using DataLayer.DTOs.TitleObjects;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataLayer
 {
@@ -32,8 +30,8 @@ namespace DataLayer
 
         public DbSet<UserSearch> UserSearches { get; set; }
 
-        public DbSet<TitleSearchResult> SearchTitleResults{ get; set; }
-        public DbSet<NameSearchResult> SearchNameResults{ get; set; }
+        public DbSet<TitleSearchResult> SearchTitleResults { get; set; }
+        public DbSet<NameSearchResult> SearchNameResults { get; set; }
 
 
         public DbSet<Character> Characters { get; set; }
@@ -42,7 +40,7 @@ namespace DataLayer
         // TITLES
 
         public DbSet<TitleAvgRating> TitleAvgRatings { get; set; }
-        
+
         public DbSet<TitleGenre> TitleGenres { get; set; }
         public DbSet<TitleEpisode> TitleEpisodes { get; set; }
         public DbSet<TitlePrincipal> TitlePrincipals { get; set; }
@@ -100,7 +98,7 @@ namespace DataLayer
 
             var KnownFor_table = modelBuilder.Entity<NameKnownFor>();
             KnownFor_table.ToTable("person_known_for_title");
-            KnownFor_table.HasKey(x => new { x.Tconst, x.Nconst});
+            KnownFor_table.HasKey(x => new { x.Tconst, x.Nconst });
             KnownFor_table.Property(x => x.Tconst).HasColumnName("tconst");
             KnownFor_table.Property(x => x.Nconst).HasColumnName("nconst");
 
@@ -113,7 +111,7 @@ namespace DataLayer
 
             var characterTable = modelBuilder.Entity<Character>();
             characterTable.ToTable("title_cast_character");
-            characterTable.HasKey(x => new { x.Tconst, x.Nconst, x.CharacterName});
+            characterTable.HasKey(x => new { x.Tconst, x.Nconst, x.CharacterName });
             characterTable.Property(x => x.Nconst).HasColumnName("nconst");
             characterTable.Property(x => x.Tconst).HasColumnName("tconst");
             characterTable.Property(x => x.CharacterName).HasColumnName("character");
@@ -155,7 +153,7 @@ namespace DataLayer
 
             var userBookmarkNameTable = modelBuilder.Entity<BookmarkName>();
             userBookmarkNameTable.ToTable("bookmark_name");
-            userBookmarkNameTable.HasKey(x =>  new { x.Username, x.Nconst });
+            userBookmarkNameTable.HasKey(x => new { x.Username, x.Nconst });
             userBookmarkNameTable.Property(x => x.Username).HasColumnName("username");
             userBookmarkNameTable.Property(x => x.Nconst).HasColumnName("nconst");
             //.Property(x => x.BirthYear).HasColumnName("birthyear");

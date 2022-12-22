@@ -23,7 +23,7 @@ namespace WebServer.Models.NameModels
             return new NameForListModel()
             {
                 BasicName = new BasicNameModel().ConvertFromBasicNameModelDTO(inputModel.BasicName),
-                KnownForTitleBasics = new BasicTitleModel().ConvertBasicTitleModel(inputModel.KnownForTitleBasics)
+                KnownForTitleBasics = new BasicTitleModel().ConvertFromDTO(inputModel.KnownForTitleBasics)
             };
         }
 

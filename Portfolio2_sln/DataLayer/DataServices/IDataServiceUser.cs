@@ -1,8 +1,7 @@
-﻿using DataLayer.DTOs.NameObjects;
+﻿using DataLayer.DomainModels.UserModels;
+using DataLayer.DTOs.NameObjects;
 using DataLayer.DTOs.TitleObjects;
 using DataLayer.DTOs.UserObjects;
-using DataLayer.DomainModels.UserModels;
-using System.Text;
 
 namespace DataLayer.DataServices
 {
@@ -40,9 +39,7 @@ namespace DataLayer.DataServices
         BookmarkTitle UpdateBookmarkTitle(string username, string oldTconst, string newTconst);
         int DeleteBookmarkTitle(string username, string tconst);
         BookmarkTitle GetBookmarkTitle(string username, string tconst);
-        IList<BookmarkTitle> GetBookmarkTitles();
         (int, IList<TitleForListDTO>) GetBookmarkTitlesByUser(string username, int page, int pageSize);
-        //IList<TitleForListDTO> GetTitlesForSearch(List<TitleSearchResult> searchedTitles, int page = 1, int pageSize = 5);
 
 
 

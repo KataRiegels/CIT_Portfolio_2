@@ -1,37 +1,14 @@
 ﻿using AutoMapper;
-using DataLayer;
-using DataLayer.DomainModels;
-using DataLayer.DomainModels.TitleModels;
-using WebServer.Models.TitleModels;
-using WebServer.Controllers;
-using Microsoft.AspNetCore.Mvc;
 //using WebServer.Models;
 using DataLayer.DataServices;
-
-
-using DataLayer.DomainModels.TitleModels;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Security.Cryptography.X509Certificates;
 using DataLayer.DomainModels.NameModels;
-using WebServer.Models.NameModels;
-using NpgsqlTypes;
-using AutoMapper;
-using DataLayer;
-using DataLayer.DomainModels;
-using DataLayer.DomainModels.TitleModels;
-using DataLayer.DomainModels.UserModels;
-using WebServer.Models.TitleModels;
-using WebServer.Models.UserModels;
-using WebServer.Controllers;
-using Microsoft.AspNetCore.Mvc;
 //using WebServer.Models;
 
-using DataLayer.DomainModels.TitleModels;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Security.Cryptography.X509Certificates;
 using DataLayer.DTOs.NameObjects;
-using System.Xml.Schema;
 using DataLayer.DTOs.TitleObjects;
+using Microsoft.AspNetCore.Mvc;
+using WebServer.Models.NameModels;
+using WebServer.Models.TitleModels;
 
 namespace WebServer.Controllers
 {
@@ -65,7 +42,7 @@ namespace WebServer.Controllers
         {
             NameModel name = CreateNameModel(_dataService.GetName(nconst));
 
-            if(name == null)
+            if (name == null)
             {
                 return NotFound();
             }
@@ -130,7 +107,7 @@ namespace WebServer.Controllers
 
             var total = _dataService.GetNumberOfPeople();
 
-            if(names == null)
+            if (names == null)
             {
                 return NotFound();
             }
@@ -160,7 +137,7 @@ namespace WebServer.Controllers
             IEnumerable<DetailedNameModel> names =
                 _dataService.GetDetailedNames().Select(x => CreateDetailedNameModel(x));
 
-            if(names == null)
+            if (names == null)
             {
                 return NotFound();
             }
@@ -194,8 +171,8 @@ namespace WebServer.Controllers
             //var model = _mapper.Map<DetailedNameModel>(detailModel);
 
             return model;
-        
-        
+
+
         }
 
 
@@ -203,23 +180,23 @@ namespace WebServer.Controllers
         {
             var model = new NameForListModel().ConvertFromDTO(listModel);
             model.BasicName.Url = _generator.GetUriByName(
-                HttpContext, 
-                nameof(GetName), 
+                HttpContext,
+                nameof(GetName),
                 new { listModel.BasicName.Nconst });
             //CreateTitleUrl(listModel.BasicName.Nconst);
             model.Url = _generator.GetUriByName(
-                HttpContext, 
-                nameof(GetListName), 
+                HttpContext,
+                nameof(GetListName),
                 new { listModel.BasicName.Nconst });
             //model.BasicTitle.Url = CreateTitleUrl(title.BasicTitle.Tconst);
 
-            if (model.KnownForTitleBasics!= null)
+            if (model.KnownForTitleBasics != null)
             {
                 model.KnownForTitleBasics.Url =
                     _generator.GetUriByName(
                     HttpContext,
                     nameof(TitleController.GetTitle),
-                    new { listModel.KnownForTitleBasics.Tconst }); 
+                    new { listModel.KnownForTitleBasics.Tconst });
                 //model.ParentTitle.Url = CreateTitleUrl(title.ParentTitle.Tconst);
             }
 
@@ -248,7 +225,7 @@ namespace WebServer.Controllers
             return _generator.GetUriByName(HttpContext, nameof(NameController.GetName), new { nconst });
         }
 
-        private string? CreateLinkList(int page, int pageSize, string method, string nconst="")
+        private string? CreateLinkList(int page, int pageSize, string method, string nconst = "")
         {
             var uri = _generator.GetUriByName(
                 HttpContext,
@@ -260,7 +237,7 @@ namespace WebServer.Controllers
 
 
 
-        private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method, string nconst="")
+        private object Paging<T>(int page, int pageSize, int totalItems, IEnumerable<T> items, string method, string nconst = "")
         {
             pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
 
@@ -281,7 +258,7 @@ namespace WebServer.Controllers
 
             var currentPageUrl = CreateLinkList(page, pageSize, method, nconst);
 
-            var nextPageUrl = page < totalPages  && totalItems > 0
+            var nextPageUrl = page < totalPages && totalItems > 0
                 ? CreateLinkList(page + 1, pageSize, method, nconst)
                 : CreateLinkList(1, pageSize, method, nconst);
 
